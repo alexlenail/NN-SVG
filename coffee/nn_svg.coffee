@@ -1,4 +1,14 @@
 
+
+
+
+
+
+
+
+
+### this was an older idea which led to this one:
+
 # somehow bind Snap to the canvas
 
 
