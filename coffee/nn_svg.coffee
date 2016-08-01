@@ -1,41 +1,74 @@
 
+verticalDistance = 10
+horizontalDistance = 10
+nodeSize = 3
+
+
+$(document).ready ->
+
+	architecture = [6, 6, 6, 1]  # later this will be a parameter
+	anchor = [50, 475]
+	nn = func_NN(anchor, architecture)
+
+	s = new sigma
+		graph: nn,
+		container: 'graph-container',
+		settings:
+			drawEdges: true
+
+
+func_NN = (P, architecture) ->
+
+	nn = { layers: [], edges: [] }
+	num_layers = architecture.length
+
+	for layer, i in architecture
+
+		P = [P[0]+i*horizontalDistance, P[1]]
+		nn.layers.push Layer(P, i, layer)
+
+	for layer, i in nn.layers
+
+		for node, j in layer
+
+			if i+1 < num_layers
+
+				for target in nn.layers[i+1]
+
+					nn.edges.push
+						id: node.id + '-' + target.id,
+						source: node.id,
+						target: target.id
+
+
+	nn.nodes = [].concat nn.layers...
+	delete nn.layers
+	return nn
+
+
+
+Layer = (P, layer_id, num_nodes) ->
+
+	nodes = []
+
+	for j in [1..num_nodes]
+
+		nodes.push
+			id: layer_id + '.' + j,
+			label: layer_id + '.' + j,
+			x: P[0],
+			y: P[1]+j*verticalDistance,
+			size: nodeSize
+			# color:
+
+
+	return nodes
 
 
 
 
 
 
-
-
-### this was an older idea which led to this one:
-
-# somehow bind Snap to the canvas
-
-
-# draw circles in 4 rows on the canvas. (6/row?)
-
-# connect each circle from each row to each circle in the next row
-
-# animate the location of each circle such that it moves to a random location on the canvas,
-# but does not occlude any other circle on the canvas
-
-# thought: there should be an abstraction in languages to iterate over a list in pairs or triplets. Look this up in python.
-
-# move them into a shape such that they form a square.
-
-# randomly add and substract edges, using a slider?
-
-######
-
-# generate a square of nodes
-
-# conect them randomly
-
-# use physics simulation to make them find their optimal arrangement.
-
-######
-
-# generate a visualization of a liquid state machine.
 
 
 
