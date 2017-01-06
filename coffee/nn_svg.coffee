@@ -1,7 +1,6 @@
 
-verticalDistance = 10
-horizontalDistance = 10
-nodeSize = 3
+verticalDistance = 2
+horizontalDistance = 2
 
 
 $(document).ready ->
@@ -58,8 +57,8 @@ Layer = (P, layer_id, num_nodes) ->
 			label: layer_id + '.' + j,
 			x: P[0],
 			y: P[1]+j*verticalDistance,
-			size: nodeSize
-			# color:
+			size: 1
+			color: '#123456'
 
 
 	return nodes
