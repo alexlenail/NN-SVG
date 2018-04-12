@@ -11,27 +11,32 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <style type="text/css">
-        svg {
+        #graph-container {
             top: 0;
             bottom: 0;
             left: 0;
             right: 0;
-            position: absolute;
+            position: fixed;
         }
 
         .nn-picker {
             width: 410px;
-            height: 500px;
             margin: 30px;
             z-index: 1000;
+        }
+        [data-toggle="collapse"] .fa:before {
+            content: "\f139";
+        }
+
+        [data-toggle="collapse"].collapsed .fa:before {
+            content: "\f13a";
         }
 
         .tab-content {
             padding: 20px;
         }
-
-        .entry {
-            width: 160px;
+        input[type="range"] {
+            margin-left: 10px;
         }
     </style>
 
@@ -40,7 +45,7 @@
 </head>
 <body>
 
-    <!-- <div id="graph-container"></div> -->
+    <div id="graph-container"></div>
 
     <div class="container-fluid">
 
@@ -49,6 +54,8 @@
                 <div class="card">
                     <div class="card-header">
                         <h1>NN-SVG</h1>
+
+                        <!-- <a class="text-right" data-toggle="collapse" href="#collapsable" role="button"><i class="fa"></i></a> -->
 
                         <nav>
                             <div class="nav nav-tabs card-header-tabs" role="tablist">
@@ -59,66 +66,71 @@
                         </nav>
 
                     </div>
-                    <div class="tab-content">
+                    <div class="tab-content" id="collapsable">
                         <div class="tab-pane fade show active" id="FCNN" role="tabpanel">
 
                             <h4>Style:</h4>
 
-                            <!-- Edge Width -->
+                            <!-- Edge Properties -->
                             <hr>
                             <div>
-                                <input type="checkbox" id="edgeWidthProportional" name="edgeWidthProportional" value="edgeWidthProportional" onchange="edgeWidthProportional=this.value;restart()">
+                                <input type="checkbox" id="edgeWidthProportional" name="edgeWidthProportional" value="edgeWidthProportional">
                                 <label for="edgeWidthProportional">Edge width proportional to edge weights</label>
                             </div>
                             <div>
                                 <label for="edgeWidth">Edge Width</label>
-                                <input type="range" id="edgeWidth" name="" min="0" max="10" step="0.1" value="3" onchange="edgeWidth=this.value;restart();">
+                                <input type="range" id="edgeWidth" name="" min="0" max="2" step="0.01" value="0.5" style="position: relative; top: 3px;">
                             </div>
 
-                            <!-- Edge Opacity -->
                             <hr>
                             <div>
-                                <input type="checkbox" id="edgeOpacityProportional" name="edgeOpacityProportional" value="edgeOpacityProportional" onchange="edgeOpacityProportional=this.value;restart()">
+                                <input type="checkbox" id="edgeOpacityProportional" name="edgeOpacityProportional" value="edgeOpacityProportional">
                                 <label for="edgeOpacityProportional">Edge opacity proportional to edge weights</label>
                             </div>
                             <div>
                                 <label for="edgeOpacity">Edge Opacity</label>
-                                <input type="range" id="edgeOpacity" name="" min="0" max="1" step="0.01" value="1" onchange="edgeOpacity=this.value;restart();">
+                                <input type="range" id="edgeOpacity" name="" min="0" max="1" step="0.01" value="1" style="position: relative; top: 3px;">
                             </div>
 
-                            <!-- Edge Color -->
                             <hr>
                             <div>
-                                <input type="checkbox" id="edgeColorProportional" name="edgeColorProportional" value="edgeColorProportional" onchange="edgeColorProportional=this.value;restart()">
+                                <input type="checkbox" id="edgeColorProportional" name="edgeColorProportional" value="edgeColorProportional">
                                 <label for="edgeColorProportional">Edge color proportional to edge weights</label>
                             </div>
                             <div>
-                                <input type="color" value="#0000ff" id="negativeEdgeColor" onchange="negativeEdgeColor=this.value;restart()">
-                                <label for="negativeEdgeColor">Negative Edge Weight Color</label>
+                                <input type="color" value="#0000ff" id="negativeEdgeColor">
+                                <label for="negativeEdgeColor">Negative Edge Color</label>
                             </div>
                             <div>
-                                <input type="color" value="#ff0000" id="positiveEdgeColor" onchange="positiveEdgeColor=this.value;restart()">
-                                <label for="positiveEdgeColor">Positive Edge Weight Color</label>
+                                <input type="color" value="#ff0000" id="positiveEdgeColor">
+                                <label for="positiveEdgeColor">Positive Edge Color</label>
+                            </div>
+                            <div>
+                                <input type="color" value="#505050" id="defaultEdgeColor">
+                                <label for="defaultEdgeColor">Default Edge Color</label>
                             </div>
 
                             <!-- Node Properties -->
                             <hr>
                             <div>
                                 <label for="nodeDiameter">Node Diameter</label>
-                                <input type="range" id="nodeDiameter" name="" min="10" max="100" step="1" value="20" onchange="node_diameter=this.value;restart();">
+                                <input type="range" id="nodeDiameter" name="" min="10" max="100" step="1" value="20" style="position: relative; top: 3px;">
                             </div>
                             <div>
-                                <input type="color" value="#aaaaaa" id="nodeColor" onchange="nodeColor=this.value;restart()">
+                                <input type="color" value="#ffffff" id="nodeColor">
                                 <label for="nodeColor">Node Color</label>
                             </div>
                             <div>
-                                <input type="color" value="#888888" id="nodeBorderColor" onchange="nodeBorderColor=this.value;restart()">
+                                <input type="color" value="#333333" id="nodeBorderColor">
                                 <label for="nodeBorderColor">Node Border Color</label>
                             </div>
 
-                            <!-- maybe add spacing between nodes -->
-                            <!-- maybe add direction the NN should point -->
-                            <!-- maybe add arrows pointing into input, out of output -->
+                            <!-- Layer Properties -->
+                            <hr>
+                            <div>
+                                <label for="betweenLayers">Layer Spacing</label>
+                                <input type="range" id="betweenLayers" name="" min="30" max="400" step="1" value="100" style="position: relative; top: 3px;">
+                            </div>
 
                             <hr>
                             <h4>Architecture:</h4>
@@ -126,37 +138,39 @@
                             <hr>
                             <div id="architecture">
 
-                                <div class="entry input-group mb-2 mr-sm-2">
-                                    <button class="btn btn-secondary btn-remove input-group-prepend" type="button">
-                                        <span class="fa fa-minus"></span>
-                                    </button>
-                                    <input class="form-control" name="fields[]" type="number" step="1" value="8" />
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="8" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
                                 </div>
-                                <div class="entry input-group mb-2 mr-sm-2">
-                                    <button class="btn btn-secondary btn-remove input-group-prepend" type="button">
-                                        <span class="fa fa-minus"></span>
-                                    </button>
-                                    <input class="form-control" name="fields[]" type="number" step="1" value="12" />
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="12" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
                                 </div>
-                                <div class="entry input-group mb-2 mr-sm-2">
-                                    <button class="btn btn-secondary btn-remove input-group-prepend" type="button">
-                                        <span class="fa fa-minus"></span>
-                                    </button>
-                                    <input class="form-control" name="fields[]" type="number" step="1" value="8" />
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="8" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
                                 </div>
-                                <div class="entry input-group mb-2 mr-sm-2">
-                                    <button class="btn btn-primary btn-add input-group-prepend" type="button">
-                                        <span class="fa fa-plus"></span>
-                                    </button>
-                                    <input class="form-control" name="fields[]" type="number" step="1"/>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1"/>
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
                                 </div>
 
-
-                                <!-- <button type="button" class="btn btn-sm btn-secondary">Add a layer</button> -->
                             </div>
 
                             <hr>
-                            <button type="button" class="btn btn-sm btn-secondary">New Random Weights</button>
+                            <button type="button" class="btn btn-sm btn-secondary" id="newRandomWeights">New Random Weights</button>
 
                             <hr>
                             <div>
@@ -200,7 +214,6 @@
 
 let range = n => [...Array(n).keys()];
 
-
 let nWise = (n, array) => {
   iterators = Array(n).fill().map(() => array[Symbol.iterator]());
   iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
@@ -219,6 +232,8 @@ function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+let randomWeight = () => Math.random() * 2 - 1;
+
 /////////////////////////////////////////////////////////////////////////////
                       ///////    Variables    ///////
 /////////////////////////////////////////////////////////////////////////////
@@ -226,139 +241,112 @@ function isNumber(n) {
 var w = window.innerWidth;
 var h = window.innerHeight;
 
-var svg = d3.select("body").append("svg");
+var svg = d3.select("#graph-container").append("svg");
 var g = svg.append("g");
-// svg.style("cursor", "move");
+svg.style("cursor", "move");
 
 var edgeWidthProportional = false;
-var edgeWidth = 1.0;
-var weightedEdgeWidth = d3.scaleLinear().domain([-1, 1]).range([, ]);
+var edgeWidth = 0.5;
+var weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
 
 var edgeOpacityProportional = false;
 var edgeOpacity = 1.0
-var weightedEdgeOpacity = d3.scaleLinear().domain([-1, 1]).range([, ]);
+var weightedEdgeOpacity = d3.scaleLinear().domain([0, 1]).range([0, 1]);
 
 var edgeColorProportional = false;
-var defaultEdgeColor = "#555";
+var defaultEdgeColor = "#505050";
 var negativeEdgeColor = "#0000ff";
 var positiveEdgeColor = "#ff0000";
-var weightedEdgeColor = d3.scaleLinear().domain([-1, 1]).range([negativeEdgeColor, positiveEdgeColor]);
+var weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
 
 var nodeDiameter = 20;
-var nodeColor = "#aaaaaa";
-var nodeBorderColor = "#888888";
+var nodeColor = "#ffffff";
+var nodeBorderColor = "#333333";
+
+var betweenLayers = 100;
 
 var architecture = [8, 12, 8];
+var betweenNodesInLayer = [20, 20, 20];
 var graph = {};
+var layer_offsets = [];
+var largest_layer_width = 0;
+var nnDirection = 'right'
 
-/////////////////////////////////////////////////////////////////////////////
-                 ///////    Select Architecture    ///////
-/////////////////////////////////////////////////////////////////////////////
-
-
-$(document).on('click', '.btn-add', function(e) {
-    e.preventDefault();
-
-    var controlForm = $('#architecture');
-    var currentEntry = $(this).parents('.entry:first');
-    var newEntry = $(currentEntry.clone()).appendTo(controlForm);
-
-    newEntry.find('input').val('');
-    controlForm.find('.entry:not(:last) .btn-add')
-        .removeClass('btn-add').addClass('btn-remove')
-        .removeClass('btn-primary').addClass('btn-secondary')
-        .html('<span class="fa fa-minus"></span>');
-
-    // change graph.nodes and graph.links
-
-}).on('click', '.btn-remove', function(e) {
-    e.preventDefault();
-
-    $(this).parents('.entry:first').remove();
-
-    // change graph.nodes and graph.links
-
-    return false;
-});
-
-
-
+var link = g.selectAll(".link");
+var node = g.selectAll(".node");
 
 
 /////////////////////////////////////////////////////////////////////////////
                       ///////    Draw Graph    ///////
 /////////////////////////////////////////////////////////////////////////////
 
-architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
-
-graph.nodes = architecture.map((layer, layer_index) => range(layer).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index}}));
-graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return {'source':left.id,'target':right.id,'weight':1}})));
-graph.nodes = flatten(graph.nodes);
-graph.links = flatten(graph.links);
-
-var link = g.selectAll(".link")
-            .data(graph.links)
-            .enter().append("line")
-            .attr("class", "link")
-            .style("stroke-width", function(d) {
-                if (edgeWidthProportional) { return weightedEdgeWidth(abs(d.weight)); }
-                else { return edgeWidth; }
-            })
-            .style("stroke", function(d) {
-                if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-                else { return defaultEdgeColor; }
-            })
-
-
-var node = g.selectAll(".node")
-            .data(graph.nodes)
-            .enter().append("path")
-            .attr("class", "node")
-            .attr("id", function(d) { return d.id; })
-            // .attr("d",d => display_type(d.type))
-            .style("fill", nodeColor)
-            .style("stroke", nodeBorderColor)
-            .style("stroke-width", 1)
-
-
 function restart() {
 
-    architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    architecture = $('#architecture').find('input[name="numberOfNodes"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
-    graph.nodes = architecture.map((layer, layer_index) => range(layer).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index}}));
-    graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return {'source':left.id,'target':right.id,'weight':1}})));
+    graph.nodes = architecture.map((layer, layer_index) => range(layer).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
+    graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return {'source':left.id,'target':right.id,'weight':randomWeight()}})));
     graph.nodes = flatten(graph.nodes);
     graph.links = flatten(graph.links);
 
-    nodes = graph.nodes;
-    node = node.data(nodes);
-    node.exit().remove();
-    node = node.enter()
-               .append("path")
-               .attr("class", "node")
-               .attr("id", function(d) { return d.id; })
-               // .attr("d",d => display_type(d.type))
-               .style("fill", nodeColor)
-               .style("stroke", nodeBorderColor)
-               .style("stroke-width", 1)
-
-
-    links = graph.links;
-    link = link.data(links);
+    link = link.data(graph.links);
     link.exit().remove();
     link = link.enter()
-               .insert("line", ".node") // insert before "node" so that nodes show up on top
+               .insert("line", ".node")
                .attr("class", "link")
                .style("stroke-width", function(d) {
-                   if (edgeWidthProportional) { return weightedEdgeWidth(abs(d.weight)); }
+                   if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
                    else { return edgeWidth; }
                })
                .style("stroke", function(d) {
                    if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
                    else { return defaultEdgeColor; }
                })
+               .style("opacity", function (d) { return edgeOpacity; })
                .merge(link);
 
+    node = node.data(graph.nodes);
+    node.exit().remove();
+    node = node.enter()
+               .append("circle")
+               .attr("r", nodeDiameter/2)
+               .attr("class", "node")
+               .attr("id", function(d) { return d.id; })
+               .style("fill", nodeColor)
+               .style("stroke", nodeBorderColor)
+               .style("stroke-width", 1)
+               .merge(node);
+
+    redistribute();
+}
+
+function redistribute() {
+
+    betweenNodesInLayer = $('#architecture').find('input[name="betweenNodesInLayer"]').map((i,el) => parseFloat($(el).val())).get();
+
+    layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i])
+
+    largest_layer_width = Math.max(...layer_widths);
+
+    layer_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2);
+
+    let indices_from_id = (id) => id.split('_').map(x => parseInt(x));
+
+    let x = (layer) => layer * (betweenLayers + nodeDiameter) + w/2;
+    let y = (layer, node_index) => layer_offsets[layer] + node_index * nodeDiameter + (node_index) * betweenNodesInLayer[layer] + h/2 - largest_layer_width/2;
+
+    let xt = (layer) => layer_offsets[layer] + node_index * nodeDiameter + (node_index) * betweenNodesInLayer[layer] + w/2 - largest_layer_width/2;
+    let yt = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + h/2;
+
+    if (nnDirection == 'up') { x = xt; y = yt; }
+
+    node.attr('cx', function(d) { return x(d.layer); })
+        .attr('cy', function(d) { return y(d.layer, d.node_index); });
+
+    link.attr("x1", function(d) { return x(...indices_from_id(d.source)); })
+        .attr("y1", function(d) { return y(...indices_from_id(d.source)); })
+        .attr("x2", function(d) { return x(...indices_from_id(d.target)); })
+        .attr("y2", function(d) { return y(...indices_from_id(d.target)); });
 
 }
 
@@ -392,8 +380,131 @@ resize();
 
 
 /////////////////////////////////////////////////////////////////////////////
-                ///////    Additional Features    ///////
+                ///////    Select Styling    ///////
 /////////////////////////////////////////////////////////////////////////////
+
+$("#edgeWidthProportional").change(function() {
+    edgeWidthProportional = this.checked;
+    link.style("stroke-width", function(d) {
+        if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
+        else { return edgeWidth; }
+    });
+    if (edgeWidthProportional) { }
+    else { }
+});
+
+$("#edgeWidth").change(function() {
+    edgeWidth = parseFloat(this.value);
+    weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
+    link.style("stroke-width", function(d) {
+        if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
+        else { return edgeWidth; }
+    });
+});
+
+$("#edgeOpacityProportional").change(function() {
+    edgeOpacityProportional = this.checked;
+    link.style("opacity", function(d) {
+        if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
+        else { return edgeOpacity; }
+    });
+    if (edgeOpacityProportional) { $("#edgeOpacity").prop('disabled', true); }
+    else { $("#edgeOpacity").prop('disabled', false); }
+});
+
+$("#edgeOpacity").change(function() {
+    edgeOpacity = parseFloat(this.value);
+    link.style("opacity", function(d) {
+        if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
+        else { return edgeOpacity; }
+    });});
+
+$("#edgeColorProportional").change(function() {
+    edgeColorProportional = this.checked;
+    link.style("stroke", function(d) {
+        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
+        else { return defaultEdgeColor; }
+    });
+});
+
+$("#negativeEdgeColor").change(function() {
+    negativeEdgeColor = this.value;
+    weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+    link.style("stroke", function(d) {
+        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
+        else { return defaultEdgeColor; }
+    });
+});
+
+$("#positiveEdgeColor").change(function() {
+    positiveEdgeColor = this.value;
+    weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+    link.style("stroke", function(d) {
+        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
+        else { return defaultEdgeColor; }
+    });
+});
+
+$("#defaultEdgeColor").change(function() {
+    defaultEdgeColor = this.value;
+    link.style("stroke", function(d) {
+        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
+        else { return defaultEdgeColor; }
+    });
+});
+
+$("#nodeDiameter").change(function() {
+    nodeDiameter = parseFloat(this.value);
+    node.attr("r", nodeDiameter/2);
+});
+
+$("#nodeColor").change(function() {
+    nodeColor = this.value;
+    node.style("fill", nodeColor);
+});
+
+$("#nodeBorderColor").change(function() {
+    nodeBorderColor = this.value;
+    node.style("stroke", nodeBorderColor);
+});
+
+$("#betweenLayers").change(function() {
+    betweenLayers = parseFloat(this.value);
+    redistribute();
+});
+
+
+/////////////////////////////////////////////////////////////////////////////
+                 ///////    Select Architecture    ///////
+/////////////////////////////////////////////////////////////////////////////
+
+
+$(document).on('click', '.btn-add', function(e) {
+    e.preventDefault();
+
+    var controlForm = $('#architecture');
+    var currentEntry = $(this).parents('.entry:first');
+    var newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+    newEntry.find('input[name="numberOfNodes"]').val('');
+    controlForm.find('.entry:not(:last) .btn-add')
+        .removeClass('btn-add').addClass('btn-remove')
+        .removeClass('btn-primary').addClass('btn-secondary')
+        .html('<span class="fa fa-minus"></span>');
+
+    restart();
+
+}).on('click', '.btn-remove', function(e) {
+    e.preventDefault();
+
+    $(this).parents('.entry:first').remove();
+
+    restart();
+
+    return false;
+
+}).on('change', "input[name='numberOfNodes']", restart).on('change', "input[name='betweenNodesInLayer']", redistribute).on('click', '#newRandomWeights', restart);
+
 
 
     </script>
