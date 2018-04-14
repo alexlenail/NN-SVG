@@ -188,14 +188,8 @@
                             <button type="button" class="btn btn-sm btn-secondary" id="newRandomWeights">New Random Weights</button>
 
                             <hr>
-                            <button type="button" class="btn btn-sm btn-secondary" id="download">DL</button>
+                            <a id="download" href="#"><big>⇩</big>Download SVG</a>
 
-                            <hr>
-                            <div>
-                                <a id="saveButton" href="javascript:(function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://rawgit.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();">
-                                    <big>⇩</big> Download SVG (doesn't work yet)
-                                </a>
-                            </div>
 
                         </div>
                         <div class="tab-pane fade" id="LeNet" role="tabpanel">
@@ -259,7 +253,7 @@ let randomWeight = () => Math.random() * 2 - 1;
 var w = window.innerWidth;
 var h = window.innerHeight;
 
-var svg = d3.select("#graph-container").append("svg");
+var svg = d3.select("#graph-container").append("svg").attr("xmlns", "http://www.w3.org/2000/svg");
 var g = svg.append("g");
 svg.style("cursor", "move");
 
@@ -409,7 +403,7 @@ function set_focus(d) {
 function remove_focus() {
     console.log('remove');
     node.style("opacity", 1);
-    link.style("opacity", function (d) { return edgeOpacity; })
+    link.style("opacity", function () { return edgeOpacity; })
 }
 
 node.on("mousedown", set_focus);
@@ -552,6 +546,7 @@ $(document).on('click', '#newRandomWeights', function() {
 });
 
 d3.select("#download").on("click", function() {
+    console.log('here');
     d3.select(this)
       .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#graph-container").html()))
       .attr("download", "viz.svg")
