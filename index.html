@@ -3,8 +3,8 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
     <!-- <link rel="shortcut icon" href="favicon.ico" /> -->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -114,7 +114,7 @@
                             <hr>
                             <div>
                                 <label for="nodeDiameter">Node Diameter</label>
-                                <input type="range" id="nodeDiameter" name="" min="10" max="100" step="1" value="20" style="position: relative; top: 3px;">
+                                <input type="range" id="nodeDiameter" name="" min="10" max="50" step="1" value="20" style="position: relative; top: 3px;">
                             </div>
                             <div>
                                 <input type="color" value="#ffffff" id="nodeColor">
@@ -131,6 +131,21 @@
                                 <label for="betweenLayers">Layer Spacing</label>
                                 <input type="range" id="betweenLayers" name="" min="30" max="400" step="1" value="100" style="position: relative; top: 3px;">
                             </div>
+                            <div id="nnDirection">
+                                <label for="nnDirection" style="margin-right:10px;">Direction</label>
+                                <!-- <input type="range" id="nnDirection" name="" min="30" max="400" step="1" value="100" style="position: relative; top: 3px;"> -->
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="nnDirection" id="horizontal" value="right" checked> horizontal
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="nnDirection" id="vertical" value="up"> vertical
+                                    </label>
+                                </div>
+                            </div>
+
 
                             <hr>
                             <h4>Architecture:</h4>
@@ -171,6 +186,9 @@
 
                             <hr>
                             <button type="button" class="btn btn-sm btn-secondary" id="newRandomWeights">New Random Weights</button>
+
+                            <hr>
+                            <button type="button" class="btn btn-sm btn-secondary" id="download">DL</button>
 
                             <hr>
                             <div>
@@ -332,15 +350,15 @@ function redistribute() {
 
     let indices_from_id = (id) => id.split('_').map(x => parseInt(x));
 
-    let x = (layer) => layer * (betweenLayers + nodeDiameter) + w/2;
+    let x = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + w/2;
     let y = (layer, node_index) => layer_offsets[layer] + node_index * nodeDiameter + (node_index) * betweenNodesInLayer[layer] + h/2 - largest_layer_width/2;
 
-    let xt = (layer) => layer_offsets[layer] + node_index * nodeDiameter + (node_index) * betweenNodesInLayer[layer] + w/2 - largest_layer_width/2;
-    let yt = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + h/2;
+    let xt = (layer, node_index) => layer_offsets[layer] + node_index * nodeDiameter + (node_index) * betweenNodesInLayer[layer] + w/2;
+    let yt = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + h/2 - largest_layer_width/2;
 
     if (nnDirection == 'up') { x = xt; y = yt; }
 
-    node.attr('cx', function(d) { return x(d.layer); })
+    node.attr('cx', function(d) { return x(d.layer, d.node_index); })
         .attr('cy', function(d) { return y(d.layer, d.node_index); });
 
     link.attr("x1", function(d) { return x(...indices_from_id(d.source)); })
@@ -378,6 +396,24 @@ d3.select(window).on("resize", resize)
 
 resize();
 
+/////////////////////////////////////////////////////////////////////////////
+                      ///////    Focus    ///////
+/////////////////////////////////////////////////////////////////////////////
+
+function set_focus(d) {
+    console.log('set');
+    node.style("opacity", function(o) { return (d == o || o.layer == d.layer - 1) ? 1 : 0.1; });
+    link.style("opacity", function(o) { return (o.target == d.id) ? 1 : 0.02; });
+}
+
+function remove_focus() {
+    console.log('remove');
+    node.style("opacity", 1);
+    link.style("opacity", function (d) { return edgeOpacity; })
+}
+
+node.on("mousedown", set_focus);
+node.on("mouseup", remove_focus);
 
 /////////////////////////////////////////////////////////////////////////////
                 ///////    Select Styling    ///////
@@ -473,6 +509,10 @@ $("#betweenLayers").change(function() {
     redistribute();
 });
 
+$('#nnDirection input:radio').change(function() {
+    nnDirection = this.value;
+    redistribute();
+});
 
 /////////////////////////////////////////////////////////////////////////////
                  ///////    Select Architecture    ///////
@@ -503,9 +543,19 @@ $(document).on('click', '.btn-add', function(e) {
 
     return false;
 
-}).on('change', "input[name='numberOfNodes']", restart).on('change', "input[name='betweenNodesInLayer']", redistribute).on('click', '#newRandomWeights', restart);
+}).on('change', "input[name='numberOfNodes']", restart).on('change', "input[name='betweenNodesInLayer']", redistribute);
 
+$(document).on('click', '#newRandomWeights', function() {
+    link = link.data([]);
+    link.exit().remove();
+    restart();
+});
 
+d3.select("#download").on("click", function() {
+    d3.select(this)
+      .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#graph-container").html()))
+      .attr("download", "viz.svg")
+})
 
     </script>
 
