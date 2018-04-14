@@ -15,10 +15,5 @@ In the future I'd like to have three layouts:
 
 
 <!-- TODO
-	- download svg should eventually work.
-	- arrowheads?
-	- maybe add arrows pointing into input, out of output
-	- color nodes in each layer separately?
 	- add bias units option
- 	- the entire thing can fold up
  -->
