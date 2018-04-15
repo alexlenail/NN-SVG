@@ -77,7 +77,7 @@
                         <nav>
                             <div class="nav nav-tabs card-header-tabs" role="tablist">
                                 <a class="nav-item nav-link active" data-toggle="tab" href="#FCNN" role="tab">FCNN style</a>
-                                <a class="nav-item nav-link disabled" data-toggle="tab" href="#LeNet" role="tab">LeNet style</a>
+                                <a class="nav-item nav-link" data-toggle="tab" href="#LeNet" role="tab">LeNet style</a>
                                 <a class="nav-item nav-link disabled" data-toggle="tab" href="#AlexNet" role="tab">AlexNet style</a>
                             </div>
                         </nav>
@@ -209,7 +209,55 @@
                         <div class="tab-pane fade" id="LeNet" role="tabpanel">
                             <h4>Style:</h4>
 
+                            <div>
+                                <input type="color" value="#e0e0e0" id="color1">
+                                <label for="color1">Color 1</label>
+                            </div>
+                            <div>
+                                <input type="color" value="#a0a0a0" id="color2">
+                                <label for="color2">Color 2</label>
+                            </div>
+                            <div>
+                                <label for="betweenSquares">Spacing</label>
+                                <input type="range" id="betweenSquares" name="" min="30" max="400" step="1" value="100" style="position: relative; top: 3px;">
+                            </div>
                             <h4>Architecture:</h4>
+                            <div id="architecture">
+                                <p>Number of filters | Filter Size | Stride</p>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="8" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="72" />
+                                        <input type="number" class="form-control" name="stride" step="1" value="72" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="12" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="24" />
+                                        <input type="number" class="form-control" name="stride" step="1" value="24" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="20" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="12" />
+                                        <input type="number" class="form-control" name="stride" step="1" value="12" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfSquares" step="1"/>
+                                        <input type="number" class="form-control" name="squareWidth" step="1"/>
+                                        <input type="number" class="form-control" name="stride" step="1"/>
+                                    </div>
+                                </div>
+
+                            </div>
 
 
                         </div>
