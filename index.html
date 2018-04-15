@@ -4,13 +4,13 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <!-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> -->
-    <!-- <link rel="shortcut icon" href="favicon.ico" /> -->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
     <style type="text/css">
+        * { font-weight: 100; }
+        h1 { font-weight: 100; }
         #graph-container {
             top: 0;
             bottom: 0;
@@ -47,6 +47,13 @@
         input[type="range"] {
             margin-left: 10px;
         }
+        #count {
+            position: fixed;
+            bottom: 0;
+            right: 1rem;
+            opacity: 0.4;
+            font-weight: 100;
+        }
     </style>
 
     <title>NN SVG</title>
@@ -65,8 +72,7 @@
                     <div class="card-header">
                         <a class="pull-right" data-toggle="collapse" href="#collapsable" role="button"><i class="fa"></i></a>
                         <h1>NN-SVG</h1>
-                        <p>Publication-ready NN-architecture schematics. <a id="download" href="#"><big>⇩</big>Download SVG</a></p>
-
+                        <p>Publication-ready NN-architecture schematics. <a id="download" href="#">Download SVG</a></p>
 
                         <nav>
                             <div class="nav nav-tabs card-header-tabs" role="tablist">
@@ -218,6 +224,9 @@
         </div>
     </div>
 
+    <div id="count"><span></span><a style="font-size: 1rem" href="about.html">About</a></div>
+
+
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -336,6 +345,8 @@ function restart() {
                .style("stroke-width", 1)
                .merge(node);
 
+
+    $('#count span:first').text(graph.nodes.length+" nodes, "+graph.links.length+" edges you don't need to draw yourself! ")
     redistribute();
 }
 
@@ -554,10 +565,9 @@ $(document).on('click', '#newRandomWeights', function() {
 });
 
 d3.select("#download").on("click", function() {
-    console.log('here');
     d3.select(this)
       .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#graph-container").html()))
-      .attr("download", "viz.svg")
+      .attr("download", "nn.svg")
 })
 
     </script>
