@@ -10,10 +10,15 @@ to visualize classic fully-connected neural networks, on top of d3.
 
 In the future I'd like to have three layouts:
 - [x] Conventional FCNN layout
-- [ ] [LeNet CNN layout](https://www.pyimagesearch.com/wp-content/uploads/2016/06/lenet_architecture.png)
+- [x] [LeNet CNN layout](https://www.pyimagesearch.com/wp-content/uploads/2016/06/lenet_architecture.png)
 - [ ] [AlexNet layout](http://www.mdpi.com/remotesensing/remotesensing-09-00848/article_deploy/html/images/remotesensing-09-00848-g001.png) (via webGL)
 
 
-<!-- TODO
+<!-- TODO: FCNN
 	- add bias units option
+ -->
+
+<!-- TODO: LeNet
+	- better spacing between layers
+	- name each layer
  -->
