@@ -78,7 +78,7 @@
                             <div class="nav nav-tabs card-header-tabs" role="tablist">
                                 <a class="nav-item nav-link active">FCNN style</a>
                                 <a class="nav-item nav-link" href="LeNet.html">LeNet style</a>
-                                <a class="nav-item nav-link disabled" href="#">AlexNet style</a>
+                                <a class="nav-item nav-link" href="AlexNet.html">AlexNet style</a>
                             </div>
                         </nav>
 
@@ -146,7 +146,7 @@
                             <hr>
                             <div>
                                 <label for="betweenLayers">Layer Spacing</label>
-                                <input type="range" id="betweenLayers" name="" min="30" max="400" step="1" value="100" style="position: relative; top: 3px;">
+                                <input type="range" id="betweenLayers" name="" min="30" max="400" step="1" value="160" style="position: relative; top: 3px;">
                             </div>
                             <div id="nnDirection">
                                 <label for="nnDirection" style="margin-right:10px;">Direction</label>
@@ -172,7 +172,7 @@
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-4">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="8" />
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="16" />
                                     </div>
                                     <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
                                 </div>
@@ -186,7 +186,14 @@
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-4">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="8" />
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="10" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="1" />
                                     </div>
                                     <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
                                 </div>
@@ -281,7 +288,7 @@ var nodeDiameter = 20;
 var nodeColor = "#ffffff";
 var nodeBorderColor = "#333333";
 
-var betweenLayers = 100;
+var betweenLayers = 160;
 
 var architecture = [8, 12, 8];
 var betweenNodesInLayer = [20, 20, 20];

@@ -78,7 +78,7 @@
                             <div class="nav nav-tabs card-header-tabs" role="tablist">
                                 <a class="nav-item nav-link" href="index.html">FCNN style</a>
                                 <a class="nav-item nav-link active">LeNet style</a>
-                                <a class="nav-item nav-link disabled" href="#">AlexNet style</a>
+                                <a class="nav-item nav-link" href="AlexNet.html">AlexNet style</a>
                             </div>
                         </nav>
 
@@ -115,7 +115,7 @@
                             <hr>
                             <h4>Architecture:</h4>
                             <div id="architecture">
-                                <p>Number of filters | Filter Size | Stride</p>
+                                <p># Feature-Maps | fMap Size | Filter Size</p>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
@@ -182,7 +182,7 @@
         </div>
     </div>
 
-    <div id="count"><span></span><a style="font-size: 1rem" href="about.html">About</a></div>
+    <div id="count"><a style="font-size: 1rem" href="about.html">About</a></div>
 
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -279,7 +279,7 @@ function restart() {
     lenet.fc_layers = architecture2.map((size, fc_layer_index) => {return {'id': 'fc_'+fc_layer_index, 'layer':fc_layer_index+architecture.length, 'size':size/Math.sqrt(2)}});
     lenet.fc_links = lenet.fc_layers.map(fc => { return [Object.assign({'id':'link_'+fc['layer']+'_0','i':0,'prevSize':10},fc), Object.assign({'id':'link_'+fc['layer']+'_1','i':1,'prevSize':10},fc)]});
     lenet.fc_links = flatten(lenet.fc_links);
-    lenet.fc_links[0]['prevSize'] = 0;
+    lenet.fc_links[0]['prevSize'] = 0;                          // hacks
     lenet.fc_links[1]['prevSize'] = lenet.rects.last()['side'];  // hacks
 
     rect = rect.data(lenet.rects);
