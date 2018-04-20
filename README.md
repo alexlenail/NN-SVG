@@ -22,3 +22,7 @@ In the future I'd like to have three layouts:
 	- better spacing between layers
 	- name each layer
  -->
+
+<!-- TODO: AlexNet
+	- Annotations for sizes of each layer
+ -->
