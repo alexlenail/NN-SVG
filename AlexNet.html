@@ -54,13 +54,18 @@
             opacity: 0.4;
             font-weight: 100;
         }
+/*        svg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: -1;
+        }*/
     </style>
 
     <title>NN SVG</title>
 
 </head>
 <body>
-
 
     <div id="graph-container"></div>
 
@@ -98,17 +103,17 @@
                                 <label for="color2">Color 2</label>
                             </div>
                             <div>
-                                <input type="color" value="#ffbbbb" id="color2">
-                                <label for="color3">Color 2</label>
+                                <input type="color" value="#ffbbbb" id="color3">
+                                <label for="color3">Color 3</label>
                             </div>
                             <div>
-                                <label for="rectOpacity">Data Opacity</label>
-                                <input type="range" id="rectOpacity" name="" min="0.2" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
+                                <label for="rectOpacity">Tensor Opacity</label>
+                                <input type="range" id="rectOpacity" name="" min="0" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
                             </div>
                             <div>
                             <div>
                                 <label for="strideOpacity">Filter Opacity</label>
-                                <input type="range" id="strideOpacity" name="" min="0.2" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
+                                <input type="range" id="strideOpacity" name="" min="0" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
                             </div>
 <!--                             <div>
                                 <label for="borderWidth">Border Width</label>
@@ -121,20 +126,37 @@
 
                             <hr>
                             <div>
-                                <input type="checkbox" id="logarithmicDepth" name="logarithmicDepth" value="logarithmicDepth">
+                                <input type="checkbox" id="logarithmicDepth" name="logarithmicDepth" value="logarithmicDepth" checked>
                                 <label for="logarithmicDepth">Logarithmic Feature-Map Depth Scaling</label>
                             </div>
                             <div>
                                 <label for="depthScale">Depth Size Scaling</label>
-                                <input type="range" id="depthScale" name="" min="10" max="100" step="1" value="20" style="position: relative; top: 3px;">
+                                <input type="range" id="depthScale" name="" min="1" max="100" step="1" value="10" style="position: relative; top: 3px;">
+                                <span id="depthSpan">10</span>
                             </div>
                             <div>
-                                <input type="checkbox" id="logarithmicWidth" name="logarithmicWidth" value="logarithmicWidth">
+                                <input type="checkbox" id="logarithmicWidth" name="logarithmicWidth" value="logarithmicWidth" checked>
                                 <label for="logarithmicWidth">Logarithmic Feature-Map Width Scaling</label>
                             </div>
                             <div>
                                 <label for="widthScale">Width Size Scaling</label>
-                                <input type="range" id="widthScale" name="" min="10" max="100" step="1" value="20" style="position: relative; top: 3px;">
+                                <input type="range" id="widthScale" name="" min="1" max="100" step="1" value="10" style="position: relative; top: 3px;">
+                                <span id="widthSpan">10</span>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="logarithmicConvSize" name="logarithmicConvSize" value="logarithmicConvSize">
+                                <label for="logarithmicConvSize">Logarithmic Convolutional Filter Scaling</label>
+                            </div>
+                            <div>
+                                <label for="convScale">Convolutional Filter Scaling</label>
+                                <input type="range" id="convScale" name="" min="1" max="10" step="1" value="1" style="position: relative; top: 3px;">
+                                <span id="convSpan">1</span>
+                            </div>
+
+                            <hr>
+                            <div>
+                                <input type="checkbox" id="showDims" name="showDims" value="showDims">
+                                <label for="showDims">Show Tensor Dimensions</label>
                             </div>
 
                             <hr>
@@ -184,6 +206,7 @@
 
 
 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -194,14 +217,15 @@
     <div id="count"><a style="font-size: 1rem" href="about.html">About</a></div>
 
 
+
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
     <script src="OrbitControls.js"></script>
-
-    <!-- <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script> -->
+    <script src="SVGRenderer.js"></script>
+    <script src="Projector.js"></script>
 
     <script type="text/javascript">
 
@@ -234,12 +258,21 @@ let rand = (min, max) => Math.random() * (max - min) + min;
 //                       ///////    Variables    ///////
 // /////////////////////////////////////////////////////////////////////////////
 
+var w = window.innerWidth;
+var h = window.innerHeight;
 
 var color1 = '#eeeeee';
 var color2 = '#99ddff';
 var color3 = '#ffbbbb';
+
 var rectOpacity = 0.4;
 var strideOpacity = 0.4;
+
+var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
+var box_material = new THREE.MeshBasicMaterial( {'color':color1, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':rectOpacity, 'depthWrite':false, 'needsUpdate':true} );
+var conv_material = new THREE.MeshBasicMaterial( {'color':color2, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
+var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
+
 
 var betweenLayers = 20;
 
@@ -247,11 +280,22 @@ var logarithmicDepth = true;
 var depthScale = 10;
 var logarithmicWidth = true;
 var widthScale = 10;
+var logarithmicConvSize = false;
+var convScale = 1;
 
-let depthFn = (depth) => Math.log(depth) * depthScale;
-let widthFn = (width) => Math.log(width) * widthScale;
+var showDims = false;
 
-let wh = (layer) => widthFn(layer['widthAndHeight'])
+let depthFn = (depth) => logarithmicDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
+let widthFn = (width) => logarithmicWidth ? (Math.log(width) * widthScale) : (width * widthScale);
+let convFn = (conv) => logarithmicConvSize ? (Math.log(conv) * convScale) : (conv * convScale);
+
+function wh(layer) { return widthFn(layer['widthAndHeight']); }
+
+var layers = new THREE.Group();
+var convs = new THREE.Group();
+var pyramids = new THREE.Group();
+var sprites = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
+
 
 // /////////////////////////////////////////////////////////////////////////////
 //                       ///////    Draw Graph    ///////
@@ -261,13 +305,17 @@ let wh = (layer) => widthFn(layer['widthAndHeight'])
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
 
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 100000 );
+// var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 100000 );
+var camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, 0.1, 100000 );
 camera.position.set(-219, 92, -39);
 
 var renderer = new THREE.WebGLRenderer( { 'alpha':true, 'transparent':true } );
+// var renderer = new THREE.SVGRenderer( { 'alpha':true, 'transparent':true } );
 renderer.setPixelRatio(window.devicePixelRatio || 1);
 renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+document.getElementById('graph-container').appendChild( renderer.domElement );
+
+
 
 
 restart(scene);
@@ -277,33 +325,24 @@ restart(scene);
 
 controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-
 var animate = function () {
     requestAnimationFrame( animate );
     renderer.render(scene, camera);
-
-    // cube.rotation.x += 0.01;
-    // cube.rotation.y += 0.01;
-
 };
 
 animate();
 
 
+
 function restart(scene) {
+
+    clearThree(scene);
 
     architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
     architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1],'stride':l[2],'rel_x':rand(-0.4,0.4),'rel_y':rand(-0.4,0.4)}});
 
     z_offset = -(sum(architecture.map(layer => depthFn(layer['depth']))) + (betweenLayers * (architecture.length - 1))) / 3;
-
     layer_offsets = pairWise(architecture).reduce((offsets, layers) => offsets.concat([offsets.last() + depthFn(layers[0]['depth'])/2 + betweenLayers + depthFn(layers[1]['depth'])/2]), [z_offset]);
-
-    var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
-    var box_material = new THREE.MeshBasicMaterial( {'color':color1, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':rectOpacity, 'depthWrite':false } );
-    var conv_material = new THREE.MeshBasicMaterial( {'color':color2, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false } );
-    var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false } );
-
 
     architecture.forEach( function( layer, index ) {
 
@@ -311,27 +350,27 @@ function restart(scene) {
         layer_geometry = new THREE.BoxGeometry( wh(layer), wh(layer), depthFn(layer['depth']) );
         layer_object = new THREE.Mesh( layer_geometry, box_material );
         layer_object.position.set(0, 0, layer_offsets[index]);
-        scene.add( layer_object );
+        layers.add( layer_object );
 
         layer_edges_geometry = new THREE.EdgesGeometry( layer_geometry );
         layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
         layer_edges_object.position.set(0, 0, layer_offsets[index]);
-        scene.add( layer_edges_object );
+        layers.add( layer_edges_object );
 
-        // Conv
-        conv_geometry = new THREE.BoxGeometry( layer['stride'], layer['stride'], depthFn(layer['depth']) );
-        conv_object = new THREE.Mesh( conv_geometry, conv_material );
-        conv_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
-        scene.add( conv_object );
-
-        conv_edges_geometry = new THREE.EdgesGeometry( conv_geometry );
-        conv_edges_object = new THREE.LineSegments( conv_edges_geometry, line_material );
-        conv_edges_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
-        scene.add( conv_edges_object );
-
-        // Pyramid
         if (index < architecture.length - 1) {
 
+            // Conv
+            conv_geometry = new THREE.BoxGeometry( convFn(layer['stride']), convFn(layer['stride']), depthFn(layer['depth']) );
+            conv_object = new THREE.Mesh( conv_geometry, conv_material );
+            conv_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
+            convs.add( conv_object );
+
+            conv_edges_geometry = new THREE.EdgesGeometry( conv_geometry );
+            conv_edges_object = new THREE.LineSegments( conv_edges_geometry, line_material );
+            conv_edges_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
+            convs.add( conv_edges_object );
+
+            // Pyramid
             pyramid_geometry = new THREE.Geometry();
 
             base_z = layer_offsets[index] + (depthFn(layer['depth']) / 2);
@@ -339,42 +378,105 @@ function restart(scene) {
             next_layer_wh = widthFn(architecture[index+1]['widthAndHeight'])
 
             pyramid_geometry.vertices = [
-                new THREE.Vector3( layer['rel_x'] * wh(layer) + layer['stride']/2, layer['rel_y'] * wh(layer) + layer['stride']/2, base_z ),  // base
-                new THREE.Vector3( layer['rel_x'] * wh(layer) + layer['stride']/2, layer['rel_y'] * wh(layer) - layer['stride']/2, base_z ),  // base
-                new THREE.Vector3( layer['rel_x'] * wh(layer) - layer['stride']/2, layer['rel_y'] * wh(layer) - layer['stride']/2, base_z ),  // base
-                new THREE.Vector3( layer['rel_x'] * wh(layer) - layer['stride']/2, layer['rel_y'] * wh(layer) + layer['stride']/2, base_z ),  // base
-                new THREE.Vector3( layer['rel_x'] * next_layer_wh,                 layer['rel_y'] * next_layer_wh,                 summit_z )  // summit
+                new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) + (convFn(layer['stride'])/2), base_z ),  // base
+                new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) - (convFn(layer['stride'])/2), base_z ),  // base
+                new THREE.Vector3( (layer['rel_x'] * wh(layer)) - (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) - (convFn(layer['stride'])/2), base_z ),  // base
+                new THREE.Vector3( (layer['rel_x'] * wh(layer)) - (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) + (convFn(layer['stride'])/2), base_z ),  // base
+                new THREE.Vector3( (layer['rel_x'] * next_layer_wh),                           (layer['rel_y'] * next_layer_wh),                           summit_z)  // summit
             ];
             pyramid_geometry.faces = [new THREE.Face3(0,1,2),new THREE.Face3(0,2,3),new THREE.Face3(1,0,4),new THREE.Face3(2,1,4),new THREE.Face3(3,2,4),new THREE.Face3(0,3,4)];
 
             pyramid_object = new THREE.Mesh( pyramid_geometry, pyra_material );
-            scene.add( pyramid_object );
+            pyramids.add( pyramid_object );
 
             pyramid_edges_geometry = new THREE.EdgesGeometry( pyramid_geometry );
             pyramid_edges_object = new THREE.LineSegments( pyramid_edges_geometry, line_material );
-            scene.add( pyramid_edges_object );
+            pyramids.add( pyramid_edges_object );
 
         }
 
+        if (showDims) {
 
+            sprite = makeTextSprite(layer['depth'].toString());
+            sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wh(layer)/2 + 2, wh(layer)/2 + 2, 0 ) );
+            sprites.add( sprite );
 
+            sprite = makeTextSprite(layer['widthAndHeight'].toString());
+            sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wh(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ) );
+            sprites.add( sprite );
 
+            sprite = makeTextSprite(layer['widthAndHeight'].toString());
+            sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, -wh(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ) );
+            sprites.add( sprite );
 
+            // if (index < architecture.length - 1) {
+
+            //     sprite = makeTextSprite(layer['stride'].toString(), {fontsize: 80});
+            //     sprite.position.copy( layer_object.position ).add( new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2)+3, (layer['rel_y'] * wh(layer))+3, -depthFn(layer['depth'])/2 ) );
+            //     sprites.add( sprite );
+
+            //     sprite = makeTextSprite(layer['stride'].toString());
+            //     sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, 0, depthFn(layer['depth'])/2 + 3 ) );
+            //     sprites.add( sprite );
+
+            // }
+
+        }
 
     });
 
-
-
-
-
-
-    redistribute();
-}
-
-function redistribute() {
-
+    scene.add( layers );
+    scene.add( convs );
+    scene.add( pyramids );
+    scene.add( sprites );
 
 }
+
+function clearThree(obj) {
+
+    while(obj.children.length > 0) {
+        clearThree( obj.children[0] )
+        obj.remove( obj.children[0] );
+    }
+
+    if ( obj.geometry ) { obj.geometry.dispose(); }
+    if ( obj.material ) { obj.material.dispose(); }
+    if ( obj.texture ) { obj.texture.dispose(); }
+}
+
+
+function makeTextSprite(message, opts) {
+    var parameters = opts || {};
+    var fontface = parameters.fontface || 'Helvetica';
+    var fontsize = parameters.fontsize || 120;
+    var fontsize = parameters.fontweight || 100;
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    context.font = fontsize + "px " + fontface;
+
+    // get size data (height depends only on font size)
+    var metrics = context.measureText(message);
+    var textWidth = metrics.width;
+
+    // text color
+    context.fillStyle = 'rgba(0, 0, 0, 1.0)';
+    context.fillText(message, 0, fontsize);
+
+    // canvas contents will be used for a texture
+    var texture = new THREE.Texture(canvas)
+    texture.minFilter = THREE.LinearFilter;
+    texture.needsUpdate = true;
+
+    var spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+    var sprite = new THREE.Sprite( spriteMaterial );
+    sprite.scale.set( 10, 5, 1.0 );
+    sprite.center.set( 0,1 );
+    return sprite;
+}
+
+
+
+
 
 // restart();
 
@@ -388,44 +490,78 @@ function redistribute() {
 
 $("#color1").change(function() {
     color1 = this.value;
-    // rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
+    box_material.color = new THREE.Color(color1);
 });
 
 $("#color2").change(function() {
     color2 = this.value;
-    // rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
+    conv_material.color = new THREE.Color(color2);
 });
 
 $("#color3").change(function() {
     color3 = this.value;
-    // rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
+    pyra_material.color = new THREE.Color(color3);
 });
 
 $("#rectOpacity").change(function() {
     rectOpacity = parseFloat(this.value);
-
+    $(this).blur();
+    box_material.opacity = rectOpacity;
 });
 
 $("#strideOpacity").change(function() {
     strideOpacity = parseFloat(this.value);
-
+    $(this).blur();
+    conv_material.opacity = strideOpacity;
+    pyra_material.opacity = strideOpacity;
 });
 
 $("#betweenLayers").change(function() {
     betweenLayers = parseFloat(this.value);
-    // redistribute();
+    $(this).blur();
+    restart(scene);
+});
+
+$("#logarithmicDepth").change(function() {
+    logarithmicDepth = this.checked;
+    restart(scene);
 });
 
 $("#depthScale").change(function() {
+    $("#depthSpan").text(this.value);
+    $(this).blur();
     depthScale = parseFloat(this.value);
-    // redistribute();
+    restart(scene);
+});
+
+$("#logarithmicWidth").change(function() {
+    logarithmicWidth = this.checked;
+    restart(scene);
 });
 
 $("#widthScale").change(function() {
+    $("#widthSpan").text(this.value);
+    $(this).blur();
     widthScale = parseFloat(this.value);
-    // redistribute();
+    restart(scene);
 });
 
+$("#logarithmicConvSize").change(function() {
+    logarithmicConvSize = this.checked;
+    restart(scene);
+});
+
+$("#convScale").change(function() {
+    $("#convSpan").text(this.value);
+    $(this).blur();
+    convScale = parseFloat(this.value);
+    restart(scene);
+});
+
+$("#showDims").change(function() {
+    showDims = this.checked;
+    restart(scene);
+});
 
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -433,43 +569,41 @@ $("#widthScale").change(function() {
 // /////////////////////////////////////////////////////////////////////////////
 
 
-// $(document).on('click', '.btn-add', function(e) {
-//     e.preventDefault();
+$(document).on('click', '#architecture .btn-add', function(e) {
+    e.preventDefault();
 
-//     var controlForm = $('#architecture');
-//     var currentEntry = $(this).parents('.entry:first');
-//     var newEntry = $(currentEntry.clone()).appendTo(controlForm);
+    var controlForm = $('#architecture');
+    var currentEntry = $(this).parents('.entry:first');
+    var newEntry = $(currentEntry.clone()).appendTo(controlForm);
 
-//     newEntry.find('input[name="numberOfNodes"]').val('');
-//     controlForm.find('.entry:not(:last) .btn-add')
-//         .removeClass('btn-add').addClass('btn-remove')
-//         .removeClass('btn-primary').addClass('btn-secondary')
-//         .html('<span class="fa fa-minus"></span>');
+    newEntry.find('input').val('');
+    controlForm.find('.entry:not(:last) .btn-add')
+        .removeClass('btn-add').addClass('btn-remove')
+        .removeClass('btn-primary').addClass('btn-secondary')
+        .html('<span class="fa fa-minus"></span>');
 
-//     restart();
+    restart(scene);
 
-// }).on('click', '.btn-remove', function(e) {
-//     e.preventDefault();
+}).on('click', '#architecture .btn-remove', function(e) {
+    e.preventDefault();
 
-//     $(this).parents('.entry:first').remove();
+    $(this).parents('.entry:first').remove();
 
-//     restart();
+    restart(scene);
 
-//     return false;
+    return false;
 
-// }).on('change', "input[name='numberOfNodes']", restart).on('change', "input[name='betweenNodesInLayer']", redistribute);
+}).on('change', 'input', function(e) {
+    e.preventDefault();
 
-// $(document).on('click', '#newRandomWeights', function() {
-//     link = link.data([]);
-//     link.exit().remove();
-//     restart();
-// });
+    restart(scene);
+});
+
+
 
 // d3.select("#download").on("click", function() {
-//     d3.select(this)
-//       .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#graph-container").html()))
-//       .attr("download", "nn.svg")
-// })
+
+// });
 
     </script>
 
