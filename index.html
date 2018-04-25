@@ -332,7 +332,7 @@ function restart() {
     if (showBias) { graph.nodes = graph.nodes.map((layer, layer_index) => (layer_index < architecture.length-1 ? [{'id':layer_index+'_-1','layer':layer_index,'node_index':-1}].concat(layer) : layer) ); }
     graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return right.node_index >= 0 ? {'source':left.id,'target':right.id,'weight':randomWeight()} : {} })));
     graph.nodes = flatten(graph.nodes);
-    graph.links = flatten(graph.links).filter(l => Object.keys(l).length !== 0);
+    graph.links = flatten(graph.links).filter(l => Object.keys(l).length > 0);
 
     label = architecture.map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
 
@@ -407,8 +407,8 @@ function redistribute() {
         .attr("x2", function(d) { return x(...indices_from_id(d.target)); })
         .attr("y2", function(d) { return y(...indices_from_id(d.target)); });
 
-    text.attr("x", function(d) { return x(d.layer, d.node_index) - textWidth/2; })
-        .attr("y", function(d) { return h/2 + largest_layer_width/2 + 20 });
+    text.attr("x", function(d) { return (nnDirection === 'right' ? x(d.layer, d.node_index) - textWidth/2 : w/2 + largest_layer_width/2 + 20 ); })
+        .attr("y", function(d) { return (nnDirection === 'right' ? h/2 + largest_layer_width/2 + 20       : y(d.layer, d.node_index) ); });
 
 }
 
