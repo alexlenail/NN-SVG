@@ -14,17 +14,12 @@ In the future I'd like to have three layouts:
 - [x] [AlexNet layout](http://www.mdpi.com/remotesensing/remotesensing-09-00848/article_deploy/html/images/remotesensing-09-00848-g001.png) (via webGL)
 
 
-<!-- TODO: FCNN
-	- add bias units option
- -->
-
 <!-- TODO: LeNet
 	- better spacing between layers
 	- name each layer
  -->
 
 <!-- TODO: AlexNet
-	- Annotations for sizes of each layer
 	- Download SVG
 	- Handle resize
  -->

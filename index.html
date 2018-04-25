@@ -54,6 +54,9 @@
             opacity: 0.4;
             font-weight: 100;
         }
+        .text {
+            font-weight: 300;
+        }
     </style>
 
     <title>NN SVG</title>
@@ -161,6 +164,14 @@
                                         <input class="form-check-input" type="radio" name="nnDirection" id="vertical" value="up"> vertical
                                     </label>
                                 </div>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="showBias" name="showBias" value="showBias" checked>
+                                <label for="showBias">Show Bias Units</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="showLabels" name="showLabels" value="showLabels" checked>
+                                <label for="showLabels">Show Layer Labels</label>
                             </div>
 
                             <hr>
@@ -296,10 +307,18 @@ var graph = {};
 var layer_offsets = [];
 var largest_layer_width = 0;
 var nnDirection = 'right'
+var showBias = true;
+
+var showLabels = true;
+let sup = (s) => s.replace('0','⁰').replace('1','¹').replace('2','²').replace('3','³').replace('4','⁴').replace('5','⁵').replace('6','⁶').replace('7','⁷').replace('8','⁸').replace('9','⁹')
+// let sup = (s) => s
+let textFn = (layer_index, layer_width) => ((layer_index === 0 ? "Input" : (layer_index === architecture.length-1 ? "Output" : "Hidden")) + " Layer ∈ ℝ" + sup(layer_width.toString()));
+var nominal_text_size = 12;
+var textWidth = 70;
 
 var link = g.selectAll(".link");
 var node = g.selectAll(".node");
-
+var text = g.selectAll(".text")
 
 /////////////////////////////////////////////////////////////////////////////
                       ///////    Draw Graph    ///////
@@ -309,11 +328,13 @@ function restart() {
 
     architecture = $('#architecture').find('input[name="numberOfNodes"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
-    graph.nodes = architecture.map((layer, layer_index) => range(layer).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
-    graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return {'source':left.id,'target':right.id,'weight':randomWeight()}})));
+    graph.nodes = architecture.map((layer_width, layer_index) => range(layer_width).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
+    if (showBias) { graph.nodes = graph.nodes.map((layer, layer_index) => (layer_index < architecture.length-1 ? [{'id':layer_index+'_-1','layer':layer_index,'node_index':-1}].concat(layer) : layer) ); }
+    graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return right.node_index >= 0 ? {'source':left.id,'target':right.id,'weight':randomWeight()} : {} })));
     graph.nodes = flatten(graph.nodes);
-    graph.links = flatten(graph.links);
+    graph.links = flatten(graph.links).filter(l => Object.keys(l).length !== 0);
 
+    label = architecture.map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
 
     link = link.data(graph.links);
     link.exit().remove();
@@ -343,6 +364,16 @@ function restart() {
                .style("stroke-width", 1)
                .merge(node);
 
+    text = text.data(label);
+    text.exit().remove();
+    text = text.enter()
+               .append("text")
+               .text(function (d) { return (showLabels ? d.text : ""); })
+               .attr("class", "text")
+               .attr("dy", ".35em")
+               .style("font-size", nominal_text_size+"px")
+               .merge(text);
+
 
     $('#count span:first').text(graph.nodes.length+" nodes, "+graph.links.length+" edges you don't need to draw yourself! ")
     redistribute();
@@ -360,11 +391,11 @@ function redistribute() {
 
     let indices_from_id = (id) => id.split('_').map(x => parseInt(x));
 
-    let x = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + w/2;
-    let y = (layer, node_index) => layer_offsets[layer] + node_index * nodeDiameter + (node_index) * betweenNodesInLayer[layer] + h/2 - largest_layer_width/2;
+    let x = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + w/2 - (betweenLayers * layer_offsets.length/3);
+    let y = (layer, node_index) => layer_offsets[layer] + node_index * (nodeDiameter + betweenNodesInLayer[layer]) + h/2 - largest_layer_width/2;
 
-    let xt = (layer, node_index) => layer_offsets[layer] + node_index * nodeDiameter + (node_index) * betweenNodesInLayer[layer] + w/2;
-    let yt = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + h/2 - largest_layer_width/2;
+    let xt = (layer, node_index) => layer_offsets[layer] + node_index * (nodeDiameter + betweenNodesInLayer[layer]) + w/2  - largest_layer_width/2;
+    let yt = (layer, node_index) => layer * (betweenLayers + nodeDiameter) + h/2 - (betweenLayers * layer_offsets.length/3);
 
     if (nnDirection == 'up') { x = xt; y = yt; }
 
@@ -375,6 +406,9 @@ function redistribute() {
         .attr("y1", function(d) { return y(...indices_from_id(d.source)); })
         .attr("x2", function(d) { return x(...indices_from_id(d.target)); })
         .attr("y2", function(d) { return y(...indices_from_id(d.target)); });
+
+    text.attr("x", function(d) { return x(d.layer, d.node_index) - textWidth/2; })
+        .attr("y", function(d) { return h/2 + largest_layer_width/2 + 20 });
 
 }
 
@@ -523,6 +557,18 @@ $('#nnDirection input:radio').change(function() {
     redistribute();
 });
 
+$("#showBias").change(function() {
+    showBias = this.checked;
+    restart();
+});
+
+$("#showLabels").change(function() {
+    showLabels = this.checked;
+    text.text(function (d) { return (showLabels ? d.text : ""); });
+});
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////
                  ///////    Select Architecture    ///////
@@ -563,7 +609,7 @@ $(document).on('click', '#newRandomWeights', function() {
 
 d3.select("#download").on("click", function() {
     d3.select(this)
-      .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#graph-container").html()))
+      .attr("href", 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(d3.select("#graph-container").html()))))
       .attr("download", "nn.svg")
 })
 

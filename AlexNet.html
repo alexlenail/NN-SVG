@@ -54,12 +54,6 @@
             opacity: 0.4;
             font-weight: 100;
         }
-/*        svg {
-            position: absolute;
-            left: 0;
-            top: 0;
-            z-index: -1;
-        }*/
     </style>
 
     <title>NN SVG</title>
@@ -227,6 +221,10 @@
     <script src="SVGRenderer.js"></script>
     <script src="Projector.js"></script>
 
+<!--     <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://threejs.org/examples/js/renderers/Projector.js"></script>
+    <script src="https://threejs.org/examples/js/renderers/SVGRenderer.js"></script> -->
+
     <script type="text/javascript">
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -243,11 +241,7 @@ let nWise = (n, array) => {
 
 let pairWise = (array) => nWise(2, array);
 
-if (!Array.prototype.last){
-    Array.prototype.last = function(){
-        return this[this.length - 1];
-    };
-};
+Array.prototype.last = function() { return this[this.length - 1]; };
 
 let sum = (arr) => arr.reduce((a,b)=>a+b);
 
@@ -309,8 +303,8 @@ scene.background = new THREE.Color( 0xffffff );
 var camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, 0.1, 100000 );
 camera.position.set(-219, 92, -39);
 
-var renderer = new THREE.WebGLRenderer( { 'alpha':true, 'transparent':true } );
-// var renderer = new THREE.SVGRenderer( { 'alpha':true, 'transparent':true } );
+var renderer = new THREE.WebGLRenderer( { 'alpha':true } );
+// var renderer = new THREE.SVGRenderer();
 renderer.setPixelRatio(window.devicePixelRatio || 1);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.getElementById('graph-container').appendChild( renderer.domElement );
@@ -601,9 +595,12 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
 
 
-// d3.select("#download").on("click", function() {
+$("#download").on("click", function() {
 
-// });
+    $(this).attr("href", 'data:application/octet-stream;base64,' + btoa($("#graph-container").html()))
+           .attr("download", "nn.svg")
+
+});
 
     </script>
 
