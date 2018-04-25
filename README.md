@@ -25,4 +25,5 @@ In the future I'd like to have three layouts:
 
 <!-- TODO: AlexNet
 	- Annotations for sizes of each layer
+	- Download SVG
  -->

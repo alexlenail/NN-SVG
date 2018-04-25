@@ -490,7 +490,7 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
     $(this).parents('.entry:first').remove();
 
-    restart();
+    restartAll();
 
     return false;
 
@@ -514,12 +514,17 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
     $(this).parents('.entry:first').remove();
 
-    restart();
+    restartAll();
 
     return false;
 
 }).on('change', 'input', function(e) {
     e.preventDefault();
+
+    restartAll();
+});
+
+function restartAll() {
 
     rect = rect.data([]);
     rect.exit().remove();
@@ -537,8 +542,7 @@ $(document).on('click', '#architecture .btn-add', function(e) {
     line.exit().remove();
 
     restart();
-});
-
+}
 
 
 d3.select("#download").on("click", function() {
