@@ -154,6 +154,12 @@
                             </div>
 
                             <hr>
+                            <div>
+                                <input type="checkbox" id="showDims" name="showDims" value="showDims">
+                                <label for="showDims">Show Tensor Dimensions</label>
+                            </div>
+
+                            <hr>
                             <h4>Architecture:</h4>
                             <div id="architecture">
                                 <p>Width and Height | Depth | Filter Size</p>
@@ -220,8 +226,6 @@
     <script src="OrbitControls.js"></script>
     <script src="SVGRenderer.js"></script>
     <script src="Projector.js"></script>
-    <script src="CSS2DRenderer.js"></script>
-    <script src="CSS3DRenderer.js"></script>
 
     <!-- <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script> -->
 
@@ -281,6 +285,8 @@ var widthScale = 10;
 var logarithmicConvSize = false;
 var convScale = 1;
 
+var showDims = false;
+
 let depthFn = (depth) => logarithmicDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
 let widthFn = (width) => logarithmicWidth ? (Math.log(width) * widthScale) : (width * widthScale);
 let convFn = (conv) => logarithmicConvSize ? (Math.log(conv) * convScale) : (conv * convScale);
@@ -290,7 +296,7 @@ function wh(layer) { return widthFn(layer['widthAndHeight']); }
 var layers = new THREE.Group();
 var convs = new THREE.Group();
 var pyramids = new THREE.Group();
-var annots = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
+var sprites = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
 
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -301,47 +307,36 @@ var annots = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
 
-var cssScene = new THREE.Scene();
-cssScene.background = new THREE.Color( 0xffffff );
-
 // var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 100000 );
 var camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, 0.1, 100000 );
 camera.position.set(-219, 92, -39);
 
-// var renderer = new THREE.SVGRenderer( { 'alpha':true, 'transparent':true } );
 var renderer = new THREE.WebGLRenderer( { 'alpha':true, 'transparent':true } );
+// var renderer = new THREE.SVGRenderer( { 'alpha':true, 'transparent':true } );
 renderer.setPixelRatio(window.devicePixelRatio || 1);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.getElementById('graph-container').appendChild( renderer.domElement );
 
 
-var cssRenderer = new THREE.CSS3DRenderer();
-cssRenderer.setSize( window.innerWidth, window.innerHeight );
-// cssRenderer.setPixelRatio(window.devicePixelRatio || 1);
-cssRenderer.domElement.style.position = 'absolute';
-cssRenderer.domElement.style.top = 0;
-document.getElementById('graph-container').appendChild( cssRenderer.domElement );
 
 
-restart(scene, cssScene);
+restart(scene);
 
 
 
 
 controls = new THREE.OrbitControls( camera, renderer.domElement );
-cssControls = new THREE.OrbitControls( camera, cssRenderer.domElement );
 
 var animate = function () {
     requestAnimationFrame( animate );
     renderer.render(scene, camera);
-    cssRenderer.render(cssScene, camera);
 };
 
 animate();
 
 
 
-function restart(scene, cssScene) {
+function restart(scene) {
 
     clearThree(scene);
 
@@ -402,22 +397,40 @@ function restart(scene, cssScene) {
 
         }
 
+        if (showDims) {
 
-        let el = document.createElement("div");
-        // el.className = cssClassName;
-        el.textContent = "Hello World";
-        el.style.visibility = "visible";
-        let obj = new THREE.CSS3DObject(el);
-        obj.position.copy(layer_object.position)
-        annots.add( obj );
+            sprite = makeTextSprite(layer['depth'].toString());
+            sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wh(layer)/2 + 2, wh(layer)/2 + 2, 0 ) );
+            sprites.add( sprite );
+
+            sprite = makeTextSprite(layer['widthAndHeight'].toString());
+            sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wh(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ) );
+            sprites.add( sprite );
+
+            sprite = makeTextSprite(layer['widthAndHeight'].toString());
+            sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, -wh(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ) );
+            sprites.add( sprite );
+
+            // if (index < architecture.length - 1) {
+
+            //     sprite = makeTextSprite(layer['stride'].toString(), {fontsize: 80});
+            //     sprite.position.copy( layer_object.position ).add( new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2)+3, (layer['rel_y'] * wh(layer))+3, -depthFn(layer['depth'])/2 ) );
+            //     sprites.add( sprite );
+
+            //     sprite = makeTextSprite(layer['stride'].toString());
+            //     sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, 0, depthFn(layer['depth'])/2 + 3 ) );
+            //     sprites.add( sprite );
+
+            // }
+
+        }
 
     });
 
     scene.add( layers );
     scene.add( convs );
     scene.add( pyramids );
-
-    cssScene.add( annots );
+    scene.add( sprites );
 
 }
 
@@ -433,6 +446,35 @@ function clearThree(obj) {
     if ( obj.texture ) { obj.texture.dispose(); }
 }
 
+
+function makeTextSprite(message, opts) {
+    var parameters = opts || {};
+    var fontface = parameters.fontface || 'Helvetica';
+    var fontsize = parameters.fontsize || 120;
+    var fontsize = parameters.fontweight || 100;
+    var canvas = document.createElement('canvas');
+    var context = canvas.getContext('2d');
+    context.font = fontsize + "px " + fontface;
+
+    // get size data (height depends only on font size)
+    var metrics = context.measureText(message);
+    var textWidth = metrics.width;
+
+    // text color
+    context.fillStyle = 'rgba(0, 0, 0, 1.0)';
+    context.fillText(message, 0, fontsize);
+
+    // canvas contents will be used for a texture
+    var texture = new THREE.Texture(canvas)
+    texture.minFilter = THREE.LinearFilter;
+    texture.needsUpdate = true;
+
+    var spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+    var sprite = new THREE.Sprite( spriteMaterial );
+    sprite.scale.set( 10, 5, 1.0 );
+    sprite.center.set( 0,1 );
+    return sprite;
+}
 
 
 
@@ -518,6 +560,10 @@ $("#convScale").change(function() {
     restart(scene);
 });
 
+$("#showDims").change(function() {
+    showDims = this.checked;
+    restart(scene);
+});
 
 
 // /////////////////////////////////////////////////////////////////////////////
