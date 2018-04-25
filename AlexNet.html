@@ -220,6 +220,8 @@
     <script src="OrbitControls.js"></script>
     <script src="SVGRenderer.js"></script>
     <script src="Projector.js"></script>
+    <script src="CSS2DRenderer.js"></script>
+    <script src="CSS3DRenderer.js"></script>
 
     <!-- <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script> -->
 
@@ -288,7 +290,7 @@ function wh(layer) { return widthFn(layer['widthAndHeight']); }
 var layers = new THREE.Group();
 var convs = new THREE.Group();
 var pyramids = new THREE.Group();
-var sprites = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
+var annots = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
 
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -299,36 +301,47 @@ var sprites = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
 var scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
 
+var cssScene = new THREE.Scene();
+cssScene.background = new THREE.Color( 0xffffff );
+
 // var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 100000 );
 var camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, 0.1, 100000 );
 camera.position.set(-219, 92, -39);
 
-var renderer = new THREE.WebGLRenderer( { 'alpha':true, 'transparent':true } );
 // var renderer = new THREE.SVGRenderer( { 'alpha':true, 'transparent':true } );
+var renderer = new THREE.WebGLRenderer( { 'alpha':true, 'transparent':true } );
 renderer.setPixelRatio(window.devicePixelRatio || 1);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.getElementById('graph-container').appendChild( renderer.domElement );
 
 
+var cssRenderer = new THREE.CSS3DRenderer();
+cssRenderer.setSize( window.innerWidth, window.innerHeight );
+// cssRenderer.setPixelRatio(window.devicePixelRatio || 1);
+cssRenderer.domElement.style.position = 'absolute';
+cssRenderer.domElement.style.top = 0;
+document.getElementById('graph-container').appendChild( cssRenderer.domElement );
 
 
-restart(scene);
+restart(scene, cssScene);
 
 
 
 
 controls = new THREE.OrbitControls( camera, renderer.domElement );
+cssControls = new THREE.OrbitControls( camera, cssRenderer.domElement );
 
 var animate = function () {
     requestAnimationFrame( animate );
     renderer.render(scene, camera);
+    cssRenderer.render(cssScene, camera);
 };
 
 animate();
 
 
 
-function restart(scene) {
+function restart(scene, cssScene) {
 
     clearThree(scene);
 
@@ -389,25 +402,22 @@ function restart(scene) {
 
         }
 
-        sprite = makeTextSprite(layer['depth'].toString(), {'fontsize': 12});
-        sprite.position.set( ...Object.values(layer_geometry.vertices[0]) )
-        // sprite.position.set( 0,0,0 )
-        sprites.add( sprite );
 
-        // layer_geometry.edges.forEach( function(edge) {
-
-        //     sprite = makeTextSprite("text")
-        //     sprite.position.set(0,0,0)
-        //     sprites.add( sprite );
-
-        // });
+        let el = document.createElement("div");
+        // el.className = cssClassName;
+        el.textContent = "Hello World";
+        el.style.visibility = "visible";
+        let obj = new THREE.CSS3DObject(el);
+        obj.position.copy(layer_object.position)
+        annots.add( obj );
 
     });
 
     scene.add( layers );
     scene.add( convs );
     scene.add( pyramids );
-    scene.add( sprites );
+
+    cssScene.add( annots );
 
 }
 
@@ -423,34 +433,6 @@ function clearThree(obj) {
     if ( obj.texture ) { obj.texture.dispose(); }
 }
 
-
-function makeTextSprite(message, opts) {
-    var parameters = opts || {};
-    var fontface = parameters.fontface || 'Helvetica';
-    var fontsize = parameters.fontsize || 10;
-    var canvas = document.createElement('canvas');
-    var context = canvas.getContext('2d');
-    context.font = fontsize + "px " + fontface;
-
-    // get size data (height depends only on font size)
-    var metrics = context.measureText(message);
-    var textWidth = metrics.width;
-    var textWidth = 30;
-
-    // text color
-    context.fillStyle = 'rgba(0, 0, 0, 1.0)';
-    context.fillText(message, 0, fontsize);
-
-    // canvas contents will be used for a texture
-    var texture = new THREE.Texture(canvas)
-    texture.minFilter = THREE.LinearFilter;
-    texture.needsUpdate = true;
-
-    var spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-    var sprite = new THREE.Sprite( spriteMaterial );
-    sprite.scale.set( 100, 50, 1.0 );
-    return sprite;
-}
 
 
 
