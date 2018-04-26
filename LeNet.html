@@ -24,9 +24,6 @@
             margin: 30px;
             z-index: 1000;
         }
-        .github-corner {
-            z-index: 1000;
-        }
 
         [data-toggle="collapse"] .fa:before {
             font-size: 2rem;
@@ -53,6 +50,9 @@
             right: 1rem;
             opacity: 0.4;
             font-weight: 100;
+        }
+        .text {
+            font-weight: 300;
         }
     </style>
 
@@ -109,9 +109,10 @@
                                 <input type="range" id="betweenSquares" name="" min="1" max="40" step="1" value="10" style="position: relative; top: 3px;">
                             </div>
                             <div>
-                                <label for="betweenLayers">Spacing Between Layers</label>
-                                <input type="range" id="betweenLayers" name="" min="4" max="100" step="1" value="12" style="position: relative; top: 3px;">
+                                <input type="checkbox" id="showLabels" name="showLabels" value="showLabels" checked>
+                                <label for="showLabels">Show Layer Labels</label>
                             </div>
+
                             <hr>
                             <h4>Architecture:</h4>
                             <div id="architecture">
@@ -121,23 +122,51 @@
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="8" />
                                         <input type="number" class="form-control" name="squareWidth" step="1" value="128" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="24" />
+                                        <input type="number" class="form-control" name="stride" step="1" value="8" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                        <input type="text"  class="form-control" name="Op" step="1" value="Max-Pool" />
+                                        <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="40" style="margin-left: 10px !important;">
                                     </div>
                                 </div>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="12" />
+                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="8" />
                                         <input type="number" class="form-control" name="squareWidth" step="1" value="64" />
                                         <input type="number" class="form-control" name="stride" step="1" value="16" />
                                     </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                      <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                      <input type="text"  class="form-control" name="Op" step="1" value="Convolution" />
+                                      <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="10" style="margin-left: 10px !important;">
+                                    </div>
                                 </div>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="16" />
-                                        <input type="number" class="form-control" name="squareWidth" step="1" value="32" />
+                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="24" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="48" />
                                         <input type="number" class="form-control" name="stride" step="1" value="8" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                      <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                      <input type="text"  class="form-control" name="Op" step="1" value="Max-Pool" />
+                                      <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="-20" style="margin-left: 10px !important;">
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfSquares" step="1" value="24" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="16" />
+                                        <input type="number" class="form-control" name="stride" step="1" value="8" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                      <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                      <input type="text"  class="form-control" name="Op" step="1" value="Dense" />
+                                      <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="-20" style="margin-left: 10px !important;">
                                     </div>
                                 </div>
                                 <div class="row entry">
@@ -146,6 +175,11 @@
                                         <input type="number" class="form-control" name="numberOfSquares" step="1"/>
                                         <input type="number" class="form-control" name="squareWidth" step="1"/>
                                         <input type="number" class="form-control" name="stride" step="1"/>
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                      <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                      <input type="text"  class="form-control" name="Op" step="1" value="" />
+                                      <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="10" style="margin-left: 10px !important;">
                                     </div>
                                 </div>
 
@@ -239,19 +273,25 @@ var borderWidth = 1.0;
 var borderColor = "black";
 var rectOpacity = 0.8;
 var betweenSquares = 8;
-var betweenLayers = 12;
+var betweenLayers = [];
+var betweenLayersDefault = 12;
 
 // numberOfSquares, squareWidth, stride.
 var architecture = [];
 var lenet = {};
 var layer_offsets = [];
 var largest_layer_width = 0;
+var showLabels = true;
+
+let textFn = (layer) => (typeof(layer) === "object" ? layer['numberOfSquares']+'@'+layer['squareWidth']+'x'+layer['squareWidth'] : "1x"+layer)
 
 var rect = g.selectAll(".rect");
 var conv = g.selectAll(".conv");
 var link = g.selectAll(".link");
 var poly = g.selectAll(".poly");
 var line = g.selectAll(".line");
+var text = g.selectAll(".text");
+var info = g.selectAll(".info");
 
 /////////////////////////////////////////////////////////////////////////////
                       ///////    Draw Graph    ///////
@@ -259,7 +299,7 @@ var line = g.selectAll(".line");
 
 function restart() {
 
-    architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    architecture = $('#architecture').find('input[type="number"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
     architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'numberOfSquares':l[0],'squareWidth':l[1],'stride':l[2]}});
 
     lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {return {'id':layer_index+'_'+rect_index,'layer':layer_index,'rect_index':rect_index,'side':layer['squareWidth']}}));
@@ -279,6 +319,11 @@ function restart() {
     lenet.fc_links[0]['prevSize'] = 0;                          // hacks
     lenet.fc_links[1]['prevSize'] = lenet.rects.last()['side'];  // hacks
 
+    label = $('#architecture').find('input[type="text"]').map((i,el) => $(el).val()).get().map((op, i) => {return {'id':'op_'+i, 'layer':i, 'op':op}})
+    .concat(architecture2.map((op, i) => { return {'id':'op_'+i+architecture.length,'layer':i+architecture.length,'op':'Dense'}}));  label.pop();
+    label2 = architecture.map((layer, layer_index) => { return {'id':'data_'+layer_index+'_label','layer':layer_index,'text':textFn(layer)}})
+    .concat(architecture2.map((layer, layer_index) => { return {'id':'data_'+layer_index+architecture.length+'_label','layer':layer_index+architecture.length,'text':textFn(layer)}}) );
+
     rect = rect.data(lenet.rects);
     rect.exit().remove();
     rect = rect.enter()
@@ -289,6 +334,7 @@ function restart() {
                .attr("height", function(d) { return d.side; })
                .style("fill", function(d) { return d.rect_index % 2 ? color1 : color2})
                .style("stroke", borderColor)
+               .style("stroke-width", borderWidth)
                .style("opacity", rectOpacity)
                .merge(rect);
 
@@ -314,8 +360,7 @@ function restart() {
                .attr("id", function(d) { return d.id; })
                .style("stroke", borderColor)
                .style("stroke-width", borderWidth / 2)
-               // .style("stroke-opacity", rectOpacity)
-               // .style("opacity", rectOpacity )
+               .style("stroke-opacity", rectOpacity)
                .merge(link);
 
     poly = poly.data(lenet.fc_layers);
@@ -326,6 +371,7 @@ function restart() {
                .attr("id", function(d) { return d.id; })
                .style("fill", color1)
                .style("stroke", borderColor)
+               .style("stroke-width", borderWidth)
                .style("opacity", rectOpacity)
                .merge(poly);
 
@@ -337,21 +383,44 @@ function restart() {
                .attr("id", function(d) { return d.id; })
                .style("stroke", borderColor)
                .style("stroke-width", borderWidth / 2)
-               // .style("stroke-opacity", rectOpacity)
-               // .style("opacity", rectOpacity )
+               .style("stroke-opacity", rectOpacity)
                .merge(line);
+
+    text = text.data(label);
+    text.exit().remove();
+    text = text.enter()
+               .append("text")
+               .text(function (d) { return (showLabels ? d.op : ""); })
+               .attr("class", "text")
+               .attr("dy", ".35em")
+               .style("font-size", "16px")
+               .merge(text);
+
+    info = info.data(label2);
+    info = info.data(label2);
+    info.exit().remove();
+    info = info.enter()
+               .append("text")
+               .text(function (d) { return (showLabels ? d.text : ""); })
+               .attr("class", "info")
+               .attr("dy", "-0.3em")
+               .style("font-size", "16px")
+               .merge(info);
+
 
     redistribute();
 }
 
 function redistribute() {
 
+    betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
+
     layer_widths = architecture.map((layer, i) => (layer['numberOfSquares']-1) * betweenSquares + layer['squareWidth']);
     layer_widths = layer_widths.concat(lenet.fc_layers.map((layer, i) => layer['size']));
 
     largest_layer_width = Math.max(...layer_widths);
 
-    layer_x_offsets = layer_widths.reduce((offsets, layer_width) => offsets.concat([offsets.last() + layer_width + betweenLayers]), [0]);
+    layer_x_offsets = layer_widths.reduce((offsets, layer_width, i) => offsets.concat([offsets.last() + layer_width + (betweenLayers[i] || betweenLayersDefault) ]), [0]);
     layer_y_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2);
 
     screen_center_x = w/2 - largest_layer_width/2;
@@ -386,6 +455,12 @@ function redistribute() {
         .attr("y1", function(d) { return layer_y_offsets[d.layer-1] + (d.i ? 0 : layer_widths[d.layer-1]) + screen_center_y})
         .attr("x2", function(d) { return layer_x_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_x})
         .attr("y2", function(d) { return layer_y_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_y});
+
+    text.attr('x', function(d) { return (layer_x_offsets[d.layer] + layer_widths[d.layer] + layer_x_offsets[d.layer+1] + layer_widths[d.layer+1]/2)/2 + screen_center_x -15; })
+        .attr('y', function(d) { return layer_y_offsets[0] + screen_center_y + largest_layer_width;  });
+
+    info.attr('x', function(d) { return layer_x_offsets[d.layer] + screen_center_x; })
+        .attr('y', function(d) { return layer_y_offsets[d.layer] + screen_center_y - 15;  });
 
 }
 
@@ -424,30 +499,18 @@ resize();
 
 $("#color1").change(function() {
     color1 = this.value;
-    rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
 });
 
 $("#color2").change(function() {
     color2 = this.value;
-    rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
 });
 
 $("#borderWidth").change(function() {
     borderWidth = parseFloat(this.value);
-    rect.style("stroke-width", borderWidth);
-    conv.style("stroke-width", borderWidth);
-    link.style("stroke-width", borderWidth);
-    poly.style("stroke-width", borderWidth);
-    line.style("stroke-width", borderWidth);
 });
 
 $("#rectOpacity").change(function() {
     rectOpacity = parseFloat(this.value);
-    rect.style("opacity",        rectOpacity);
-    conv.style("stroke-opacity", rectOpacity);
-    link.style("stroke-opacity", rectOpacity);
-    poly.style("opacity",        rectOpacity);
-    line.style("stroke-opacity", rectOpacity);
 });
 
 $("#betweenSquares").change(function() {
@@ -455,8 +518,13 @@ $("#betweenSquares").change(function() {
     redistribute();
 });
 
-$("#betweenLayers").change(function() {
-    betweenLayers = parseFloat(this.value);
+$("#showLabels").change(function() {
+    showLabels = this.checked;
+    text.text(function (d) { return (showLabels ? d.op : ""); });
+    info.text(function (d) { return (showLabels ? d.text : ""); });
+});
+
+$("input[name='spacing']").change(function() {
     redistribute();
 });
 
@@ -515,7 +583,12 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
     return false;
 
-}).on('change', 'input', function(e) {
+}).on('change', 'input[type="number"]', function(e) {
+    e.preventDefault();
+
+    restartAll();
+
+}).on('change', 'input[type="text"]', function(e) {
     e.preventDefault();
 
     restartAll();
@@ -537,6 +610,12 @@ function restartAll() {
 
     line = line.data([]);
     line.exit().remove();
+
+    text = text.data([]);
+    text.exit().remove();
+
+    info = info.data([]);
+    info.exit().remove();
 
     restart();
 }
