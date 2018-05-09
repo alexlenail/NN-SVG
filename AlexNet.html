@@ -11,7 +11,7 @@
     <style type="text/css">
         * { font-weight: 100; }
         h1 { font-weight: 100; }
-        canvas {
+        #graph-container {
             top: 0;
             bottom: 0;
             left: 0;
@@ -120,8 +120,8 @@
 
                             <hr>
                             <div>
-                                <input type="checkbox" id="logarithmicDepth" name="logarithmicDepth" value="logarithmicDepth" checked>
-                                <label for="logarithmicDepth">Logarithmic Feature-Map Depth Scaling</label>
+                                <input type="checkbox" id="logDepth" name="logDepth" value="logDepth" checked>
+                                <label for="logDepth">Log Feature-Map Depth Scaling</label>
                             </div>
                             <div>
                                 <label for="depthScale">Depth Size Scaling</label>
@@ -129,8 +129,8 @@
                                 <span id="depthSpan">10</span>
                             </div>
                             <div>
-                                <input type="checkbox" id="logarithmicWidth" name="logarithmicWidth" value="logarithmicWidth" checked>
-                                <label for="logarithmicWidth">Logarithmic Feature-Map Width Scaling</label>
+                                <input type="checkbox" id="logWidth" name="logWidth" value="logWidth" checked>
+                                <label for="logWidth">Log Feature-Map Width Scaling</label>
                             </div>
                             <div>
                                 <label for="widthScale">Width Size Scaling</label>
@@ -138,8 +138,8 @@
                                 <span id="widthSpan">10</span>
                             </div>
                             <div>
-                                <input type="checkbox" id="logarithmicConvSize" name="logarithmicConvSize" value="logarithmicConvSize">
-                                <label for="logarithmicConvSize">Logarithmic Convolutional Filter Scaling</label>
+                                <input type="checkbox" id="logConvSize" name="logConvSize" value="logConvSize">
+                                <label for="logConvSize">Log Convolutional Filter Size Scaling</label>
                             </div>
                             <div>
                                 <label for="convScale">Convolutional Filter Scaling</label>
@@ -191,6 +191,22 @@
                                 </div>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="384" />
+                                        <input type="number" class="form-control" name="stride" step="1" value="3" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="256" />
+                                        <input type="number" class="form-control" name="stride" step="1" value="3" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
                                         <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
                                         <input type="number" class="form-control" name="widthAndHeight" step="1"/>
                                         <input type="number" class="form-control" name="depth" step="1"/>
@@ -218,12 +234,14 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
     <script src="OrbitControls.js"></script>
-    <script src="SVGRenderer.js"></script>
-    <script src="Projector.js"></script>
+    <!-- <script src="SVGRenderer.js"></script> -->
+    <!-- <script src="Projector.js"></script> -->
 
-<!--     <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://threejs.org/examples/js/renderers/Projector.js"></script>
-    <script src="https://threejs.org/examples/js/renderers/SVGRenderer.js"></script> -->
+    <!-- <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script> -->
+    <!-- <script src="https://threejs.org/examples/js/renderers/Projector.js"></script> -->
+    <!-- <script src="https://threejs.org/examples/js/renderers/SVGRenderer.js"></script> -->
+    <!-- <script src="https://threejs.org/examples/js/renderers/CSS2DRenderer.js"></script> -->
+    <!-- <script src="https://threejs.org/examples/js/renderers/CSS3DRenderer.js"></script> -->
 
     <script type="text/javascript">
 
@@ -270,18 +288,18 @@ var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.D
 
 var betweenLayers = 20;
 
-var logarithmicDepth = true;
+var logDepth = true;
 var depthScale = 10;
-var logarithmicWidth = true;
+var logWidth = true;
 var widthScale = 10;
-var logarithmicConvSize = false;
+var logConvSize = false;
 var convScale = 1;
 
 var showDims = false;
 
-let depthFn = (depth) => logarithmicDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
-let widthFn = (width) => logarithmicWidth ? (Math.log(width) * widthScale) : (width * widthScale);
-let convFn = (conv) => logarithmicConvSize ? (Math.log(conv) * convScale) : (conv * convScale);
+let depthFn = (depth) => logDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
+let widthFn = (width) => logWidth ? (Math.log(width) * widthScale) : (width * widthScale);
+let convFn = (conv) => logConvSize ? (Math.log(conv) * convScale) : (conv * convScale);
 
 function wh(layer) { return widthFn(layer['widthAndHeight']); }
 
@@ -300,8 +318,8 @@ var scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
 
 // var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 100000 );
-var camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, 0.1, 100000 );
-camera.position.set(-219, 92, -39);
+var camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, -10000000, 10000000 );
+camera.position.set(-219, 92, 84);
 
 var renderer = new THREE.WebGLRenderer( { 'alpha':true } );
 // var renderer = new THREE.SVGRenderer();
@@ -309,13 +327,7 @@ renderer.setPixelRatio(window.devicePixelRatio || 1);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.getElementById('graph-container').appendChild( renderer.domElement );
 
-
-
-
 restart(scene);
-
-
-
 
 controls = new THREE.OrbitControls( camera, renderer.domElement );
 
@@ -325,7 +337,6 @@ var animate = function () {
 };
 
 animate();
-
 
 
 function restart(scene) {
@@ -403,18 +414,6 @@ function restart(scene) {
             sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, -wh(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ) );
             sprites.add( sprite );
 
-            // if (index < architecture.length - 1) {
-
-            //     sprite = makeTextSprite(layer['stride'].toString(), {fontsize: 80});
-            //     sprite.position.copy( layer_object.position ).add( new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2)+3, (layer['rel_y'] * wh(layer))+3, -depthFn(layer['depth'])/2 ) );
-            //     sprites.add( sprite );
-
-            //     sprite = makeTextSprite(layer['stride'].toString());
-            //     sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, 0, depthFn(layer['depth'])/2 + 3 ) );
-            //     sprites.add( sprite );
-
-            // }
-
         }
 
     });
@@ -423,6 +422,7 @@ function restart(scene) {
     scene.add( convs );
     scene.add( pyramids );
     scene.add( sprites );
+
 
 }
 
@@ -443,7 +443,6 @@ function makeTextSprite(message, opts) {
     var parameters = opts || {};
     var fontface = parameters.fontface || 'Helvetica';
     var fontsize = parameters.fontsize || 120;
-    var fontsize = parameters.fontweight || 100;
     var canvas = document.createElement('canvas');
     var context = canvas.getContext('2d');
     context.font = fontsize + "px " + fontface;
@@ -469,11 +468,24 @@ function makeTextSprite(message, opts) {
 }
 
 
+// /////////////////////////////////////////////////////////////////////////////
+//                  ///////    Window Resize    ///////
+// /////////////////////////////////////////////////////////////////////////////
 
+function onWindowResize() {
 
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-// restart();
+    camFactor = window.devicePixelRatio || 1;
+    camera.left = -window.innerWidth / camFactor;
+    camera.right = window.innerWidth / camFactor;
+    camera.top = window.innerHeight / camFactor;
+    camera.bottom = -window.innerHeight / camFactor;
+    camera.updateProjectionMatrix();
 
+}
+
+window.addEventListener( 'resize', onWindowResize, false );
 
 
 // /////////////////////////////////////////////////////////////////////////////
@@ -516,8 +528,8 @@ $("#betweenLayers").change(function() {
     restart(scene);
 });
 
-$("#logarithmicDepth").change(function() {
-    logarithmicDepth = this.checked;
+$("#logDepth").change(function() {
+    logDepth = this.checked;
     restart(scene);
 });
 
@@ -528,8 +540,8 @@ $("#depthScale").change(function() {
     restart(scene);
 });
 
-$("#logarithmicWidth").change(function() {
-    logarithmicWidth = this.checked;
+$("#logWidth").change(function() {
+    logWidth = this.checked;
     restart(scene);
 });
 
@@ -540,8 +552,8 @@ $("#widthScale").change(function() {
     restart(scene);
 });
 
-$("#logarithmicConvSize").change(function() {
-    logarithmicConvSize = this.checked;
+$("#logConvSize").change(function() {
+    logConvSize = this.checked;
     restart(scene);
 });
 
