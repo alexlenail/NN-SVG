@@ -2,6 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119008715-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119008715-1');
+    </script>
+
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 
@@ -150,7 +161,6 @@
                             </div>
                             <div id="nnDirection">
                                 <label for="nnDirection" style="margin-right:10px;">Direction</label>
-                                <!-- <input type="range" id="nnDirection" name="" min="30" max="400" step="1" value="100" style="position: relative; top: 3px;"> -->
                                 <div class="form-check form-check-inline">
                                     <label class="form-check-label">
                                         <input class="form-check-input" type="radio" name="nnDirection" id="horizontal" value="right" checked> horizontal
@@ -163,7 +173,7 @@
                                 </div>
                             </div>
                             <div>
-                                <input type="checkbox" id="showBias" name="showBias" value="showBias" checked>
+                                <input type="checkbox" id="showBias" name="showBias" value="showBias">
                                 <label for="showBias">Show Bias Units</label>
                             </div>
                             <div>
@@ -218,13 +228,8 @@
                             <hr>
                             <button type="button" class="btn btn-sm btn-secondary" id="newRandomWeights">New Random Weights</button>
 
-
-
                         </div>
-                        <div class="tab-pane fade" id="LeNet" role="tabpanel">
-                        </div>
-                        <div class="tab-pane fade" id="AlexNet" role="tabpanel">
-                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -304,11 +309,10 @@ var graph = {};
 var layer_offsets = [];
 var largest_layer_width = 0;
 var nnDirection = 'right'
-var showBias = true;
+var showBias = false;
 
 var showLabels = true;
 let sup = (s) => s.replace('0','⁰').replace('1','¹').replace('2','²').replace('3','³').replace('4','⁴').replace('5','⁵').replace('6','⁶').replace('7','⁷').replace('8','⁸').replace('9','⁹')
-// let sup = (s) => s
 let textFn = (layer_index, layer_width) => ((layer_index === 0 ? "Input" : (layer_index === architecture.length-1 ? "Output" : "Hidden")) + " Layer ∈ ℝ" + sup(layer_width.toString()));
 var nominal_text_size = 12;
 var textWidth = 70;
@@ -326,10 +330,9 @@ function restart() {
     architecture = $('#architecture').find('input[name="numberOfNodes"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
     graph.nodes = architecture.map((layer_width, layer_index) => range(layer_width).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
-    if (showBias) { graph.nodes = graph.nodes.map((layer, layer_index) => (layer_index < architecture.length-1 ? [{'id':layer_index+'_-1','layer':layer_index,'node_index':-1}].concat(layer) : layer) ); }
     graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return right.node_index >= 0 ? {'source':left.id,'target':right.id,'weight':randomWeight()} : {} })));
     graph.nodes = flatten(graph.nodes);
-    graph.links = flatten(graph.links).filter(l => Object.keys(l).length > 0);
+    graph.links = flatten(graph.links).filter(l => (Object.keys(l).length > 0 && (showBias ? (parseInt(l['target'].split('_')[0]) !== architecture.length-1 ? (l['target'].split('_')[1] !== '0') : true) : true)));
 
     label = architecture.map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
 

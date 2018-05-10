@@ -12,9 +12,3 @@ In the future I'd like to have three layouts:
 - [x] Conventional FCNN layout
 - [x] [LeNet CNN layout](https://www.pyimagesearch.com/wp-content/uploads/2016/06/lenet_architecture.png)
 - [x] [AlexNet layout](http://www.mdpi.com/remotesensing/remotesensing-09-00848/article_deploy/html/images/remotesensing-09-00848-g001.png) (via webGL)
-
-
-<!-- TODO: AlexNet
-	- Dense layers
-	- Download SVG
- -->
