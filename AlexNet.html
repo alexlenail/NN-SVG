@@ -54,6 +54,10 @@
             opacity: 0.4;
             font-weight: 100;
         }
+        a.disabled {
+            color: gray;
+            pointer-events: none;
+        }
     </style>
 
     <title>NN SVG</title>
@@ -71,7 +75,7 @@
                     <div class="card-header">
                         <a class="pull-right" data-toggle="collapse" href="#collapsable" role="button"><i class="fa"></i></a>
                         <h1>NN-SVG</h1>
-                        <p>Publication-ready NN-architecture schematics. <a id="download" href="#">Download SVG</a></p>
+                        <p>Publication-ready NN-architecture schematics. <a id="download" class="disabled" href="#">Download SVG</a></p>
 
                         <nav>
                             <div class="nav nav-tabs card-header-tabs" role="tablist">
@@ -87,7 +91,22 @@
 
 
                             <h4>Style:</h4>
+                            <div id="rendererType">
+                                <label for="rendererType" style="margin-right:10px;">Renderer</label>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="rendererType" id="webGL" value="webgl" checked> webGL
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="rendererType" id="SVG" value="svg"> SVG
+                                    </label>
+                                </div>
+                                <small class="form-text text-muted">The SVG renderer is required to download SVG, however the WebGL renderer is required to show tensor dimensions.</small>
+                            </div>
 
+                            <br>
                             <div>
                                 <input type="color" value="#eeeeee" id="color1">
                                 <label for="color1">Color 1</label>
@@ -213,10 +232,38 @@
                                         <input type="number" class="form-control" name="stride" step="1"/>
                                     </div>
                                 </div>
+                            </div>
 
-
+                            <hr>
+                            <div id="architecture2">
+                                <p>Vector Length</p>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-5">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="vectorLength" step="1" value="2048" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-5">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="vectorLength" step="1" value="2048" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-5">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="vectorLength" step="1" value="1000" />
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-5">
+                                        <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
+                                        <input type="number" class="form-control" name="vectorLength" step="1"/>
+                                    </div>
+                                </div>
 
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -234,8 +281,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
     <script src="OrbitControls.js"></script>
-    <!-- <script src="SVGRenderer.js"></script> -->
-    <!-- <script src="Projector.js"></script> -->
+    <script src="SVGRenderer.js"></script>
+    <script src="Projector.js"></script>
 
     <!-- <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script> -->
     <!-- <script src="https://threejs.org/examples/js/renderers/Projector.js"></script> -->
@@ -285,7 +332,8 @@ var box_material = new THREE.MeshBasicMaterial( {'color':color1, 'side':THREE.Do
 var conv_material = new THREE.MeshBasicMaterial( {'color':color2, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
 var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
 
-
+var architecture = [];
+var architecture2 = [];
 var betweenLayers = 20;
 
 var logDepth = true;
@@ -306,12 +354,7 @@ function wh(layer) { return widthFn(layer['widthAndHeight']); }
 var layers = new THREE.Group();
 var convs = new THREE.Group();
 var pyramids = new THREE.Group();
-var sprites = new THREE.Group();        //// MAKE SURE THESE GET EMPTIED
-
-
-// /////////////////////////////////////////////////////////////////////////////
-//                       ///////    Draw Graph    ///////
-// /////////////////////////////////////////////////////////////////////////////
+var sprites = new THREE.Group();
 
 
 var scene = new THREE.Scene();
@@ -321,23 +364,46 @@ scene.background = new THREE.Color( 0xffffff );
 var camera = new THREE.OrthographicCamera( w / - 2, w / 2, h / 2, h / - 2, -10000000, 10000000 );
 camera.position.set(-219, 92, 84);
 
-var renderer = new THREE.WebGLRenderer( { 'alpha':true } );
-// var renderer = new THREE.SVGRenderer();
-renderer.setPixelRatio(window.devicePixelRatio || 1);
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.getElementById('graph-container').appendChild( renderer.domElement );
+var renderer;
+var rendererType = 'svg';
 
-restart(scene);
+var controls;
 
-controls = new THREE.OrbitControls( camera, renderer.domElement );
+// /////////////////////////////////////////////////////////////////////////////
+//                       ///////    Draw Graph    ///////
+// /////////////////////////////////////////////////////////////////////////////
 
-var animate = function () {
+
+
+function restartRenderer() {
+
+    clearThree(scene);
+
+    if (rendererType === 'webgl') { renderer = new THREE.WebGLRenderer( { 'alpha':true } ); }
+    else if (rendererType === 'svg') { renderer = new THREE.SVGRenderer(); }
+
+    renderer.setPixelRatio(window.devicePixelRatio || 1);
+    renderer.setSize( window.innerWidth, window.innerHeight );
+
+    graph_container = document.getElementById('graph-container')
+    while (graph_container.firstChild) { graph_container.removeChild(graph_container.firstChild); }
+    graph_container.appendChild( renderer.domElement );
+
+    if (controls) { controls.dispose(); }
+    controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+    restart(scene);
+    animate();
+
+}
+
+function animate() {
     requestAnimationFrame( animate );
     renderer.render(scene, camera);
 };
 
-animate();
-
+restartRenderer()
+restart(scene);
 
 function restart(scene) {
 
@@ -346,8 +412,11 @@ function restart(scene) {
     architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
     architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1],'stride':l[2],'rel_x':rand(-0.4,0.4),'rel_y':rand(-0.4,0.4)}});
 
+    architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+
     z_offset = -(sum(architecture.map(layer => depthFn(layer['depth']))) + (betweenLayers * (architecture.length - 1))) / 3;
     layer_offsets = pairWise(architecture).reduce((offsets, layers) => offsets.concat([offsets.last() + depthFn(layers[0]['depth'])/2 + betweenLayers + depthFn(layers[1]['depth'])/2]), [z_offset]);
+    layer_offsets = layer_offsets.concat(architecture2.reduce((offsets, layer) => offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), [layer_offsets.last() + depthFn(architecture.last()['depth'])/2 + betweenLayers + widthFn(2)]));
 
     architecture.forEach( function( layer, index ) {
 
@@ -402,6 +471,7 @@ function restart(scene) {
 
         if (showDims) {
 
+            // Dims
             sprite = makeTextSprite(layer['depth'].toString());
             sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wh(layer)/2 + 2, wh(layer)/2 + 2, 0 ) );
             sprites.add( sprite );
@@ -418,11 +488,43 @@ function restart(scene) {
 
     });
 
+    architecture2.forEach( function( layer, index ) {
+
+        // Dense
+        layer_geometry = new THREE.BoxGeometry( widthFn(2), depthFn(layer), widthFn(2) );
+        layer_object = new THREE.Mesh( layer_geometry, box_material );
+        layer_object.position.set(0, 0, layer_offsets[architecture.length + index]);
+        layers.add( layer_object );
+
+        layer_edges_geometry = new THREE.EdgesGeometry( layer_geometry );
+        layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
+        layer_edges_object.position.set(0, 0, layer_offsets[architecture.length + index]);
+        layers.add( layer_edges_object );
+
+        direction = new THREE.Vector3( 0, 0, 1 );
+        origin = new THREE.Vector3( 0, 0, layer_offsets[architecture.length + index] - betweenLayers - widthFn(2)/2 + 1 );
+        length = betweenLayers - 2;
+        headLength = betweenLayers/3;
+        headWidth = 5;
+        arrow = new THREE.ArrowHelper( direction, origin, length, 0x000000, headLength, headWidth );
+        pyramids.add( arrow );
+
+        if (showDims) {
+
+            // Dims
+            sprite = makeTextSprite(layer.toString());
+            sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 3, depthFn(layer)/2 + 3, 3 ) );
+            sprites.add( sprite );
+
+        }
+
+
+    });
+
     scene.add( layers );
     scene.add( convs );
     scene.add( pyramids );
     scene.add( sprites );
-
 
 }
 
@@ -493,6 +595,20 @@ window.addEventListener( 'resize', onWindowResize, false );
 // /////////////////////////////////////////////////////////////////////////////
 
 
+$('#rendererType input:radio').change(function() {
+    rendererType = this.value;
+    if (rendererType == 'svg') {
+        showDims = false;
+        $("#showDims").prop('disabled', true).prop('checked', false);
+        $("#download").removeClass('disabled');
+    }
+    else if (rendererType == 'webgl') {
+        $("#showDims").prop('disabled', false);
+        $("#download").addClass('disabled');
+    }
+    $(this).blur();
+    restartRenderer();
+});
 
 $("#color1").change(function() {
     color1 = this.value;
@@ -599,6 +715,30 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
     return false;
 
+}).on('click', '#architecture2 .btn-add', function(e) {
+    e.preventDefault();
+
+    var controlForm = $('#architecture2');
+    var currentEntry = $(this).parents('.entry:first');
+    var newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+    newEntry.find('input').val('');
+    controlForm.find('.entry:not(:last) .btn-add')
+        .removeClass('btn-add').addClass('btn-remove')
+        .removeClass('btn-primary').addClass('btn-secondary')
+        .html('<span class="fa fa-minus"></span>');
+
+    restart(scene);
+
+}).on('click', '#architecture2 .btn-remove', function(e) {
+    e.preventDefault();
+
+    $(this).parents('.entry:first').remove();
+
+    restart(scene);
+
+    return false;
+
 }).on('change', 'input', function(e) {
     e.preventDefault();
 
@@ -609,10 +749,11 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
 $("#download").on("click", function() {
 
-    $(this).attr("href", 'data:application/octet-stream;base64,' + btoa($("#graph-container").html()))
+    $(this).attr("href", 'data:application/octet-stream;base64,' + btoa($('<div>').append($( $("#graph-container").html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html()))
            .attr("download", "nn.svg")
 
 });
+
 
     </script>
 
