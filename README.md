@@ -1,14 +1,24 @@
-NN-SVG
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![status](http://joss.theoj.org/papers/52b511ab107595a805107aa4ad70161d/status.svg)](http://joss.theoj.org/papers/52b511ab107595a805107aa4ad70161d)
+
+
+[NN-SVG](http://alexlenail.me/NN-SVG/)
 ======
 
-What's conventionally described as the trellis structure of the connections between two
-fully-connected layers of a neural network is really a visual description of a matrix-vector product.
-Driven by the belief that mathematics are beautiful when properly represented,
-I'm building a little tool to quickly generate SVG representations of these trellises,
-to visualize classic fully-connected neural networks, on top of d3.
+Illustrations of Neural Network architectures are often time-consuming to produce, and machine learning researchers all too often find themselves constructing these diagrams from scratch by hand.
+
+NN-SVG is a tool for creating Neural Network (NN) architecture drawings parametrically rather than manually. It then provides the ability to export those drawings to Scalable Vector Graphics (SVG) files, suitable for inclusion in academic papers or as figures on web pages.
+
+The tool provides the ability to generate figures of three kinds: classic Fully-Connected Neural Network (FCNN) figures, Convolutional Neural Network (CNN) figures of the sort introduced in [the LeNet paper](http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf), and Deep Neural Network figures following the style introduced in [the AlexNet paper](http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf). The former two are accomplished using the [D3 javascript library](https://d3js.org/) and the latter with the javascript library [Three.js](https://threejs.org/). NN-SVG provides the ability to style the figure to the user's liking via many size, color, and layout parameters.
+
+We hope this tool will save machine learning researchers time, and we hope this software might also serve as a pedagogical tool in some contexts.
 
 
-In the future I'd like to have three layouts:
-- [x] Conventional FCNN layout
-- [x] [LeNet CNN layout](https://www.pyimagesearch.com/wp-content/uploads/2016/06/lenet_architecture.png)
-- [x] [AlexNet layout](http://www.mdpi.com/remotesensing/remotesensing-09-00848/article_deploy/html/images/remotesensing-09-00848-g001.png) (via webGL)
+### License
+
+[MIT](LICENSE)
+
+### Citation
+
+... coming soon!
+
