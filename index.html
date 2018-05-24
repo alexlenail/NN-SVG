@@ -339,12 +339,11 @@ function restart() {
     label = architecture.map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
 
     link = link.data(graph.links);
-    if (link.empty())
-        link = link.enter()
-                   .insert("line", ".node")
-                   .attr("class", "link");
-
-    link = link.style("stroke-width", function(d) {
+    link.exit().remove();
+    link = link.enter()
+               .insert("line", ".node")
+               .attr("class", "link")
+               .style("stroke-width", function(d) {
                    if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
                    else { return edgeWidth; }
                })
@@ -356,10 +355,12 @@ function restart() {
                .merge(link);
 
     node = node.data(graph.nodes);
-    if (node.empty())
-        node = node.enter().append("circle").attr("class", "node");
-    node = node.attr("r", nodeDiameter/2)
-               .attr("id", (d) => d.id)
+    node.exit().remove();
+    node = node.enter()
+               .append("circle")
+               .attr("r", nodeDiameter/2)
+               .attr("class", "node")
+               .attr("id", function(d) { return d.id; })
                .style("fill", nodeColor)
                .style("stroke", nodeBorderColor)
                .style("stroke-width", 1)
