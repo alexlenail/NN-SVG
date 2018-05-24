@@ -312,7 +312,9 @@ var nnDirection = 'right'
 var showBias = false;
 
 var showLabels = true;
-let sup = (s) => s.replace('0','⁰').replace('1','¹').replace('2','²').replace('3','³').replace('4','⁴').replace('5','⁵').replace('6','⁶').replace('7','⁷').replace('8','⁸').replace('9','⁹')
+let sup_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
+let sup = (s) => Array.prototype.map.call(s, (d) => (d in sup_map && sup_map[d]) || d).join('');
+
 let textFn = (layer_index, layer_width) => ((layer_index === 0 ? "Input" : (layer_index === architecture.length-1 ? "Output" : "Hidden")) + " Layer ∈ ℝ" + sup(layer_width.toString()));
 var nominal_text_size = 12;
 var textWidth = 70;
@@ -337,11 +339,12 @@ function restart() {
     label = architecture.map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
 
     link = link.data(graph.links);
-    link.exit().remove();
-    link = link.enter()
-               .insert("line", ".node")
-               .attr("class", "link")
-               .style("stroke-width", function(d) {
+    if (link.empty())
+        link = link.enter()
+                   .insert("line", ".node")
+                   .attr("class", "link");
+
+    link = link.style("stroke-width", function(d) {
                    if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
                    else { return edgeWidth; }
                })
@@ -353,27 +356,22 @@ function restart() {
                .merge(link);
 
     node = node.data(graph.nodes);
-    node.exit().remove();
-    node = node.enter()
-               .append("circle")
-               .attr("r", nodeDiameter/2)
-               .attr("class", "node")
-               .attr("id", function(d) { return d.id; })
+    if (node.empty())
+        node = node.enter().append("circle").attr("class", "node");
+    node = node.attr("r", nodeDiameter/2)
+               .attr("id", (d) => d.id)
                .style("fill", nodeColor)
                .style("stroke", nodeBorderColor)
                .style("stroke-width", 1)
                .merge(node);
 
     text = text.data(label);
-    text.exit().remove();
-    text = text.enter()
-               .append("text")
-               .text(function (d) { return (showLabels ? d.text : ""); })
-               .attr("class", "text")
+    if (text.empty())
+        text = text.enter().append("text").attr("class", "text");
+    text = text.text(function (d) { return (showLabels ? d.text : ""); })
                .attr("dy", ".35em")
                .style("font-size", nominal_text_size+"px")
                .merge(text);
-
 
     $('#count span:first').text(graph.nodes.length+" nodes, "+graph.links.length+" edges you don't need to draw yourself! ")
     redistribute();
