@@ -247,13 +247,17 @@
 
     <script type="text/javascript">
 
+fcnn = new FCNN();
+
 function restart() {
 
-    architecture = $('#architecture').find('input[name="numberOfNodes"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    fcnn.architecture = $('#architecture').find('input[name="numberOfNodes"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
-    draw_fcnn();
+    fcnn.betweenNodesInLayer = $('#architecture').find('input[name="betweenNodesInLayer"]').map((i,el) => parseFloat($(el).val())).get();
 
-    $('#count span:first').text(graph.nodes.length+" nodes, "+graph.links.length+" edges you don't need to draw yourself! ")
+    fcnn.redraw();
+
+    $('#count span:first').text(fcnn.graph.nodes.length+" nodes, "+fcnn.graph.links.length+" edges you don't need to draw yourself! ")
 }
 
 restart();
@@ -263,107 +267,107 @@ restart();
 /////////////////////////////////////////////////////////////////////////////
 
 $("#edgeWidthProportional").change(function() {
-    edgeWidthProportional = this.checked;
-    link.style("stroke-width", function(d) {
-        if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
-        else { return edgeWidth; }
+    fcnn.edgeWidthProportional = this.checked;
+    fcnn.link.style("stroke-width", function(d) {
+        if (fcnn.edgeWidthProportional) { return fcnn.weightedEdgeWidth(Math.abs(d.weight)); }
+        else { return fcnn.edgeWidth; }
     });
 });
 
 $("#edgeWidth").change(function() {
-    edgeWidth = parseFloat(this.value);
-    weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
-    link.style("stroke-width", function(d) {
-        if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
-        else { return edgeWidth; }
+    fcnn.edgeWidth = parseFloat(this.value);
+    fcnn.weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, fcnn.edgeWidth]);
+    fcnn.link.style("stroke-width", function(d) {
+        if (fcnn.edgeWidthProportional) { return fcnn.weightedEdgeWidth(Math.abs(d.weight)); }
+        else { return fcnn.edgeWidth; }
     });
 });
 
 $("#edgeOpacityProportional").change(function() {
-    edgeOpacityProportional = this.checked;
-    link.style("opacity", function(d) {
-        if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
-        else { return edgeOpacity; }
+    fcnn.edgeOpacityProportional = this.checked;
+    fcnn.link.style("opacity", function(d) {
+        if (fcnn.edgeOpacityProportional) { return fcnn.weightedEdgeOpacity(Math.abs(d.weight)); }
+        else { return fcnn.edgeOpacity; }
     });
-    if (edgeOpacityProportional) { $("#edgeOpacity").prop('disabled', true); }
+    if (fcnn.edgeOpacityProportional) { $("#edgeOpacity").prop('disabled', true); }
     else { $("#edgeOpacity").prop('disabled', false); }
 });
 
 $("#edgeOpacity").change(function() {
-    edgeOpacity = parseFloat(this.value);
-    link.style("opacity", function(d) {
-        if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
-        else { return edgeOpacity; }
+    fcnn.edgeOpacity = parseFloat(this.value);
+    fcnn.link.style("opacity", function(d) {
+        if (fcnn.edgeOpacityProportional) { return fcnn.weightedEdgeOpacity(Math.abs(d.weight)); }
+        else { return fcnn.edgeOpacity; }
     });
 });
 
 $("#edgeColorProportional").change(function() {
-    edgeColorProportional = this.checked;
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
+    fcnn.edgeColorProportional = this.checked;
+    fcnn.link.style("stroke", function(d) {
+        if (fcnn.edgeColorProportional) { return fcnn.weightedEdgeColor(d.weight); }
+        else { return fcnn.defaultEdgeColor; }
     });
 });
 
 $("#negativeEdgeColor").change(function() {
-    negativeEdgeColor = this.value;
-    weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
+    fcnn.negativeEdgeColor = this.value;
+    fcnn.weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([fcnn.negativeEdgeColor, "white", fcnn.positiveEdgeColor]);
+    fcnn.link.style("stroke", function(d) {
+        if (fcnn.edgeColorProportional) { return fcnn.weightedEdgeColor(d.weight); }
+        else { return fcnn.defaultEdgeColor; }
     });
 });
 
 $("#positiveEdgeColor").change(function() {
-    positiveEdgeColor = this.value;
-    weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
+    fcnn.positiveEdgeColor = this.value;
+    fcnn.weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([fcnn.negativeEdgeColor, "white", fcnn.positiveEdgeColor]);
+    fcnn.link.style("stroke", function(d) {
+        if (fcnn.edgeColorProportional) { return fcnn.weightedEdgeColor(d.weight); }
+        else { return fcnn.defaultEdgeColor; }
     });
 });
 
 $("#defaultEdgeColor").change(function() {
-    defaultEdgeColor = this.value;
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
+    fcnn.defaultEdgeColor = this.value;
+    fcnn.link.style("stroke", function(d) {
+        if (fcnn.edgeColorProportional) { return fcnn.weightedEdgeColor(d.weight); }
+        else { return fcnn.defaultEdgeColor; }
     });
 });
 
 $("#nodeDiameter").change(function() {
-    nodeDiameter = parseFloat(this.value);
-    node.attr("r", nodeDiameter/2);
+    fcnn.nodeDiameter = parseFloat(this.value);
+    fcnn.node.attr("r", fcnn.nodeDiameter/2);
 });
 
 $("#nodeColor").change(function() {
-    nodeColor = this.value;
-    node.style("fill", nodeColor);
+    fcnn.nodeColor = this.value;
+    fcnn.node.style("fill", fcnn.nodeColor);
 });
 
 $("#nodeBorderColor").change(function() {
-    nodeBorderColor = this.value;
-    node.style("stroke", nodeBorderColor);
+    fcnn.nodeBorderColor = this.value;
+    fcnn.node.style("stroke", fcnn.nodeBorderColor);
 });
 
 $("#betweenLayers").change(function() {
-    betweenLayers = parseFloat(this.value);
-    redistribute();
+    fcnn.betweenLayers = parseFloat(this.value);
+    fcnn.redistribute();
 });
 
 $('#nnDirection input:radio').change(function() {
-    nnDirection = this.value;
-    redistribute();
+    fcnn.nnDirection = this.value;
+    fcnn.redistribute();
 });
 
 $("#showBias").change(function() {
-    showBias = this.checked;
-    restart();
+    fcnn.showBias = this.checked;
+    fcnn.redraw();
 });
 
 $("#showLabels").change(function() {
-    showLabels = this.checked;
-    text.text(function (d) { return (showLabels ? d.text : ""); });
+    fcnn.showLabels = this.checked;
+    fcnn.text.text(function (d) { return (fcnn.showLabels ? d.text : ""); });
 });
 
 
@@ -386,8 +390,9 @@ $(document).on('click', '.btn-add', function(e) {
         .html('<span class="fa fa-minus"></span>');
 
     restart();
+});
 
-}).on('click', '.btn-remove', function(e) {
+$(document).on('click', '.btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
@@ -395,8 +400,11 @@ $(document).on('click', '.btn-add', function(e) {
     restart();
 
     return false;
+});
 
-}).on('change', "input[name='numberOfNodes']", restart).on('change', "input[name='betweenNodesInLayer']", redistribute);
+$(document).on('change', "input[name='numberOfNodes']", restart);
+
+$(document).on('change', "input[name='betweenNodesInLayer']", fcnn.redistribute);  // TODO fix
 
 $(document).on('click', '#newRandomWeights', function() {
     link = link.data([]);
