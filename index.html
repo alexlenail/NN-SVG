@@ -247,13 +247,18 @@
 
     <script type="text/javascript">
 
+fcnn = FCNN();
+
 function restart() {
 
     architecture = $('#architecture').find('input[name="numberOfNodes"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
-    draw_fcnn();
+    betweenNodesInLayer = $('#architecture').find('input[name="betweenNodesInLayer"]').map((i,el) => parseFloat($(el).val())).get();
 
-    $('#count span:first').text(graph.nodes.length+" nodes, "+graph.links.length+" edges you don't need to draw yourself! ")
+    fcnn.redraw(architecture);
+    fcnn.redistribute(betweenNodesInLayer);
+
+    $('#count span:first').text(fcnn.graph.nodes.length+" nodes, "+fcnn.graph.links.length+" edges you don't need to draw yourself! ")
 }
 
 restart();
@@ -264,113 +269,86 @@ restart();
 
 $("#edgeWidthProportional").change(function() {
     edgeWidthProportional = this.checked;
-    link.style("stroke-width", function(d) {
-        if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
-        else { return edgeWidth; }
-    });
+    fcnn.setEdgeWidth(edgeWidthProportional, edgeWidth);
 });
 
 $("#edgeWidth").change(function() {
     edgeWidth = parseFloat(this.value);
-    weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
-    link.style("stroke-width", function(d) {
-        if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
-        else { return edgeWidth; }
-    });
+    fcnn.setEdgeWidth(edgeWidthProportional, edgeWidth);
 });
 
 $("#edgeOpacityProportional").change(function() {
     edgeOpacityProportional = this.checked;
-    link.style("opacity", function(d) {
-        if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
-        else { return edgeOpacity; }
-    });
+    fcnn.setEdgeOpacity(edgeOpacityProportional, edgeOpacity);
+
     if (edgeOpacityProportional) { $("#edgeOpacity").prop('disabled', true); }
     else { $("#edgeOpacity").prop('disabled', false); }
 });
 
 $("#edgeOpacity").change(function() {
     edgeOpacity = parseFloat(this.value);
-    link.style("opacity", function(d) {
-        if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
-        else { return edgeOpacity; }
-    });
+    fcnn.setEdgeOpacity(edgeOpacityProportional, edgeOpacity);
 });
 
 $("#edgeColorProportional").change(function() {
     edgeColorProportional = this.checked;
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
-    });
+    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
 });
 
 $("#negativeEdgeColor").change(function() {
     negativeEdgeColor = this.value;
-    weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
-    });
+    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
 });
 
 $("#positiveEdgeColor").change(function() {
     positiveEdgeColor = this.value;
-    weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
-    });
+    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
 });
 
 $("#defaultEdgeColor").change(function() {
     defaultEdgeColor = this.value;
-    link.style("stroke", function(d) {
-        if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-        else { return defaultEdgeColor; }
-    });
+    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
 });
 
 $("#nodeDiameter").change(function() {
     nodeDiameter = parseFloat(this.value);
-    node.attr("r", nodeDiameter/2);
+    fcnn.setNodeStyles(nodeDiameter, nodeColor, nodeBorderColor);
 });
 
 $("#nodeColor").change(function() {
     nodeColor = this.value;
-    node.style("fill", nodeColor);
+    fcnn.setNodeStyles(nodeDiameter, nodeColor, nodeBorderColor);
 });
 
 $("#nodeBorderColor").change(function() {
     nodeBorderColor = this.value;
-    node.style("stroke", nodeBorderColor);
+    fcnn.setNodeStyles(nodeDiameter, nodeColor, nodeBorderColor);
 });
 
 $("#betweenLayers").change(function() {
     betweenLayers = parseFloat(this.value);
-    redistribute();
+    fcnn.setBetweenLayers(betweenLayers);
 });
 
 $('#nnDirection input:radio').change(function() {
     nnDirection = this.value;
-    redistribute();
+    fcnn.setNnDirection(nnDirection);
 });
 
 $("#showBias").change(function() {
     showBias = this.checked;
-    restart();
+    fcnn.setShowBias(showBias);
 });
 
 $("#showLabels").change(function() {
     showLabels = this.checked;
-    text.text(function (d) { return (showLabels ? d.text : ""); });
+    fcnn.setShowLabels(showLabels);
 });
 
 
 /////////////////////////////////////////////////////////////////////////////
                  ///////    Select Architecture    ///////
 /////////////////////////////////////////////////////////////////////////////
-
 
 $(document).on('click', '.btn-add', function(e) {
     e.preventDefault();
@@ -387,7 +365,9 @@ $(document).on('click', '.btn-add', function(e) {
 
     restart();
 
-}).on('click', '.btn-remove', function(e) {
+});
+
+$(document).on('click', '.btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
@@ -396,11 +376,15 @@ $(document).on('click', '.btn-add', function(e) {
 
     return false;
 
-}).on('change', "input[name='numberOfNodes']", restart).on('change', "input[name='betweenNodesInLayer']", redistribute);
+});
+
+$(document).on('change', "input[name='numberOfNodes']", restart);
+
+$(document).on('change', "input[name='betweenNodesInLayer']", fcnn.redistribute);
 
 $(document).on('click', '#newRandomWeights', function() {
-    link = link.data([]);
-    link.exit().remove();
+    link = fcnn.link.data([]);
+    fcnn.link.exit().remove();
     restart();
 });
 
