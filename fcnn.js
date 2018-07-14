@@ -82,9 +82,9 @@ function FCNN() {
                           ///////    Draw Graph    ///////
     /////////////////////////////////////////////////////////////////////////////
 
-    function redraw(architecture) {
+    function redraw(p_architecture = architecture) {
 
-        architecture = architecture || architecture;
+        architecture = p_architecture;
 
         graph.nodes = architecture.map((layer_width, layer_index) => range(layer_width).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
         graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return right.node_index >= 0 ? {'source':left.id,'target':right.id,'weight':randomWeight()} : {} })));
@@ -98,16 +98,10 @@ function FCNN() {
         link = link.enter()
                    .insert("line", ".node")
                    .attr("class", "link")
-                   .style("stroke-width", function(d) {
-                       if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
-                       else { return edgeWidth; }
-                   })
-                   .style("stroke", function(d) {
-                       if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-                       else { return defaultEdgeColor; }
-                   })
-                   .style("opacity", function(d) { return edgeOpacity; })
                    .merge(link);
+        setEdgeWidth();
+        setEdgeOpacity();
+        setEdgeColor();
 
         node = node.data(graph.nodes);
         node.exit().remove();
@@ -116,12 +110,10 @@ function FCNN() {
                    .attr("r", nodeDiameter/2)
                    .attr("class", "node")
                    .attr("id", function(d) { return d.id; })
-                   .style("fill", nodeColor)
-                   .style("stroke", nodeBorderColor)
-                   .style("stroke-width", 1)
                    .on("mousedown", set_focus)
                    .on("mouseup", remove_focus)
                    .merge(node);
+        setNodeStyles();
 
         text = text.data(label);
         if (text.empty()) { text = text.enter().append("text").attr("class", "text"); }
@@ -130,12 +122,11 @@ function FCNN() {
                    .style("font-size", nominal_text_size+"px")
                    .merge(text);
 
-        redistribute();
     }
 
-    function redistribute(betweenNodesInLayer) {
+    function redistribute(p_betweenNodesInLayer = betweenNodesInLayer) {
 
-        betweenNodesInLayer = betweenNodesInLayer || betweenNodesInLayer;
+        betweenNodesInLayer = p_betweenNodesInLayer;
 
         layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i])
 
@@ -167,11 +158,13 @@ function FCNN() {
     }
 
     redraw();
+    redistribute();
 
-    function setEdgeWidth(edgeWidthProportional, edgeWidth) {
-        edgeWidthProportional = edgeWidthProportional || edgeWidthProportional;
-        edgeWidth = edgeWidth || edgeWidth;
-        weightedEdgeWidth = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
+    function setEdgeWidth(chosen_edgeWidthProportional = edgeWidthProportional,
+                          chosen_edgeWidth = edgeWidth) {
+        edgeWidthProportional = chosen_edgeWidthProportional;
+        edgeWidth             = chosen_edgeWidth;
+        weightedEdgeWidth     = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
 
         link.style("stroke-width", function(d) {
             if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
@@ -179,22 +172,26 @@ function FCNN() {
         });
     }
 
-    function setEdgeOpacity(edgeOpacityProportional, edgeOpacity) {
-        edgeOpacityProportional = edgeOpacityProportional || edgeOpacityProportional;
-        edgeOpacity = edgeOpacity || edgeOpacity;
+    function setEdgeOpacity(chosen_edgeOpacityProportional = edgeOpacityProportional,
+                            chosen_edgeOpacity = edgeOpacity) {
+        edgeOpacityProportional = chosen_edgeOpacityProportional;
+        edgeOpacity             = chosen_edgeOpacity;
 
-        link.style("stroke-Opacity", function(d) {
+        link.style("stroke-opacity", function(d) {
             if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
             else { return edgeOpacity; }
         });
     }
 
-    function setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor) {
-        negativeEdgeColor = negativeEdgeColor || negativeEdgeColor;
-        positiveEdgeColor = positiveEdgeColor || positiveEdgeColor;
-        weightedEdgeColor = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
-        edgeColorProportional = edgeColorProportional || edgeColorProportional;
-        defaultEdgeColor = defaultEdgeColor || defaultEdgeColor;
+    function setEdgeColor(chosen_negativeEdgeColor = negativeEdgeColor,
+                          chosen_positiveEdgeColor = positiveEdgeColor,
+                          chosen_edgeColorProportional = edgeColorProportional,
+                          chosen_defaultEdgeColor = defaultEdgeColor) {
+        defaultEdgeColor      = chosen_defaultEdgeColor;
+        edgeColorProportional = chosen_edgeColorProportional;
+        negativeEdgeColor     = chosen_negativeEdgeColor;
+        positiveEdgeColor     = chosen_positiveEdgeColor;
+        weightedEdgeColor     = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
 
         link.style("stroke", function(d) {
             if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
@@ -202,33 +199,36 @@ function FCNN() {
         });
     }
 
-    function setNodeStyles(nodeDiameter, nodeColor, nodeBorderColor) {
-        nodeDiameter = nodeDiameter || nodeDiameter;
-        nodeColor = nodeColor || nodeColor;
-        nodeBorderColor = nodeBorderColor || nodeBorderColor;
+    function setNodeStyles(chosen_nodeDiameter = nodeDiameter,
+                           chosen_nodeColor = nodeColor,
+                           chosen_nodeBorderColor = nodeBorderColor) {
+        nodeDiameter    = chosen_nodeDiameter;
+        nodeColor       = chosen_nodeColor;
+        nodeBorderColor = chosen_nodeBorderColor;
 
         node.attr("r", nodeDiameter/2);
         node.style("fill", nodeColor);
         node.style("stroke", nodeBorderColor);
     }
 
-    function setBetweenLayers(betweenLayers) {
-        betweenLayers = betweenLayers || betweenLayers;
+    function setBetweenLayers(chosen_betweenLayers = betweenLayers) {
+        betweenLayers = chosen_betweenLayers;
         redistribute();
     }
 
-    function setNnDirection(nnDirection) {
-        nnDirection = nnDirection || nnDirection;
+    function setNnDirection(chosen_nnDirection = nnDirection) {
+        nnDirection = chosen_nnDirection;
         redistribute();
     }
 
-    function setShowBias(showBias) {
-        showBias = showBias || showBias;
+    function setShowBias(chosen_showBias = showBias) {
+        showBias = chosen_showBias;
         redraw();
+        redistribute();
     }
 
-    function setShowLabels(showLabels) {
-        showLabels = showLabels || showLabels;
+    function setShowLabels(chosen_showLabels = showLabels) {
+        showLabels = chosen_showLabels;
         text.text(function (d) { return (showLabels ? d.text : ""); });
     }
 
@@ -275,21 +275,19 @@ function FCNN() {
     }
 
     return {
-        'redraw': redraw,
-        'redistribute' : redistribute,
+        'redraw'           : redraw,
+        'redistribute'     : redistribute,
 
-        'setEdgeWidth' : setEdgeWidth,
-        'setEdgeOpacity' : setEdgeOpacity,
-        'setEdgeColor' : setEdgeColor,
-        'setNodeStyles' : setNodeStyles,
+        'setEdgeWidth'     : setEdgeWidth,
+        'setEdgeOpacity'   : setEdgeOpacity,
+        'setEdgeColor'     : setEdgeColor,
+        'setNodeStyles'    : setNodeStyles,
         'setBetweenLayers' : setBetweenLayers,
-        'setNnDirection' : setNnDirection,
-        'setShowBias' : setShowBias,
-        'setShowLabels' : setShowLabels,
+        'setNnDirection'   : setNnDirection,
+        'setShowBias'      : setShowBias,
+        'setShowLabels'    : setShowLabels,
 
-        'graph' : graph,
-        'node'  : node,
-        'link'  : link,
+        'graph'            : graph,
 
     }
 

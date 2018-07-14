@@ -269,17 +269,17 @@ restart();
 
 $("#edgeWidthProportional").change(function() {
     edgeWidthProportional = this.checked;
-    fcnn.setEdgeWidth(edgeWidthProportional, edgeWidth);
+    fcnn.setEdgeWidth(edgeWidthProportional, undefined);
 });
 
 $("#edgeWidth").change(function() {
     edgeWidth = parseFloat(this.value);
-    fcnn.setEdgeWidth(edgeWidthProportional, edgeWidth);
+    fcnn.setEdgeWidth(undefined, edgeWidth);
 });
 
 $("#edgeOpacityProportional").change(function() {
     edgeOpacityProportional = this.checked;
-    fcnn.setEdgeOpacity(edgeOpacityProportional, edgeOpacity);
+    fcnn.setEdgeOpacity(edgeOpacityProportional, undefined);
 
     if (edgeOpacityProportional) { $("#edgeOpacity").prop('disabled', true); }
     else { $("#edgeOpacity").prop('disabled', false); }
@@ -287,42 +287,42 @@ $("#edgeOpacityProportional").change(function() {
 
 $("#edgeOpacity").change(function() {
     edgeOpacity = parseFloat(this.value);
-    fcnn.setEdgeOpacity(edgeOpacityProportional, edgeOpacity);
-});
-
-$("#edgeColorProportional").change(function() {
-    edgeColorProportional = this.checked;
-    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
+    fcnn.setEdgeOpacity(undefined, edgeOpacity);
 });
 
 $("#negativeEdgeColor").change(function() {
     negativeEdgeColor = this.value;
-    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
+    fcnn.setEdgeColor(negativeEdgeColor, undefined, undefined, undefined);
 });
 
 $("#positiveEdgeColor").change(function() {
     positiveEdgeColor = this.value;
-    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
+    fcnn.setEdgeColor(undefined, positiveEdgeColor, undefined, undefined);
+});
+
+$("#edgeColorProportional").change(function() {
+    edgeColorProportional = this.checked;
+    fcnn.setEdgeColor(undefined, undefined, edgeColorProportional, undefined);
 });
 
 $("#defaultEdgeColor").change(function() {
     defaultEdgeColor = this.value;
-    fcnn.setEdgeColor(negativeEdgeColor, positiveEdgeColor, edgeColorProportional, defaultEdgeColor);
+    fcnn.setEdgeColor(undefined, undefined, undefined, defaultEdgeColor);
 });
 
 $("#nodeDiameter").change(function() {
     nodeDiameter = parseFloat(this.value);
-    fcnn.setNodeStyles(nodeDiameter, nodeColor, nodeBorderColor);
+    fcnn.setNodeStyles(nodeDiameter, undefined, undefined);
 });
 
 $("#nodeColor").change(function() {
     nodeColor = this.value;
-    fcnn.setNodeStyles(nodeDiameter, nodeColor, nodeBorderColor);
+    fcnn.setNodeStyles(undefined, nodeColor, undefined);
 });
 
 $("#nodeBorderColor").change(function() {
     nodeBorderColor = this.value;
-    fcnn.setNodeStyles(nodeDiameter, nodeColor, nodeBorderColor);
+    fcnn.setNodeStyles(undefined, undefined, nodeBorderColor);
 });
 
 $("#betweenLayers").change(function() {
