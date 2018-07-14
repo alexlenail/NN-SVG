@@ -380,7 +380,7 @@ $(document).on('click', '.btn-remove', function(e) {
 
 $(document).on('change', "input[name='numberOfNodes']", restart);
 
-$(document).on('change', "input[name='betweenNodesInLayer']", fcnn.redistribute);
+$(document).on('change', "input[name='betweenNodesInLayer']", restart);  // fix this so we only redistribute
 
 $(document).on('click', '#newRandomWeights', function() {
     link = fcnn.link.data([]);

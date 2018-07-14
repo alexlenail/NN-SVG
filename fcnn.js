@@ -157,9 +157,6 @@ function FCNN() {
 
     }
 
-    redraw();
-    redistribute();
-
     function setEdgeWidth(chosen_edgeWidthProportional = edgeWidthProportional,
                           chosen_edgeWidth = edgeWidth) {
         edgeWidthProportional = chosen_edgeWidthProportional;

@@ -239,6 +239,22 @@
 
     <script type="text/javascript">
 
+lenet = LeNet();
+
+function restart() {
+
+    architecture = $('#architecture').find('input[type="number"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
+
+    let range = n => [...Array(n).keys()];
+    architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'numberOfSquares':l[0],'squareWidth':l[1],'stride':l[2]}});
+
+    lenet.redraw(architecture);
+    lenet.redistribute(betweenLayers);
+
+}
+
+restart();
 
 /////////////////////////////////////////////////////////////////////////////
                 ///////    Select Styling    ///////
@@ -246,33 +262,37 @@
 
 $("#color1").change(function() {
     color1 = this.value;
+    lenet.reColor(color1, undefined)
 });
 
 $("#color2").change(function() {
     color2 = this.value;
+    lenet.reColor(undefined, color2)
 });
 
 $("#borderWidth").change(function() {
     borderWidth = parseFloat(this.value);
+    lenet.setBorderWidth(borderWidth);
 });
 
 $("#rectOpacity").change(function() {
     rectOpacity = parseFloat(this.value);
+    lenet.setRectOpacity(rectOpacity);
 });
 
 $("#betweenSquares").change(function() {
     betweenSquares = parseFloat(this.value);
-    redistribute();
+    lenet.redistribute(undefined, betweenSquares);
 });
 
 $("#showLabels").change(function() {
     showLabels = this.checked;
-    text.text(function (d) { return (showLabels ? d.op : ""); });
-    info.text(function (d) { return (showLabels ? d.text : ""); });
+    lenet.setShowLabels(showLabels);
 });
 
 $("input[name='spacing']").change(function() {
-    redistribute();
+    betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
+    lenet.redistribute(betweenLayers);
 });
 
 
@@ -297,16 +317,20 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
     restart();
 
-}).on('click', '#architecture .btn-remove', function(e) {
+})
+
+$(document).on('click', '#architecture .btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
 
-    restartAll();
+    restart();
 
     return false;
 
-}).on('click', '#architecture2 .btn-add', function(e) {
+})
+
+$(document).on('click', '#architecture2 .btn-add', function(e) {
     e.preventDefault();
 
     var controlForm = $('#architecture2');
@@ -321,51 +345,31 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
     restart();
 
-}).on('click', '#architecture2 .btn-remove', function(e) {
+})
+
+$(document).on('click', '#architecture2 .btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
 
-    restartAll();
+    restart();
 
     return false;
 
-}).on('change', 'input[type="number"]', function(e) {
+})
+
+$(document).on('change', 'input[type="number"]', function(e) {
     e.preventDefault();
 
-    restartAll();
+    restart();  // TODO only fire if the whole row is filled.
 
-}).on('change', 'input[type="text"]', function(e) {
+})
+
+$(document).on('change', 'input[type="text"]', function(e) {
     e.preventDefault();
-
-    restartAll();
-});
-
-function restartAll() {
-
-    rect = rect.data([]);
-    rect.exit().remove();
-
-    conv = conv.data([]);
-    conv.exit().remove();
-
-    link = link.data([]);
-    link.exit().remove();
-
-    poly = poly.data([]);
-    poly.exit().remove();
-
-    line = line.data([]);
-    line.exit().remove();
-
-    text = text.data([]);
-    text.exit().remove();
-
-    info = info.data([]);
-    info.exit().remove();
 
     restart();
-}
+});
 
 
 d3.select("#download").on("click", function() {
