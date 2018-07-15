@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html>redistribute
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -267,24 +267,24 @@ restart();
                 ///////    Select Styling    ///////
 /////////////////////////////////////////////////////////////////////////////
 
-$("#edgeWidthProportional").change(   function() { fcnn.setStyles({'edgeWidthProportional_': this.checked}) });
-$("#edgeWidth").change(               function() { fcnn.setStyles({'edgeWidth_': parseFloat(this.value)}) });
-$("#edgeOpacityProportional").change( function() { fcnn.setStyles({'edgeOpacityProportional_': this.checked});
+$("#edgeWidthProportional").change(   function() { fcnn.style({'edgeWidthProportional_': this.checked}) });
+$("#edgeWidth").change(               function() { fcnn.style({'edgeWidth_': parseFloat(this.value)}) });
+$("#edgeOpacityProportional").change( function() { fcnn.style({'edgeOpacityProportional_': this.checked});
     if (this.checked) { $("#edgeOpacity").prop('disabled', true); }
     else { $("#edgeOpacity").prop('disabled', false); }
 });
-$("#edgeOpacity").change(             function() { fcnn.setStyles({'edgeOpacity_': parseFloat(this.value)}) });
-$("#negativeEdgeColor").change(       function() { fcnn.setStyles({'negativeEdgeColor_': this.value}) });
-$("#positiveEdgeColor").change(       function() { fcnn.setStyles({'positiveEdgeColor_': this.value}) });
-$("#edgeColorProportional").change(   function() { fcnn.setStyles({'edgeColorProportional_': this.checked}) });
-$("#defaultEdgeColor").change(        function() { fcnn.setStyles({'defaultEdgeColor_': this.value}) });
-$("#nodeDiameter").change(            function() { fcnn.setStyles({'nodeDiameter_': parseFloat(this.value)}) });
-$("#nodeColor").change(               function() { fcnn.setStyles({'nodeColor_': this.value}) });
-$("#nodeBorderColor").change(         function() { fcnn.setStyles({'nodeBorderColor_': this.value}) });
-$("#betweenLayers").change(           function() { fcnn.setBetweenLayers({'betweenLayers_': parseFloat(this.value)}) });
-$('#nnDirection input:radio').change( function() { fcnn.setNnDirection({'nnDirection_': this.value}) });
-$("#showBias").change(                function() { fcnn.setShowBias({'showBias_': this.checked}) });
-$("#showLabels").change(              function() { fcnn.setShowLabels({'showLabels_': this.checked}) });
+$("#edgeOpacity").change(             function() { fcnn.style({'edgeOpacity_': parseFloat(this.value)}) });
+$("#negativeEdgeColor").change(       function() { fcnn.style({'negativeEdgeColor_': this.value}) });
+$("#positiveEdgeColor").change(       function() { fcnn.style({'positiveEdgeColor_': this.value}) });
+$("#edgeColorProportional").change(   function() { fcnn.style({'edgeColorProportional_': this.checked}) });
+$("#defaultEdgeColor").change(        function() { fcnn.style({'defaultEdgeColor_': this.value}) });
+$("#nodeDiameter").change(            function() { fcnn.style({'nodeDiameter_': parseFloat(this.value)}) });
+$("#nodeColor").change(               function() { fcnn.style({'nodeColor_': this.value}) });
+$("#nodeBorderColor").change(         function() { fcnn.style({'nodeBorderColor_': this.value}) });
+$("#betweenLayers").change(           function() { fcnn.redistribute({'betweenLayers_': parseFloat(this.value)}) });
+$('#nnDirection input:radio').change( function() { fcnn.redistribute({'nnDirection_': this.value}) });
+$("#showBias").change(                function() { fcnn.redraw({'showBias_': this.checked}) });
+$("#showLabels").change(              function() { fcnn.redraw({'showLabels_': this.checked}) });
 
 
 /////////////////////////////////////////////////////////////////////////////
