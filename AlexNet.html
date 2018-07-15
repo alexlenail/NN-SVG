@@ -294,6 +294,7 @@
     <script src="SVGRenderer.js"></script>
     <script src="Projector.js"></script>
 
+    <!-- We use locally cached copies of these in case the upstream versions change -->
     <!-- <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script> -->
     <!-- <script src="https://threejs.org/examples/js/renderers/Projector.js"></script> -->
     <!-- <script src="https://threejs.org/examples/js/renderers/SVGRenderer.js"></script> -->
@@ -343,79 +344,19 @@ $('#rendererType input:radio').change(function() {
     alexnet.restartRenderer();
 });
 
-$("#color1").change(function() {
-    color1 = this.value;
-    alexnet.reColor(color1, undefined, undefined);
-});
-
-$("#color2").change(function() {
-    color2 = this.value;
-    alexnet.reColor(undefined, color2, undefined);
-});
-
-$("#color3").change(function() {
-    color3 = this.value;
-    alexnet.reColor(undefined, undefined, color3);
-});
-
-$("#rectOpacity").change(function() {
-    rectOpacity = parseFloat(this.value);
-    $(this).blur();
-    alexnet.setRectOpacity(rectOpacity)
-});
-
-$("#strideOpacity").change(function() {
-    strideOpacity = parseFloat(this.value);
-    $(this).blur();
-    alexnet.setStrideOpacity(strideOpacity)
-});
-
-$("#betweenLayers").change(function() {
-    $(this).blur();
-    betweenLayers = parseFloat(this.value);
-    alexnet.redraw({'betweenLayers_': betweenLayers});
-});
-
-$("#logDepth").change(function() {
-    logDepth = this.checked;
-    alexnet.redraw({'logDepth_': logDepth});
-});
-
-$("#depthScale").change(function() {
-    $("#depthSpan").text(this.value);
-    $(this).blur();
-    depthScale = parseFloat(this.value);
-    alexnet.redraw({'depthScale_': depthScale});
-});
-
-$("#logWidth").change(function() {
-    logWidth = this.checked;
-    alexnet.redraw({'logWidth_': logWidth});
-});
-
-$("#widthScale").change(function() {
-    $("#widthSpan").text(this.value);
-    $(this).blur();
-    widthScale = parseFloat(this.value);
-    alexnet.redraw({'widthScale_': widthScale});
-});
-
-$("#logConvSize").change(function() {
-    logConvSize = this.checked;
-    alexnet.redraw({'logConvSize_': logConvSize});
-});
-
-$("#convScale").change(function() {
-    $("#convSpan").text(this.value);
-    $(this).blur();
-    convScale = parseFloat(this.value);
-    alexnet.redraw({'convScale_': convScale});
-});
-
-$("#showDims").change(function() {
-    showDims = this.checked;
-    alexnet.redraw({'showDims_': showDims});
-});
+$("#color1").change(        function () { alexnet.style({'color1_': this.value}); });
+$("#color2").change(        function () { alexnet.style({'color2_': this.value}); });
+$("#color3").change(        function () { alexnet.style({'color3_': this.value}); });
+$("#rectOpacity").change(   function () { alexnet.style({'rectOpacity_': parseFloat(this.value)}); $(this).blur(); });
+$("#strideOpacity").change( function () { alexnet.style({'strideOpacity_': parseFloat(this.value)}); $(this).blur(); });
+$("#betweenLayers").change( function () { alexnet.redraw({'betweenLayers_': parseFloat(this.value)}); $(this).blur(); });
+$("#logDepth").change(      function () { alexnet.redraw({'logDepth_': this.checked}); });
+$("#depthScale").change(    function () { alexnet.redraw({'depthScale_': parseFloat(this.value)}); $(this).blur(); $("#depthSpan").text(this.value); });
+$("#logWidth").change(      function () { alexnet.redraw({'logWidth_': this.checked}); });
+$("#widthScale").change(    function () { alexnet.redraw({'widthScale_': parseFloat(this.value)}); $(this).blur(); $("#widthSpan").text(this.value); });
+$("#logConvSize").change(   function () { alexnet.redraw({'logConvSize_': this.checked}); });
+$("#convScale").change(     function () { alexnet.redraw({'convScale_': parseFloat(this.value)}); $(this).blur(); $("#convSpan").text(this.value); });
+$("#showDims").change(      function () { alexnet.redraw({'showDims_': this.checked}); });
 
 
 // /////////////////////////////////////////////////////////////////////////////

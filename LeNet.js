@@ -8,22 +8,14 @@ function LeNet() {
     let range = n => [...Array(n).keys()];
 
     let nWise = (n, array) => {
-      iterators = Array(n).fill().map(() => array[Symbol.iterator]());
-      iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
-      return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
+        iterators = Array(n).fill().map(() => array[Symbol.iterator]());
+        iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
+        return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
     };
 
     let pairWise = (array) => nWise(2, array);
 
-    function flatten(array) {
-      return array.reduce(function (flat, toFlatten) {
-        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-      }, []);
-    }
-
-    function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
+    let flatten = (array) => array.reduce((flat, toFlatten) => (flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)), []);
 
     let rand = (min, max) => Math.random() * (max - min) + min;
 
@@ -71,9 +63,10 @@ function LeNet() {
                           ///////    Draw Graph    ///////
     /////////////////////////////////////////////////////////////////////////////
 
-    function redraw(p_architecture = architecture) {
+    function redraw({architecture_=architecture,
+                     architecture2_=architecture2}={}) {
 
-        architecture = p_architecture;
+        architecture = architecture_;
 
         lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {return {'id':layer_index+'_'+rect_index,'layer':layer_index,'rect_index':rect_index,'side':layer['squareWidth']}}));
         lenet.rects = flatten(lenet.rects);
@@ -83,8 +76,6 @@ function LeNet() {
 
         lenet.conv_links = lenet.convs.map(conv => {return [Object.assign({'id':'link_'+conv['layer']+'_0','i':0},conv), Object.assign({'id':'link_'+conv['layer']+'_1','i':1},conv)]});
         lenet.conv_links = flatten(lenet.conv_links);
-
-        architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
         lenet.fc_layers = architecture2.map((size, fc_layer_index) => {return {'id': 'fc_'+fc_layer_index, 'layer':fc_layer_index+architecture.length, 'size':size/Math.sqrt(2)}});
         lenet.fc_links = lenet.fc_layers.map(fc => { return [Object.assign({'id':'link_'+fc['layer']+'_0','i':0,'prevSize':10},fc), Object.assign({'id':'link_'+fc['layer']+'_1','i':1,'prevSize':10},fc)]});
@@ -171,15 +162,15 @@ function LeNet() {
                    .attr("font-family", "sans-serif")
                    .merge(info);
 
-        reColor();
-        setBorderWidth();
-        setRectOpacity();
+        style();
+
     }
 
-    function redistribute(p_betweenLayers = betweenLayers, p_betweenSquares = betweenSquares) {
+    function redistribute({betweenLayers_=betweenLayers,
+                           betweenSquares_=betweenSquares}={}) {
 
-        betweenLayers = p_betweenLayers;
-        betweenSquares = p_betweenSquares;
+        betweenLayers = betweenLayers_;
+        betweenSquares = betweenSquares_;
 
         layer_widths = architecture.map((layer, i) => (layer['numberOfSquares']-1) * betweenSquares + layer['squareWidth']);
         layer_widths = layer_widths.concat(lenet.fc_layers.map((layer, i) => layer['size']));
@@ -231,9 +222,16 @@ function LeNet() {
     }
 
 
-    function reColor(chosen_color1 = color1, chosen_color2 = color2) {
-        color1 = chosen_color1;
-        color2 = chosen_color2;
+    function style({color1_=color1,
+                    color2_=color2,
+                    borderWidth_=borderWidth,
+                    rectOpacity_=rectOpacity,
+                    showLabels_=showLabels}={}) {
+        color1      = color1_;
+        color2      = color2_;
+        borderWidth = borderWidth_;
+        rectOpacity = rectOpacity_;
+        showLabels  = showLabels_;
 
         rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
         poly.style("fill", color1);
@@ -243,30 +241,18 @@ function LeNet() {
         link.style("stroke", borderColor);
         poly.style("stroke", borderColor);
         line.style("stroke", borderColor);
-    }
-
-    function setBorderWidth(chosen_borderWidth = borderWidth) {
-        borderWidth = chosen_borderWidth;
 
         rect.style("stroke-width", borderWidth);
         conv.style("stroke-width", borderWidth);
         link.style("stroke-width", borderWidth / 2);
         poly.style("stroke-width", borderWidth);
         line.style("stroke-width", borderWidth / 2);
-    }
-
-    function setRectOpacity(chosen_rectOpacity = rectOpacity) {
-        rectOpacity = chosen_rectOpacity;
 
         rect.style("opacity", rectOpacity);
         conv.style("stroke-opacity", rectOpacity);
         link.style("stroke-opacity", rectOpacity);
         poly.style("opacity", rectOpacity);
         line.style("stroke-opacity", rectOpacity);
-    }
-
-    function setShowLabels(chosen_showLabels = showLabels) {
-        showLabels = chosen_showLabels;
 
         text.text(function (d) { return (showLabels ? d.op : ""); });
         info.text(function (d) { return (showLabels ? d.text : ""); });
@@ -297,14 +283,15 @@ function LeNet() {
 
     resize();
 
+
+    /////////////////////////////////////////////////////////////////////////////
+                          ///////    Return    ///////
+    /////////////////////////////////////////////////////////////////////////////
+
     return {
         'redraw'         : redraw,
         'redistribute'   : redistribute,
-
-        'reColor'        : reColor,
-        'setBorderWidth' : setBorderWidth,
-        'setRectOpacity' : setRectOpacity,
-        'setShowLabels'  : setShowLabels,
+        'style'          : style,
     }
 
 }

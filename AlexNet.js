@@ -5,8 +5,6 @@ function AlexNet() {
     //                     ///////    Helper Functions    ///////
     // /////////////////////////////////////////////////////////////////////////////
 
-    let range = n => [...Array(n).keys()];
-
     let nWise = (n, array) => {
       iterators = Array(n).fill().map(() => array[Symbol.iterator]());
       iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
@@ -15,11 +13,11 @@ function AlexNet() {
 
     let pairWise = (array) => nWise(2, array);
 
-    Array.prototype.last = function() { return this[this.length - 1]; };
-
     let sum = (arr) => arr.reduce((a,b)=>a+b);
 
     let rand = (min, max) => Math.random() * (max - min) + min;
+
+    Array.prototype.last = function() { return this[this.length - 1]; };
 
 
     // /////////////////////////////////////////////////////////////////////////////
@@ -111,10 +109,17 @@ function AlexNet() {
 
     restartRenderer();
 
-    function redraw({scene_=scene, architecture_=architecture, architecture2_=architecture2,
-                     betweenLayers_=betweenLayers, logDepth_=logDepth, depthScale_=depthScale,
-                     logWidth_=logWidth, widthScale_=widthScale, logConvSize_=logConvSize,
-                     convScale_=convScale, showDims_=showDims}={}) {
+    function redraw({scene_=scene,
+                     architecture_=architecture,
+                     architecture2_=architecture2,
+                     betweenLayers_=betweenLayers,
+                     logDepth_=logDepth,
+                     depthScale_=depthScale,
+                     logWidth_=logWidth,
+                     widthScale_=widthScale,
+                     logConvSize_=logConvSize,
+                     convScale_=convScale,
+                     showDims_=showDims}={}) {
 
         scene = scene_;
         architecture = architecture_;
@@ -285,25 +290,22 @@ function AlexNet() {
         return sprite;
     }
 
-    function reColor(color1_=color1, color2_=color2, color3_=color3) {
-        color1 = color1_;
-        color2 = color2_;
-        color3 = color3_;
+    function style({color1_=color1,
+                    color2_=color2,
+                    color3_=color3,
+                    rectOpacity_=rectOpacity,
+                    strideOpacity_=strideOpacity}={}) {
+        color1        = color1_;
+        color2        = color2_;
+        color3        = color3_;
+        rectOpacity   = rectOpacity_;
+        strideOpacity = strideOpacity_;
 
         box_material.color = new THREE.Color(color1);
         conv_material.color = new THREE.Color(color2);
         pyra_material.color = new THREE.Color(color3);
-    }
-
-
-    function setRectOpacity(rectOpacity_ = rectOpacity) {
-        rectOpacity = rectOpacity_;
 
         box_material.opacity = rectOpacity;
-    }
-
-    function setStrideOpacity(strideOpacity_ = strideOpacity) {
-        strideOpacity = strideOpacity_;
 
         conv_material.opacity = strideOpacity;
         pyra_material.opacity = strideOpacity;
@@ -328,13 +330,15 @@ function AlexNet() {
 
     window.addEventListener('resize', onWindowResize, false);
 
+
+    /////////////////////////////////////////////////////////////////////////////
+                          ///////    Return    ///////
+    /////////////////////////////////////////////////////////////////////////////
+
     return {
         'redraw'           : redraw,
         'restartRenderer'  : restartRenderer,
-
-        'reColor'          : reColor,
-        'setRectOpacity'   : setRectOpacity,
-        'setStrideOpacity' : setStrideOpacity,
+        'style'            : style,
 
     }
 

@@ -8,24 +8,17 @@ function FCNN() {
     let range = n => [...Array(n).keys()];
 
     let nWise = (n, array) => {
-      iterators = Array(n).fill().map(() => array[Symbol.iterator]());
-      iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
-      return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
+        iterators = Array(n).fill().map(() => array[Symbol.iterator]());
+        iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
+        return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
     };
 
     let pairWise = (array) => nWise(2, array);
 
-    function flatten(array) {
-      return array.reduce(function (flat, toFlatten) {
-        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-      }, []);
-    }
-
-    function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
+    let flatten = (array) => array.reduce((flat, toFlatten) => (flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)), []);
 
     let randomWeight = () => Math.random() * 2 - 1;
+
 
     /////////////////////////////////////////////////////////////////////////////
                           ///////    Variables    ///////
@@ -82,9 +75,13 @@ function FCNN() {
                           ///////    Draw Graph    ///////
     /////////////////////////////////////////////////////////////////////////////
 
-    function redraw(p_architecture = architecture) {
+    function redraw({architecture_=architecture,
+                     showBias_=showBias,
+                     showLabels_=showLabels}={}) {
 
-        architecture = p_architecture;
+        architecture = architecture_;
+        showBias = showBias_;
+        showLabels = showLabels_;
 
         graph.nodes = architecture.map((layer_width, layer_index) => range(layer_width).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
         graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return right.node_index >= 0 ? {'source':left.id,'target':right.id,'weight':randomWeight()} : {} })));
@@ -99,9 +96,6 @@ function FCNN() {
                    .insert("line", ".node")
                    .attr("class", "link")
                    .merge(link);
-        setEdgeWidth();
-        setEdgeOpacity();
-        setEdgeColor();
 
         node = node.data(graph.nodes);
         node.exit().remove();
@@ -113,7 +107,6 @@ function FCNN() {
                    .on("mousedown", set_focus)
                    .on("mouseup", remove_focus)
                    .merge(node);
-        setNodeStyles();
 
         text = text.data(label);
         if (text.empty()) { text = text.enter().append("text").attr("class", "text"); }
@@ -122,11 +115,16 @@ function FCNN() {
                    .style("font-size", nominal_text_size+"px")
                    .merge(text);
 
+        style();
     }
 
-    function redistribute(p_betweenNodesInLayer = betweenNodesInLayer) {
+    function redistribute({betweenNodesInLayer_=betweenNodesInLayer,
+                           betweenLayers_=betweenLayers,
+                           nnDirection_=nnDirection}={}) {
 
-        betweenNodesInLayer = p_betweenNodesInLayer;
+        betweenNodesInLayer = betweenNodesInLayer_;
+        betweenLayers = betweenLayers_;
+        nnDirection = nnDirection_;
 
         layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i])
 
@@ -157,78 +155,52 @@ function FCNN() {
 
     }
 
-    function setEdgeWidth(chosen_edgeWidthProportional = edgeWidthProportional,
-                          chosen_edgeWidth = edgeWidth) {
-        edgeWidthProportional = chosen_edgeWidthProportional;
-        edgeWidth             = chosen_edgeWidth;
-        weightedEdgeWidth     = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
+    function style({edgeWidthProportional_=edgeWidthProportional,
+                    edgeWidth_=edgeWidth,
+                    edgeOpacityProportional_=edgeOpacityProportional,
+                    edgeOpacity_=edgeOpacity,
+                    negativeEdgeColor_=negativeEdgeColor,
+                    positiveEdgeColor_=positiveEdgeColor,
+                    edgeColorProportional_=edgeColorProportional,
+                    defaultEdgeColor_=defaultEdgeColor,
+                    nodeDiameter_=nodeDiameter,
+                    nodeColor_=nodeColor,
+                    nodeBorderColor_=nodeBorderColor}={}) {
+        // Edge Width
+        edgeWidthProportional   = edgeWidthProportional_;
+        edgeWidth               = edgeWidth_;
+        weightedEdgeWidth       = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
+        // Edge Opacity
+        edgeOpacityProportional = edgeOpacityProportional_;
+        edgeOpacity             = edgeOpacity_;
+        // Edge Color
+        defaultEdgeColor        = defaultEdgeColor_;
+        edgeColorProportional   = edgeColorProportional_;
+        negativeEdgeColor       = negativeEdgeColor_;
+        positiveEdgeColor       = positiveEdgeColor_;
+        weightedEdgeColor       = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+        // Node Styles
+        nodeDiameter            = nodeDiameter_;
+        nodeColor               = nodeColor_;
+        nodeBorderColor         = nodeBorderColor_;
 
         link.style("stroke-width", function(d) {
-            if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
-            else { return edgeWidth; }
+            if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); } else { return edgeWidth; }
         });
-    }
-
-    function setEdgeOpacity(chosen_edgeOpacityProportional = edgeOpacityProportional,
-                            chosen_edgeOpacity = edgeOpacity) {
-        edgeOpacityProportional = chosen_edgeOpacityProportional;
-        edgeOpacity             = chosen_edgeOpacity;
 
         link.style("stroke-opacity", function(d) {
-            if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
-            else { return edgeOpacity; }
+            if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); } else { return edgeOpacity; }
         });
-    }
-
-    function setEdgeColor(chosen_negativeEdgeColor = negativeEdgeColor,
-                          chosen_positiveEdgeColor = positiveEdgeColor,
-                          chosen_edgeColorProportional = edgeColorProportional,
-                          chosen_defaultEdgeColor = defaultEdgeColor) {
-        defaultEdgeColor      = chosen_defaultEdgeColor;
-        edgeColorProportional = chosen_edgeColorProportional;
-        negativeEdgeColor     = chosen_negativeEdgeColor;
-        positiveEdgeColor     = chosen_positiveEdgeColor;
-        weightedEdgeColor     = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
 
         link.style("stroke", function(d) {
-            if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-            else { return defaultEdgeColor; }
+            if (edgeColorProportional) { return weightedEdgeColor(d.weight); } else { return defaultEdgeColor; }
         });
-    }
-
-    function setNodeStyles(chosen_nodeDiameter = nodeDiameter,
-                           chosen_nodeColor = nodeColor,
-                           chosen_nodeBorderColor = nodeBorderColor) {
-        nodeDiameter    = chosen_nodeDiameter;
-        nodeColor       = chosen_nodeColor;
-        nodeBorderColor = chosen_nodeBorderColor;
 
         node.attr("r", nodeDiameter/2);
         node.style("fill", nodeColor);
         node.style("stroke", nodeBorderColor);
-    }
 
-    function setBetweenLayers(chosen_betweenLayers = betweenLayers) {
-        betweenLayers = chosen_betweenLayers;
-        redistribute();
     }
-
-    function setNnDirection(chosen_nnDirection = nnDirection) {
-        nnDirection = chosen_nnDirection;
-        redistribute();
-    }
-
-    function setShowBias(chosen_showBias = showBias) {
-        showBias = chosen_showBias;
-        redraw();
-        redistribute();
-    }
-
-    function setShowLabels(chosen_showLabels = showLabels) {
-        showLabels = chosen_showLabels;
-        text.text(function (d) { return (showLabels ? d.text : ""); });
-    }
-
 
     /////////////////////////////////////////////////////////////////////////////
                           ///////    Zoom    ///////
@@ -271,21 +243,17 @@ function FCNN() {
         link.style("opacity", function () { return edgeOpacity; })
     }
 
+    /////////////////////////////////////////////////////////////////////////////
+                          ///////    Return    ///////
+    /////////////////////////////////////////////////////////////////////////////
+
     return {
         'redraw'           : redraw,
         'redistribute'     : redistribute,
-
-        'setEdgeWidth'     : setEdgeWidth,
-        'setEdgeOpacity'   : setEdgeOpacity,
-        'setEdgeColor'     : setEdgeColor,
-        'setNodeStyles'    : setNodeStyles,
-        'setBetweenLayers' : setBetweenLayers,
-        'setNnDirection'   : setNnDirection,
-        'setShowBias'      : setShowBias,
-        'setShowLabels'    : setShowLabels,
+        'style'            : style,
 
         'graph'            : graph,
-
+        'link'             : link
     }
 
 }
