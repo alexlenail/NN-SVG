@@ -249,8 +249,8 @@ function restart() {
     let range = n => [...Array(n).keys()];
     architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'numberOfSquares':l[0],'squareWidth':l[1],'stride':l[2]}});
 
-    lenet.redraw(architecture);
-    lenet.redistribute(betweenLayers);
+    lenet.redraw({'architecture_':architecture});
+    lenet.redistribute({'betweenLayers_':betweenLayers});
 
 }
 
@@ -260,41 +260,17 @@ restart();
                 ///////    Select Styling    ///////
 /////////////////////////////////////////////////////////////////////////////
 
-$("#color1").change(function() {
-    color1 = this.value;
-    lenet.reColor(color1, undefined)
-});
-
-$("#color2").change(function() {
-    color2 = this.value;
-    lenet.reColor(undefined, color2)
-});
-
-$("#borderWidth").change(function() {
-    borderWidth = parseFloat(this.value);
-    lenet.setBorderWidth(borderWidth);
-});
-
-$("#rectOpacity").change(function() {
-    rectOpacity = parseFloat(this.value);
-    lenet.setRectOpacity(rectOpacity);
-});
-
-$("#betweenSquares").change(function() {
-    betweenSquares = parseFloat(this.value);
-    lenet.redistribute(undefined, betweenSquares);
-});
-
-$("#showLabels").change(function() {
-    showLabels = this.checked;
-    lenet.setShowLabels(showLabels);
-});
+$("#color1").change(         function () { lenet.style({'color1_': this.value}); });
+$("#color2").change(         function () { lenet.style({'color2_': this.value}); });
+$("#borderWidth").change(    function () { lenet.style({'borderWidth_': parseFloat(this.value)}); });
+$("#rectOpacity").change(    function () { lenet.style({'rectOpacity_': parseFloat(this.value)}); });
+$("#betweenSquares").change( function () { lenet.style({'betweenSquares_': parseFloat(this.value)}); });
+$("#showLabels").change(     function () { lenet.style({'showLabels_': this.checked}); });
 
 $("input[name='spacing']").change(function() {
     betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
-    lenet.redistribute(betweenLayers);
+    lenet.redistribute({'betweenLayers_':betweenLayers});
 });
-
 
 
 /////////////////////////////////////////////////////////////////////////////

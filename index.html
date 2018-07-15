@@ -255,8 +255,8 @@ function restart() {
 
     betweenNodesInLayer = $('#architecture').find('input[name="betweenNodesInLayer"]').map((i,el) => parseFloat($(el).val())).get();
 
-    fcnn.redraw(architecture);
-    fcnn.redistribute(betweenNodesInLayer);
+    fcnn.redraw({'architecture_':architecture});
+    fcnn.redistribute({'betweenNodesInLayer_':betweenNodesInLayer});
 
     $('#count span:first').text(fcnn.graph.nodes.length+" nodes, "+fcnn.graph.links.length+" edges you don't need to draw yourself! ")
 }

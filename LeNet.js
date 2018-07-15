@@ -71,9 +71,9 @@ function LeNet() {
                           ///////    Draw Graph    ///////
     /////////////////////////////////////////////////////////////////////////////
 
-    function redraw(p_architecture = architecture) {
+    function redraw({architecture_=architecture}={}) {
 
-        architecture = p_architecture;
+        architecture = architecture_;
 
         lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {return {'id':layer_index+'_'+rect_index,'layer':layer_index,'rect_index':rect_index,'side':layer['squareWidth']}}));
         lenet.rects = flatten(lenet.rects);
@@ -176,10 +176,11 @@ function LeNet() {
         setRectOpacity();
     }
 
-    function redistribute(p_betweenLayers = betweenLayers, p_betweenSquares = betweenSquares) {
+    function redistribute({betweenLayers_=betweenLayers,
+                           betweenSquares_=betweenSquares}={}) {
 
-        betweenLayers = p_betweenLayers;
-        betweenSquares = p_betweenSquares;
+        betweenLayers = betweenLayers_;
+        betweenSquares = betweenSquares_;
 
         layer_widths = architecture.map((layer, i) => (layer['numberOfSquares']-1) * betweenSquares + layer['squareWidth']);
         layer_widths = layer_widths.concat(lenet.fc_layers.map((layer, i) => layer['size']));
@@ -231,9 +232,16 @@ function LeNet() {
     }
 
 
-    function reColor(chosen_color1 = color1, chosen_color2 = color2) {
-        color1 = chosen_color1;
-        color2 = chosen_color2;
+    function style({color1_=color1,
+                    color2_=color2,
+                    borderWidth_=borderWidth,
+                    rectOpacity_=rectOpacity,
+                    showLabels_=showLabels}={}) {
+        color1 = color1_;
+        color2 = color2_;
+        borderWidth = borderWidth_;
+        rectOpacity = rectOpacity_;
+        showLabels = showLabels_;
 
         rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
         poly.style("fill", color1);
@@ -243,30 +251,18 @@ function LeNet() {
         link.style("stroke", borderColor);
         poly.style("stroke", borderColor);
         line.style("stroke", borderColor);
-    }
-
-    function setBorderWidth(chosen_borderWidth = borderWidth) {
-        borderWidth = chosen_borderWidth;
 
         rect.style("stroke-width", borderWidth);
         conv.style("stroke-width", borderWidth);
         link.style("stroke-width", borderWidth / 2);
         poly.style("stroke-width", borderWidth);
         line.style("stroke-width", borderWidth / 2);
-    }
-
-    function setRectOpacity(chosen_rectOpacity = rectOpacity) {
-        rectOpacity = chosen_rectOpacity;
 
         rect.style("opacity", rectOpacity);
         conv.style("stroke-opacity", rectOpacity);
         link.style("stroke-opacity", rectOpacity);
         poly.style("opacity", rectOpacity);
         line.style("stroke-opacity", rectOpacity);
-    }
-
-    function setShowLabels(chosen_showLabels = showLabels) {
-        showLabels = chosen_showLabels;
 
         text.text(function (d) { return (showLabels ? d.op : ""); });
         info.text(function (d) { return (showLabels ? d.text : ""); });
