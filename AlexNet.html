@@ -304,6 +304,24 @@
 
     <script type="text/javascript">
 
+alexnet = AlexNet();
+
+function restart() {
+
+    let range = n => [...Array(n).keys()];
+    let rand = (min, max) => Math.random() * (max - min) + min;
+
+
+    architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1],'stride':l[2],'rel_x':rand(-0.4,0.4),'rel_y':rand(-0.4,0.4)}});
+
+    architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+
+    alexnet.redraw({'architecture_':architecture, 'architecture2_':architecture2});
+
+}
+
+restart();
 
 // /////////////////////////////////////////////////////////////////////////////
 //                 ///////    Select Styling    ///////
@@ -322,82 +340,81 @@ $('#rendererType input:radio').change(function() {
         $("#download").addClass('disabled');
     }
     $(this).blur();
-    restartRenderer();
+    alexnet.restartRenderer();
 });
 
 $("#color1").change(function() {
     color1 = this.value;
-    box_material.color = new THREE.Color(color1);
+    alexnet.reColor(color1, undefined, undefined);
 });
 
 $("#color2").change(function() {
     color2 = this.value;
-    conv_material.color = new THREE.Color(color2);
+    alexnet.reColor(undefined, color2, undefined);
 });
 
 $("#color3").change(function() {
     color3 = this.value;
-    pyra_material.color = new THREE.Color(color3);
+    alexnet.reColor(undefined, undefined, color3);
 });
 
 $("#rectOpacity").change(function() {
     rectOpacity = parseFloat(this.value);
     $(this).blur();
-    box_material.opacity = rectOpacity;
+    alexnet.setRectOpacity(rectOpacity)
 });
 
 $("#strideOpacity").change(function() {
     strideOpacity = parseFloat(this.value);
     $(this).blur();
-    conv_material.opacity = strideOpacity;
-    pyra_material.opacity = strideOpacity;
+    alexnet.setStrideOpacity(strideOpacity)
 });
 
 $("#betweenLayers").change(function() {
-    betweenLayers = parseFloat(this.value);
     $(this).blur();
-    restart(scene);
+    betweenLayers = parseFloat(this.value);
+    alexnet.redraw({'betweenLayers_': betweenLayers});
 });
 
 $("#logDepth").change(function() {
     logDepth = this.checked;
-    restart(scene);
+    alexnet.redraw({'logDepth_': logDepth});
 });
 
 $("#depthScale").change(function() {
     $("#depthSpan").text(this.value);
     $(this).blur();
     depthScale = parseFloat(this.value);
-    restart(scene);
+    alexnet.redraw({'depthScale_': depthScale});
 });
 
 $("#logWidth").change(function() {
     logWidth = this.checked;
-    restart(scene);
+    alexnet.redraw({'logWidth_': logWidth});
 });
 
 $("#widthScale").change(function() {
     $("#widthSpan").text(this.value);
     $(this).blur();
     widthScale = parseFloat(this.value);
-    restart(scene);
+    alexnet.redraw({'widthScale_': widthScale});
 });
 
 $("#logConvSize").change(function() {
     logConvSize = this.checked;
-    restart(scene);
+    alexnet.redraw({'logConvSize_': logConvSize});
 });
 
 $("#convScale").change(function() {
     $("#convSpan").text(this.value);
     $(this).blur();
     convScale = parseFloat(this.value);
-    restart(scene);
+    alexnet.redraw({'convScale_': convScale});
 });
 
 $("#showDims").change(function() {
     showDims = this.checked;
-    restart(scene);
+    alexnet.redraw({'showDims_': showDims});
 });
 
 
@@ -419,18 +436,22 @@ $(document).on('click', '#architecture .btn-add', function(e) {
         .removeClass('btn-primary').addClass('btn-secondary')
         .html('<span class="fa fa-minus"></span>');
 
-    restart(scene);
+    restart();
 
-}).on('click', '#architecture .btn-remove', function(e) {
+});
+
+$(document).on('click', '#architecture .btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
 
-    restart(scene);
+    restart();
 
     return false;
 
-}).on('click', '#architecture2 .btn-add', function(e) {
+});
+
+$(document).on('click', '#architecture2 .btn-add', function(e) {
     e.preventDefault();
 
     var controlForm = $('#architecture2');
@@ -443,23 +464,26 @@ $(document).on('click', '#architecture .btn-add', function(e) {
         .removeClass('btn-primary').addClass('btn-secondary')
         .html('<span class="fa fa-minus"></span>');
 
-    restart(scene);
+    restart();
 
-}).on('click', '#architecture2 .btn-remove', function(e) {
+});
+
+$(document).on('click', '#architecture2 .btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
 
-    restart(scene);
+    restart();
 
     return false;
 
-}).on('change', 'input', function(e) {
-    e.preventDefault();
-
-    restart(scene);
 });
 
+$(document).on('change', 'input', function(e) {
+    e.preventDefault();
+
+    restart();
+});
 
 
 $("#download").on("click", function() {
