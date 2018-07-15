@@ -249,7 +249,9 @@ function restart() {
     let range = n => [...Array(n).keys()];
     architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'numberOfSquares':l[0],'squareWidth':l[1],'stride':l[2]}});
 
-    lenet.redraw({'architecture_':architecture});
+    architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+
+    lenet.redraw({'architecture_':architecture, 'architecture2_':architecture2});
     lenet.redistribute({'betweenLayers_':betweenLayers});
 
 }
@@ -264,7 +266,7 @@ $("#color1").change(         function () { lenet.style({'color1_': this.value});
 $("#color2").change(         function () { lenet.style({'color2_': this.value}); });
 $("#borderWidth").change(    function () { lenet.style({'borderWidth_': parseFloat(this.value)}); });
 $("#rectOpacity").change(    function () { lenet.style({'rectOpacity_': parseFloat(this.value)}); });
-$("#betweenSquares").change( function () { lenet.style({'betweenSquares_': parseFloat(this.value)}); });
+$("#betweenSquares").change( function () { lenet.redistribute({'betweenSquares_': parseFloat(this.value)}); });
 $("#showLabels").change(     function () { lenet.style({'showLabels_': this.checked}); });
 
 $("input[name='spacing']").change(function() {

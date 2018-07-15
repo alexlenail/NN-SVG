@@ -8,17 +8,17 @@ function LeNet() {
     let range = n => [...Array(n).keys()];
 
     let nWise = (n, array) => {
-      iterators = Array(n).fill().map(() => array[Symbol.iterator]());
-      iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
-      return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
+        iterators = Array(n).fill().map(() => array[Symbol.iterator]());
+        iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
+        return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
     };
 
     let pairWise = (array) => nWise(2, array);
 
     function flatten(array) {
-      return array.reduce(function (flat, toFlatten) {
-        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-      }, []);
+        return array.reduce(function (flat, toFlatten) {
+            return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+        }, []);
     }
 
     function isNumber(n) {
@@ -71,7 +71,8 @@ function LeNet() {
                           ///////    Draw Graph    ///////
     /////////////////////////////////////////////////////////////////////////////
 
-    function redraw({architecture_=architecture}={}) {
+    function redraw({architecture_=architecture,
+                     architecture2_=architecture2}={}) {
 
         architecture = architecture_;
 
@@ -83,8 +84,6 @@ function LeNet() {
 
         lenet.conv_links = lenet.convs.map(conv => {return [Object.assign({'id':'link_'+conv['layer']+'_0','i':0},conv), Object.assign({'id':'link_'+conv['layer']+'_1','i':1},conv)]});
         lenet.conv_links = flatten(lenet.conv_links);
-
-        architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
         lenet.fc_layers = architecture2.map((size, fc_layer_index) => {return {'id': 'fc_'+fc_layer_index, 'layer':fc_layer_index+architecture.length, 'size':size/Math.sqrt(2)}});
         lenet.fc_links = lenet.fc_layers.map(fc => { return [Object.assign({'id':'link_'+fc['layer']+'_0','i':0,'prevSize':10},fc), Object.assign({'id':'link_'+fc['layer']+'_1','i':1,'prevSize':10},fc)]});
@@ -171,9 +170,8 @@ function LeNet() {
                    .attr("font-family", "sans-serif")
                    .merge(info);
 
-        reColor();
-        setBorderWidth();
-        setRectOpacity();
+        style();
+
     }
 
     function redistribute({betweenLayers_=betweenLayers,
@@ -296,11 +294,7 @@ function LeNet() {
     return {
         'redraw'         : redraw,
         'redistribute'   : redistribute,
-
-        'reColor'        : reColor,
-        'setBorderWidth' : setBorderWidth,
-        'setRectOpacity' : setRectOpacity,
-        'setShowLabels'  : setShowLabels,
+        'style'          : style,
     }
 
 }

@@ -335,10 +335,7 @@ function AlexNet() {
     return {
         'redraw'           : redraw,
         'restartRenderer'  : restartRenderer,
-
-        'reColor'          : reColor,
-        'setRectOpacity'   : setRectOpacity,
-        'setStrideOpacity' : setStrideOpacity,
+        'style'            : style,
 
     }
 
