@@ -8,17 +8,17 @@ function FCNN() {
     let range = n => [...Array(n).keys()];
 
     let nWise = (n, array) => {
-      iterators = Array(n).fill().map(() => array[Symbol.iterator]());
-      iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
-      return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
+        iterators = Array(n).fill().map(() => array[Symbol.iterator]());
+        iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
+        return Array(array.length - n + 1).fill().map(() => (iterators.map(it => it.next().value)));
     };
 
     let pairWise = (array) => nWise(2, array);
 
     function flatten(array) {
-      return array.reduce(function (flat, toFlatten) {
-        return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-      }, []);
+        return array.reduce(function (flat, toFlatten) {
+            return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+        }, []);
     }
 
     function isNumber(n) {
