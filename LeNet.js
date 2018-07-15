@@ -59,6 +59,7 @@ function LeNet() {
     var text = g.selectAll(".text");
     var info = g.selectAll(".info");
 
+
     /////////////////////////////////////////////////////////////////////////////
                           ///////    Draw Graph    ///////
     /////////////////////////////////////////////////////////////////////////////
@@ -220,7 +221,6 @@ function LeNet() {
             .attr('y', function(d) { return layer_y_offsets[d.layer] + screen_center_y - 15;  });
 
     }
-
 
     function style({color1_=color1,
                     color2_=color2,

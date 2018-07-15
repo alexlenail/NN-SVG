@@ -109,8 +109,7 @@ function AlexNet() {
 
     restartRenderer();
 
-    function redraw({scene_=scene,
-                     architecture_=architecture,
+    function redraw({architecture_=architecture,
                      architecture2_=architecture2,
                      betweenLayers_=betweenLayers,
                      logDepth_=logDepth,
@@ -121,7 +120,6 @@ function AlexNet() {
                      convScale_=convScale,
                      showDims_=showDims}={}) {
 
-        scene = scene_;
         architecture = architecture_;
         architecture2 = architecture2_;
         betweenLayers = betweenLayers_;

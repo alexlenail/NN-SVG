@@ -56,7 +56,7 @@ function FCNN() {
     var graph = {};
     var layer_offsets = [];
     var largest_layer_width = 0;
-    var nnDirection = 'right'
+    var nnDirection = 'right';
     var showBias = false;
 
     var showLabels = true;
