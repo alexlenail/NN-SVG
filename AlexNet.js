@@ -5,8 +5,6 @@ function AlexNet() {
     //                     ///////    Helper Functions    ///////
     // /////////////////////////////////////////////////////////////////////////////
 
-    let range = n => [...Array(n).keys()];
-
     let nWise = (n, array) => {
       iterators = Array(n).fill().map(() => array[Symbol.iterator]());
       iterators.forEach((it, index) => Array(index).fill().forEach(() => it.next()));
@@ -15,11 +13,11 @@ function AlexNet() {
 
     let pairWise = (array) => nWise(2, array);
 
-    Array.prototype.last = function() { return this[this.length - 1]; };
-
     let sum = (arr) => arr.reduce((a,b)=>a+b);
 
     let rand = (min, max) => Math.random() * (max - min) + min;
+
+    Array.prototype.last = function() { return this[this.length - 1]; };
 
 
     // /////////////////////////////////////////////////////////////////////////////

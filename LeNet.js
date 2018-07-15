@@ -15,15 +15,9 @@ function LeNet() {
 
     let pairWise = (array) => nWise(2, array);
 
-    function flatten(array) {
-        return array.reduce(function (flat, toFlatten) {
-            return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-        }, []);
-    }
+    let flatten = (array) => array.reduce((flat, toFlatten) => (flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)), []);
 
-    function isNumber(n) {
-        return !isNaN(parseFloat(n)) && isFinite(n);
-    }
+    let isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
     let rand = (min, max) => Math.random() * (max - min) + min;
 
