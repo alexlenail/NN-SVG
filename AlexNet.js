@@ -295,10 +295,10 @@ function AlexNet() {
                     color3_=color3,
                     rectOpacity_=rectOpacity,
                     strideOpacity_=strideOpacity}={}) {
-        color1 = color1_;
-        color2 = color2_;
-        color3 = color3_;
-        rectOpacity = rectOpacity_;
+        color1        = color1_;
+        color2        = color2_;
+        color3        = color3_;
+        rectOpacity   = rectOpacity_;
         strideOpacity = strideOpacity_;
 
         box_material.color = new THREE.Color(color1);
@@ -329,6 +329,11 @@ function AlexNet() {
     }
 
     window.addEventListener('resize', onWindowResize, false);
+
+
+    /////////////////////////////////////////////////////////////////////////////
+                          ///////    Return    ///////
+    /////////////////////////////////////////////////////////////////////////////
 
     return {
         'redraw'           : redraw,

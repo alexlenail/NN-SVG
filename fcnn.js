@@ -166,38 +166,35 @@ function FCNN() {
                     nodeDiameter_=nodeDiameter,
                     nodeColor_=nodeColor,
                     nodeBorderColor_=nodeBorderColor}={}) {
-
-        edgeWidthProportional = edgeWidthProportional_;
-        edgeWidth             = edgeWidth_;
-        weightedEdgeWidth     = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
-
+        // Edge Width
+        edgeWidthProportional   = edgeWidthProportional_;
+        edgeWidth               = edgeWidth_;
+        weightedEdgeWidth       = d3.scaleLinear().domain([0, 1]).range([0, edgeWidth]);
+        // Edge Opacity
         edgeOpacityProportional = edgeOpacityProportional_;
         edgeOpacity             = edgeOpacity_;
-
-        defaultEdgeColor      = defaultEdgeColor_;
-        edgeColorProportional = edgeColorProportional_;
-        negativeEdgeColor     = negativeEdgeColor_;
-        positiveEdgeColor     = positiveEdgeColor_;
-        weightedEdgeColor     = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+        // Edge Color
+        defaultEdgeColor        = defaultEdgeColor_;
+        edgeColorProportional   = edgeColorProportional_;
+        negativeEdgeColor       = negativeEdgeColor_;
+        positiveEdgeColor       = positiveEdgeColor_;
+        weightedEdgeColor       = d3.scaleLinear().domain([-1, 0, 1]).range([negativeEdgeColor, "white", positiveEdgeColor]);
+        // Node Styles
+        nodeDiameter            = nodeDiameter_;
+        nodeColor               = nodeColor_;
+        nodeBorderColor         = nodeBorderColor_;
 
         link.style("stroke-width", function(d) {
-            if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); }
-            else { return edgeWidth; }
+            if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); } else { return edgeWidth; }
         });
 
         link.style("stroke-opacity", function(d) {
-            if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); }
-            else { return edgeOpacity; }
+            if (edgeOpacityProportional) { return weightedEdgeOpacity(Math.abs(d.weight)); } else { return edgeOpacity; }
         });
 
         link.style("stroke", function(d) {
-            if (edgeColorProportional) { return weightedEdgeColor(d.weight); }
-            else { return defaultEdgeColor; }
+            if (edgeColorProportional) { return weightedEdgeColor(d.weight); } else { return defaultEdgeColor; }
         });
-
-        nodeDiameter    = nodeDiameter_;
-        nodeColor       = nodeColor_;
-        nodeBorderColor = nodeBorderColor_;
 
         node.attr("r", nodeDiameter/2);
         node.style("fill", nodeColor);
@@ -246,14 +243,17 @@ function FCNN() {
         link.style("opacity", function () { return edgeOpacity; })
     }
 
+    /////////////////////////////////////////////////////////////////////////////
+                          ///////    Return    ///////
+    /////////////////////////////////////////////////////////////////////////////
+
     return {
         'redraw'           : redraw,
         'redistribute'     : redistribute,
-        'style'        : style,
+        'style'            : style,
 
         'graph'            : graph,
-        'link'             : link,
-
+        'link'             : link
     }
 
 }

@@ -227,11 +227,11 @@ function LeNet() {
                     borderWidth_=borderWidth,
                     rectOpacity_=rectOpacity,
                     showLabels_=showLabels}={}) {
-        color1 = color1_;
-        color2 = color2_;
+        color1      = color1_;
+        color2      = color2_;
         borderWidth = borderWidth_;
         rectOpacity = rectOpacity_;
-        showLabels = showLabels_;
+        showLabels  = showLabels_;
 
         rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
         poly.style("fill", color1);
@@ -282,6 +282,11 @@ function LeNet() {
     d3.select(window).on("resize", resize)
 
     resize();
+
+
+    /////////////////////////////////////////////////////////////////////////////
+                          ///////    Return    ///////
+    /////////////////////////////////////////////////////////////////////////////
 
     return {
         'redraw'         : redraw,
