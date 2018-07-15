@@ -17,8 +17,6 @@ function FCNN() {
 
     let flatten = (array) => array.reduce((flat, toFlatten) => (flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten)), []);
 
-    let isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
-
     let randomWeight = () => Math.random() * 2 - 1;
 
 
