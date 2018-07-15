@@ -111,10 +111,17 @@ function AlexNet() {
 
     restartRenderer();
 
-    function redraw({scene_=scene, architecture_=architecture, architecture2_=architecture2,
-                     betweenLayers_=betweenLayers, logDepth_=logDepth, depthScale_=depthScale,
-                     logWidth_=logWidth, widthScale_=widthScale, logConvSize_=logConvSize,
-                     convScale_=convScale, showDims_=showDims}={}) {
+    function redraw({scene_=scene,
+                     architecture_=architecture,
+                     architecture2_=architecture2,
+                     betweenLayers_=betweenLayers,
+                     logDepth_=logDepth,
+                     depthScale_=depthScale,
+                     logWidth_=logWidth,
+                     widthScale_=widthScale,
+                     logConvSize_=logConvSize,
+                     convScale_=convScale,
+                     showDims_=showDims}={}) {
 
         scene = scene_;
         architecture = architecture_;
@@ -285,25 +292,22 @@ function AlexNet() {
         return sprite;
     }
 
-    function reColor(color1_=color1, color2_=color2, color3_=color3) {
+    function style({color1_=color1,
+                    color2_=color2,
+                    color3_=color3,
+                    rectOpacity_=rectOpacity,
+                    strideOpacity_=strideOpacity}={}) {
         color1 = color1_;
         color2 = color2_;
         color3 = color3_;
+        rectOpacity = rectOpacity_;
+        strideOpacity = strideOpacity_;
 
         box_material.color = new THREE.Color(color1);
         conv_material.color = new THREE.Color(color2);
         pyra_material.color = new THREE.Color(color3);
-    }
-
-
-    function setRectOpacity(rectOpacity_ = rectOpacity) {
-        rectOpacity = rectOpacity_;
 
         box_material.opacity = rectOpacity;
-    }
-
-    function setStrideOpacity(strideOpacity_ = strideOpacity) {
-        strideOpacity = strideOpacity_;
 
         conv_material.opacity = strideOpacity;
         pyra_material.opacity = strideOpacity;
