@@ -341,7 +341,7 @@ $('#rendererType input:radio').change(function() {
         $("#download").addClass('disabled');
     }
     $(this).blur();
-    alexnet.restartRenderer();
+    alexnet.restartRenderer({'rendererType_':rendererType});
 });
 
 $("#color1").change(        function () { alexnet.style({'color1_': this.value}); });

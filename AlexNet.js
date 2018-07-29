@@ -81,7 +81,9 @@ function AlexNet() {
     //                       ///////    Draw Graph    ///////
     // /////////////////////////////////////////////////////////////////////////////
 
-    function restartRenderer() {
+    function restartRenderer({rendererType_=rendererType}={}) {
+
+        rendererType = rendererType_;
 
         clearThree(scene);
 
