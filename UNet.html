@@ -98,7 +98,7 @@
 
                     </div>
                     <div class="tab-content collapse show" id="collapsable">
-                        <div class="tab-pane fade show active" id="BasicCNN" role="tabpanel">
+                        <div class="tab-pane fade show active" id="UNet" role="tabpanel">
 
 
                             <h4>Style:</h4>
@@ -296,14 +296,15 @@
                             </div>
 
                             <hr>
+                            <h4>Skip connections:</h4>
                             <div id="architecture2">
-                                <p>Concat</p>
+                                <p>From | To</p>
                                 
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-5">
                                         <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
-                                        <input type="number" class="form-control" name="From" step="1"/>
-                                        <input type="number" class="form-control" name="To" step="1"/>
+                                        <select for="from"></select>
+                                        <select for="to"></select>
                                     </div>
                                 </div>
 
@@ -344,6 +345,8 @@ unet = UNet();
 
 function restart() {
 
+    updateLayersNumber();
+
     let range = n => [...Array(n).keys()];
     let rand = (min, max) => Math.random() * (max - min) + min;
 
@@ -355,18 +358,35 @@ function restart() {
 
     unet.redraw({'architecture_':architecture, 'architecture2_':architecture2});
 
+
+
 }
 
 restart();
 
-var layers = 7
 function updateLayersNumber(){
 
-    layers = $(this).parents('.entry');
-    layers.each(function (index, value) { 
-        console.log('div' + index + ':' + $(this).attr('id')); 
-    // l.find('layerid');
+    layers = $('#architecture').find('[for="layerid"]');
+    layersCount = layers.length
+    layers.each(function (index) { 
+        $(this).text('L' + (index));
+    });
+    froms = $('#architecture2').find('[for="from"]:last');
+    froms.each(function (index) {
+        options = '';
+        for (i =0; i< layersCount;i++){
+            options += '<option value=L'+i+'>L'+i+'</option>'
+        }
+        $(this).html(options);
+    });
 
+    tos = $('#architecture2').find('[for="to"]:last');
+    tos.each(function (index) {
+        options = '';
+        for (i =0; i< layersCount;i++){
+            options += '<option value=L'+i+'>L'+i+'</option>'
+        }
+        $(this).html(options);
     });
 
 }
@@ -423,8 +443,6 @@ $(document).on('click', '#architecture .btn-add', function(e) {
         .removeClass('btn-primary').addClass('btn-secondary')
         .html('<span class="fa fa-minus"></span>');
 
-    layers++;
-    updateLayersNumber();
     restart();
 
 });
@@ -433,9 +451,6 @@ $(document).on('click', '#architecture .btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
-
-    layers--;
-    updateLayersNumber();
 
     restart();
 
