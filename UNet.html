@@ -135,8 +135,8 @@
                                 <label for="clr_pool">Pooling</label>
                             </div>
                             <div>
-                                <input type="color" value="#6dae47" id="clr_conc">
-                                <label for="clr_conc">Concat</label>
+                                <input type="color" value="#6dae47" id="clr_conn">
+                                <label for="clr_conn">Connections</label>
                             </div>
                             
                             <div>
@@ -296,7 +296,7 @@
                             </div>
 
                             <hr>
-                            <h4>Skip connections:</h4>
+                            <h4>Connections:</h4>
                             <div id="architecture2">
                                 <p>From | To</p>
                                 
@@ -352,7 +352,7 @@ function restart() {
 
 
     architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
-    architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1],'stride':l[2],'rel_x':rand(-0.4,0.4),'rel_y':rand(-0.4,0.4)}});
+    architecture = range(architecture.length / 2).map(i => architecture.slice(2*i, 2*i+2)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1]}});
 
     architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
@@ -410,18 +410,19 @@ $('#rendererType input:radio').change(function() {
     unet.restartRenderer({'rendererType_':rendererType});
 });
 
-$("#color1").change(        function () { unet.style({'color1_': this.value}); });
-$("#color2").change(        function () { unet.style({'color2_': this.value}); });
-$("#color3").change(        function () { unet.style({'color3_': this.value}); });
-$("#rectOpacity").change(   function () { unet.style({'rectOpacity_': parseFloat(this.value)}); $(this).blur(); });
-$("#strideOpacity").change( function () { unet.style({'strideOpacity_': parseFloat(this.value)}); $(this).blur(); });
+$("#clr_vol").change(        function () { unet.style({'clr_vol': this.value}); });
+$("#clr_conv").change(        function () { unet.style({'clr_conv': this.value}); });
+$("#clr_upconv").change(        function () { unet.style({'clr_upconv': this.value}); });
+$("#clr_pool").change(        function () { unet.style({'clr_pool': this.value}); });
+
+$("#clr_conn").change(        function () { unet.style({'clr_conn': this.value}); });
+
 $("#betweenLayers").change( function () { unet.redraw({'betweenLayers_': parseFloat(this.value)}); $(this).blur(); });
 $("#logDepth").change(      function () { unet.redraw({'logDepth_': this.checked}); });
 $("#depthScale").change(    function () { unet.redraw({'depthScale_': parseFloat(this.value)}); $(this).blur(); $("#depthSpan").text(this.value); });
 $("#logWidth").change(      function () { unet.redraw({'logWidth_': this.checked}); });
 $("#widthScale").change(    function () { unet.redraw({'widthScale_': parseFloat(this.value)}); $(this).blur(); $("#widthSpan").text(this.value); });
-$("#logConvSize").change(   function () { unet.redraw({'logConvSize_': this.checked}); });
-$("#convScale").change(     function () { unet.redraw({'convScale_': parseFloat(this.value)}); $(this).blur(); $("#convSpan").text(this.value); });
+
 $("#showDims").change(      function () { unet.redraw({'showDims_': this.checked}); });
 
 

@@ -27,17 +27,14 @@ function UNet() {
     var w = window.innerWidth;
     var h = window.innerHeight;
 
-    var color1 = '#eeeeee';
-    var color2 = '#99ddff';
-    var color3 = '#ffbbbb';
-
-    var rectOpacity = 0.4;
-    var strideOpacity = 0.4;
+    var clr_vol = '#eeeeee';
+    var clr_conv = '#99ddff';
+    var clr_upconv = '#ffbbbb';
+    var clr_pool = '#ffbbbb';
+    var clr_conn = '#ffbbbb';
 
     var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
-    var box_material = new THREE.MeshBasicMaterial( {'color':color1, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':rectOpacity, 'depthWrite':false, 'needsUpdate':true} );
-    var conv_material = new THREE.MeshBasicMaterial( {'color':color2, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
-    var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
+    var vol_material = new THREE.MeshBasicMaterial( {'color':clr_vol, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':1, 'depthWrite':false, 'needsUpdate':true} );
 
     var architecture = [];
     var architecture2 = [];
@@ -47,20 +44,15 @@ function UNet() {
     var depthScale = 10;
     var logWidth = true;
     var widthScale = 10;
-    var logConvSize = false;
-    var convScale = 1;
 
     var showDims = false;
 
     let depthFn = (depth) => logDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
     let widthFn = (width) => logWidth ? (Math.log(width) * widthScale) : (width * widthScale);
-    let convFn = (conv) => logConvSize ? (Math.log(conv) * convScale) : (conv * convScale);
 
     function wh(layer) { return widthFn(layer['widthAndHeight']); }
 
     var layers = new THREE.Group();
-    var convs = new THREE.Group();
-    var pyramids = new THREE.Group();
     var sprites = new THREE.Group();
 
 
@@ -118,8 +110,6 @@ function UNet() {
                      depthScale_=depthScale,
                      logWidth_=logWidth,
                      widthScale_=widthScale,
-                     logConvSize_=logConvSize,
-                     convScale_=convScale,
                      showDims_=showDims}={}) {
 
         architecture = architecture_;
@@ -129,8 +119,6 @@ function UNet() {
         depthScale = depthScale_;
         logWidth = logWidth_;
         widthScale = widthScale_;
-        logConvSize = logConvSize_;
-        convScale = convScale_;
         showDims = showDims_;
 
         clearThree(scene);
@@ -143,7 +131,7 @@ function UNet() {
 
             // Layer
             layer_geometry = new THREE.BoxGeometry( wh(layer), wh(layer), depthFn(layer['depth']) );
-            layer_object = new THREE.Mesh( layer_geometry, box_material );
+            layer_object = new THREE.Mesh( layer_geometry, vol_material );
             layer_object.position.set(0, 0, layer_offsets[index]);
             layers.add( layer_object );
 
@@ -151,44 +139,6 @@ function UNet() {
             layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
             layer_edges_object.position.set(0, 0, layer_offsets[index]);
             layers.add( layer_edges_object );
-
-            if (index < architecture.length - 1) {
-
-                // Conv
-                conv_geometry = new THREE.BoxGeometry( convFn(layer['stride']), convFn(layer['stride']), depthFn(layer['depth']) );
-                conv_object = new THREE.Mesh( conv_geometry, conv_material );
-                conv_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
-                convs.add( conv_object );
-
-                conv_edges_geometry = new THREE.EdgesGeometry( conv_geometry );
-                conv_edges_object = new THREE.LineSegments( conv_edges_geometry, line_material );
-                conv_edges_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
-                convs.add( conv_edges_object );
-
-                // Pyramid
-                pyramid_geometry = new THREE.Geometry();
-
-                base_z = layer_offsets[index] + (depthFn(layer['depth']) / 2);
-                summit_z = layer_offsets[index] + (depthFn(layer['depth']) / 2) + betweenLayers;
-                next_layer_wh = widthFn(architecture[index+1]['widthAndHeight'])
-
-                pyramid_geometry.vertices = [
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) + (convFn(layer['stride'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) - (convFn(layer['stride'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) - (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) - (convFn(layer['stride'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) - (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) + (convFn(layer['stride'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * next_layer_wh),                           (layer['rel_y'] * next_layer_wh),                           summit_z)  // summit
-                ];
-                pyramid_geometry.faces = [new THREE.Face3(0,1,2),new THREE.Face3(0,2,3),new THREE.Face3(1,0,4),new THREE.Face3(2,1,4),new THREE.Face3(3,2,4),new THREE.Face3(0,3,4)];
-
-                pyramid_object = new THREE.Mesh( pyramid_geometry, pyra_material );
-                pyramids.add( pyramid_object );
-
-                pyramid_edges_geometry = new THREE.EdgesGeometry( pyramid_geometry );
-                pyramid_edges_object = new THREE.LineSegments( pyramid_edges_geometry, line_material );
-                pyramids.add( pyramid_edges_object );
-
-            }
 
             if (showDims) {
 
@@ -213,7 +163,7 @@ function UNet() {
 
             // Dense
             layer_geometry = new THREE.BoxGeometry( widthFn(2), depthFn(layer), widthFn(2) );
-            layer_object = new THREE.Mesh( layer_geometry, box_material );
+            layer_object = new THREE.Mesh( layer_geometry, vol_material );
             layer_object.position.set(0, 0, layer_offsets[architecture.length + index]);
             layers.add( layer_object );
 
@@ -243,8 +193,6 @@ function UNet() {
         });
 
         scene.add( layers );
-        scene.add( convs );
-        scene.add( pyramids );
         scene.add( sprites );
 
     }
@@ -289,26 +237,18 @@ function UNet() {
         sprite.center.set( 0,1 );
         return sprite;
     }
+    function style({clr_vol_=clr_vol,
+                    clr_conv_=clr_conv,
+                    clr_upconv_=clr_upconv,
+                    clr_pool_=clr_pool,
+                    clr_conn_=clr_conn}={}) {
+        clr_vol        = clr_vol_;
+        clr_conv        = clr_conv_;
+        clr_upconv        = clr_upconv_;
+        clr_pool        = clr_pool_;
+        clr_conn        = clr_conn_;
 
-    function style({color1_=color1,
-                    color2_=color2,
-                    color3_=color3,
-                    rectOpacity_=rectOpacity,
-                    strideOpacity_=strideOpacity}={}) {
-        color1        = color1_;
-        color2        = color2_;
-        color3        = color3_;
-        rectOpacity   = rectOpacity_;
-        strideOpacity = strideOpacity_;
-
-        box_material.color = new THREE.Color(color1);
-        conv_material.color = new THREE.Color(color2);
-        pyra_material.color = new THREE.Color(color3);
-
-        box_material.opacity = rectOpacity;
-
-        conv_material.opacity = strideOpacity;
-        pyra_material.opacity = strideOpacity;
+        vol_material.color = new THREE.Color(clr_vol);
     }
 
     // /////////////////////////////////////////////////////////////////////////////
