@@ -138,7 +138,10 @@
                                 <input type="color" value="#6dae47" id="clr_conn">
                                 <label for="clr_conn">Connections</label>
                             </div>
-                            
+                            <div>
+                                <label for="rectOpacity">Tensor Opacity</label>
+                                <input type="range" id="rectOpacity" name="" min="0" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
+                            </div>
                             <div>
                                 <label for="betweenLayers">Spacing Between Layers</label>
                                 <input type="range" id="betweenLayers" name="" min="10" max="100" step="1" value="20" style="position: relative; top: 3px;">
@@ -195,14 +198,14 @@
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L1</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="55" />
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="112" />
                                         <input type="number" class="form-control" name="depth" step="1" value="96" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
                                          <select>
                                           <option value="conv">Conv</option>
-                                          <option value="pool">Pooling</option>
+                                          <option value="pool" selected>Pooling</option>
                                           <option value="up_conv">Up-Conv</option>
                                           <option value="No_op">No Op.</option>
                                         </select> 
@@ -212,7 +215,7 @@
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L2</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="27" />
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="56" />
                                         <input type="number" class="form-control" name="depth" step="1" value="256" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
@@ -229,13 +232,13 @@
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L3</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="28" />
                                         <input type="number" class="form-control" name="depth" step="1" value="384" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
                                          <select>
-                                          <option value="conv">Conv</option>
+                                          <option value="conv" selected>Conv</option>
                                           <option value="pool">Pooling</option>
                                           <option value="up_conv">Up-Conv</option>
                                           <option value="No_op">No Op.</option>
@@ -246,8 +249,25 @@
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L4</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="384" />
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="56" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="256" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool">Pooling</option>
+                                          <option value="up_conv" selected>Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L5</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="112" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="96" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -263,8 +283,8 @@
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L5</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="256" />
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="224" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="3" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -272,7 +292,7 @@
                                           <option value="conv">Conv</option>
                                           <option value="pool">Pooling</option>
                                           <option value="up_conv">Up-Conv</option>
-                                          <option value="No_op">No Op.</option>
+                                          <option value="No_op" selected>No Op.</option>
                                         </select> 
                                     </div>
                                 </div>
@@ -297,7 +317,7 @@
 
                             <hr>
                             <h4>Connections:</h4>
-                            <div id="architecture2">
+                            <div id="connections">
                                 <p>From | To</p>
                                 
                                 <div class="row entry">
@@ -345,8 +365,6 @@ unet = UNet();
 
 function restart() {
 
-    updateLayersNumber();
-
     let range = n => [...Array(n).keys()];
     let rand = (min, max) => Math.random() * (max - min) + min;
 
@@ -354,37 +372,48 @@ function restart() {
     architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
     architecture = range(architecture.length / 2).map(i => architecture.slice(2*i, 2*i+2)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1]}});
 
-    architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    ops = $('#architecture').find(':selected').map((i,el) => $(el).text());
+    for (i =0;i <architecture.length;i++){
+        architecture[i]['op'] = ops[i];
+    }
 
-    unet.redraw({'architecture_':architecture, 'architecture2_':architecture2});
+    connections = $('#connections').find(':selected').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    connections = range(connections.length / 2).map(i => connections.slice(2*i, 2*i+2)).map((l) => {return {'from':l[0],'to':l[1]}});
+
+    unet.redraw({'architecture_':architecture, 'connections_':connections});
 
 
 
 }
 
+updateLayersNumber();
 restart();
 
 function updateLayersNumber(){
 
     layers = $('#architecture').find('[for="layerid"]');
-    layersCount = layers.length
+    layersCount = layers.length -1;
     layers.each(function (index) { 
         $(this).text('L' + (index));
     });
-    froms = $('#architecture2').find('[for="from"]:last');
+    froms = $('#connections').find('[for="from"]:last');
     froms.each(function (index) {
         options = '';
         for (i =0; i< layersCount;i++){
-            options += '<option value=L'+i+'>L'+i+'</option>'
+            options += '<option value='+i+'>L'+i+'</option>'
         }
         $(this).html(options);
     });
 
-    tos = $('#architecture2').find('[for="to"]:last');
+    tos = $('#connections').find('[for="to"]:last');
     tos.each(function (index) {
         options = '';
         for (i =0; i< layersCount;i++){
-            options += '<option value=L'+i+'>L'+i+'</option>'
+            if (i == layersCount-1){
+                options += '<option value='+i+' selected>L'+i+'</option>'
+            } else{
+                options += '<option value='+i+'>L'+i+'</option>'
+            }
         }
         $(this).html(options);
     });
@@ -410,12 +439,15 @@ $('#rendererType input:radio').change(function() {
     unet.restartRenderer({'rendererType_':rendererType});
 });
 
-$("#clr_vol").change(        function () { unet.style({'clr_vol': this.value}); });
-$("#clr_conv").change(        function () { unet.style({'clr_conv': this.value}); });
-$("#clr_upconv").change(        function () { unet.style({'clr_upconv': this.value}); });
-$("#clr_pool").change(        function () { unet.style({'clr_pool': this.value}); });
+$("#clr_vol").change(        function () { unet.style({'clr_vol_': this.value}); });
+$("#clr_conv").change(        function () { unet.style({'clr_conv_': this.value}); });
+$("#clr_upconv").change(        function () { unet.style({'clr_upconv_': this.value}); });
+$("#clr_pool").change(        function () { unet.style({'clr_pool_': this.value}); });
 
-$("#clr_conn").change(        function () { unet.style({'clr_conn': this.value}); });
+$("#clr_conn").change(        function () { unet.style({'clr_conn_': this.value}); });
+
+$("#rectOpacity").change(   function () { unet.style({'rectOpacity_': parseFloat(this.value)}); $(this).blur(); });
+
 
 $("#betweenLayers").change( function () { unet.redraw({'betweenLayers_': parseFloat(this.value)}); $(this).blur(); });
 $("#logDepth").change(      function () { unet.redraw({'logDepth_': this.checked}); });
@@ -425,7 +457,6 @@ $("#widthScale").change(    function () { unet.redraw({'widthScale_': parseFloat
 
 $("#showDims").change(      function () { unet.redraw({'showDims_': this.checked}); });
 
-
 // /////////////////////////////////////////////////////////////////////////////
 //                  ///////    Select Architecture    ///////
 // /////////////////////////////////////////////////////////////////////////////
@@ -433,6 +464,8 @@ $("#showDims").change(      function () { unet.redraw({'showDims_': this.checked
 
 $(document).on('click', '#architecture .btn-add', function(e) {
     e.preventDefault();
+
+    updateLayersNumber();
 
     var controlForm = $('#architecture');
     var currentEntry = $(this).parents('.entry:first');
@@ -451,6 +484,8 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 $(document).on('click', '#architecture .btn-remove', function(e) {
     e.preventDefault();
 
+    updateLayersNumber();
+
     $(this).parents('.entry:first').remove();
 
     restart();
@@ -459,10 +494,10 @@ $(document).on('click', '#architecture .btn-remove', function(e) {
 
 });
 
-$(document).on('click', '#architecture2 .btn-add', function(e) {
+$(document).on('click', '#connections .btn-add', function(e) {
     e.preventDefault();
 
-    var controlForm = $('#architecture2');
+    var controlForm = $('#connections');
     var currentEntry = $(this).parents('.entry:first');
     var newEntry = $(currentEntry.clone()).appendTo(controlForm);
 
@@ -476,7 +511,7 @@ $(document).on('click', '#architecture2 .btn-add', function(e) {
 
 });
 
-$(document).on('click', '#architecture2 .btn-remove', function(e) {
+$(document).on('click', '#connections .btn-remove', function(e) {
     e.preventDefault();
 
     $(this).parents('.entry:first').remove();
@@ -493,6 +528,11 @@ $(document).on('change', 'input', function(e) {
     restart();
 });
 
+$(document).on('change', 'select', function(e) {
+    e.preventDefault();
+
+    restart();
+});
 
 $("#download").on("click", function() {
     ga('send', 'event', 'downloadSVG', 'UNet');

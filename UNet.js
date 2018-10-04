@@ -27,17 +27,20 @@ function UNet() {
     var w = window.innerWidth;
     var h = window.innerHeight;
 
-    var clr_vol = '#eeeeee';
-    var clr_conv = '#99ddff';
-    var clr_upconv = '#ffbbbb';
-    var clr_pool = '#ffbbbb';
-    var clr_conn = '#ffbbbb';
+    var clr_vol = '#5a9dd6';
+    var clr_conv = '#7030a0';
+    var clr_upconv = '#ffc000';
+    var clr_pool = '#c10000';
+    var clr_conn = '#6dae47';
+
+    var rectOpacity = 0.4;
+
 
     var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
-    var vol_material = new THREE.MeshBasicMaterial( {'color':clr_vol, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':1, 'depthWrite':false, 'needsUpdate':true} );
+    var vol_material = new THREE.MeshBasicMaterial( {'color':clr_vol, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':rectOpacity, 'depthWrite':false, 'needsUpdate':true} );
 
     var architecture = [];
-    var architecture2 = [];
+    var connections = [];
     var betweenLayers = 20;
 
     var logDepth = true;
@@ -46,6 +49,10 @@ function UNet() {
     var widthScale = 10;
 
     var showDims = false;
+
+    var colors = {"Conv" : clr_conv,
+                "Pooling" : clr_pool,
+                "Up-Conv": clr_upconv}
 
     let depthFn = (depth) => logDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
     let widthFn = (width) => logWidth ? (Math.log(width) * widthScale) : (width * widthScale);
@@ -104,7 +111,7 @@ function UNet() {
     restartRenderer();
 
     function redraw({architecture_=architecture,
-                     architecture2_=architecture2,
+                     connections_=connections,
                      betweenLayers_=betweenLayers,
                      logDepth_=logDepth,
                      depthScale_=depthScale,
@@ -113,7 +120,7 @@ function UNet() {
                      showDims_=showDims}={}) {
 
         architecture = architecture_;
-        architecture2 = architecture2_;
+        connections = connections_;
         betweenLayers = betweenLayers_;
         logDepth = logDepth_;
         depthScale = depthScale_;
@@ -122,14 +129,17 @@ function UNet() {
         showDims = showDims_;
 
         clearThree(scene);
+        var widths= [];
 
         z_offset = -(sum(architecture.map(layer => depthFn(layer['depth']))) + (betweenLayers * (architecture.length - 1))) / 3;
         layer_offsets = pairWise(architecture).reduce((offsets, layers) => offsets.concat([offsets.last() + depthFn(layers[0]['depth'])/2 + betweenLayers + depthFn(layers[1]['depth'])/2]), [z_offset]);
-        layer_offsets = layer_offsets.concat(architecture2.reduce((offsets, layer) => offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), [layer_offsets.last() + depthFn(architecture.last()['depth'])/2 + betweenLayers + widthFn(2)]));
+        layer_offsets = layer_offsets.concat(connections.reduce((offsets, layer) => offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), [layer_offsets.last() + depthFn(architecture.last()['depth'])/2 + betweenLayers + widthFn(2)]));
 
         architecture.forEach( function( layer, index ) {
 
             // Layer
+            widths.push(wh(layer))
+
             layer_geometry = new THREE.BoxGeometry( wh(layer), wh(layer), depthFn(layer['depth']) );
             layer_object = new THREE.Mesh( layer_geometry, vol_material );
             layer_object.position.set(0, 0, layer_offsets[index]);
@@ -139,6 +149,16 @@ function UNet() {
             layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
             layer_edges_object.position.set(0, 0, layer_offsets[index]);
             layers.add( layer_edges_object );
+
+            if (layer['op'] != "No Op."){
+                direction = new THREE.Vector3( 0, 0, 1 );
+                origin = new THREE.Vector3( 0, 0, layer_offsets[index] + depthFn(layer['depth'])/2);
+                length = betweenLayers;
+                headLength = betweenLayers/3;
+                headWidth = 5;
+                arrow = new THREE.ArrowHelper( direction, origin, length, colors[layer['op']], headLength, headWidth );
+                layers.add( arrow );
+             }
 
             if (showDims) {
 
@@ -158,37 +178,38 @@ function UNet() {
             }
 
         });
+        height = 15;
+        connections.forEach( function( layer, index ) {
 
-        architecture2.forEach( function( layer, index ) {
+            // Skip connections
+            // up link
+            direction = new THREE.Vector3( 0, 1, 0 );
+            origin = new THREE.Vector3( 0,widths[layer['from']]/2, layer_offsets[layer['from']] );
+            length = widthFn(height);
+            headLength = 1e-16;
+            headWidth = 1e-16;
+            arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
+            layers.add( arrow );
 
-            // Dense
-            layer_geometry = new THREE.BoxGeometry( widthFn(2), depthFn(layer), widthFn(2) );
-            layer_object = new THREE.Mesh( layer_geometry, vol_material );
-            layer_object.position.set(0, 0, layer_offsets[architecture.length + index]);
-            layers.add( layer_object );
-
-            layer_edges_geometry = new THREE.EdgesGeometry( layer_geometry );
-            layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
-            layer_edges_object.position.set(0, 0, layer_offsets[architecture.length + index]);
-            layers.add( layer_edges_object );
-
+            //right link
             direction = new THREE.Vector3( 0, 0, 1 );
-            origin = new THREE.Vector3( 0, 0, layer_offsets[architecture.length + index] - betweenLayers - widthFn(2)/2 + 1 );
-            length = betweenLayers - 2;
+            origin = new THREE.Vector3( 0,widths[layer['from']]/2 + widthFn(height), layer_offsets[layer['from']] );
+            length = layer_offsets[layer['to']] - layer_offsets[layer['from']];
+            headLength = 1e-16;
+            headWidth = 1e-16;
+            arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
+            layers.add( arrow );
+
+            //down arrow
+            direction = new THREE.Vector3( 0, -1, 0 );
+            origin = new THREE.Vector3( 0,widths[layer['from']]/2 + widthFn(height), layer_offsets[layer['to']] );
+            length = widthFn(height);
             headLength = betweenLayers/3;
             headWidth = 5;
-            arrow = new THREE.ArrowHelper( direction, origin, length, 0x000000, headLength, headWidth );
-            pyramids.add( arrow );
+            arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
+            layers.add( arrow );
 
-            if (showDims) {
-
-                // Dims
-                sprite = makeTextSprite(layer.toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 3, depthFn(layer)/2 + 3, 3 ) );
-                sprites.add( sprite );
-
-            }
-
+            height += 20;
 
         });
 
@@ -240,6 +261,7 @@ function UNet() {
     function style({clr_vol_=clr_vol,
                     clr_conv_=clr_conv,
                     clr_upconv_=clr_upconv,
+                    rectOpacity_=rectOpacity,
                     clr_pool_=clr_pool,
                     clr_conn_=clr_conn}={}) {
         clr_vol        = clr_vol_;
@@ -248,7 +270,15 @@ function UNet() {
         clr_pool        = clr_pool_;
         clr_conn        = clr_conn_;
 
+        rectOpacity   = rectOpacity_;
+
         vol_material.color = new THREE.Color(clr_vol);
+
+        vol_material.opacity = rectOpacity;
+
+        colors = {"Conv" : clr_conv,
+                "Pooling" : clr_pool,
+                "Up-Conv": clr_upconv}
     }
 
     // /////////////////////////////////////////////////////////////////////////////
