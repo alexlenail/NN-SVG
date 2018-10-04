@@ -75,7 +75,20 @@ function UNet() {
 
     var controls;
 
-
+    function calc_vert(index,total,lvl_height = 20){
+        if (index< total/2){
+            return -lvl_height*index
+        } else {
+            return -lvl_height*(total - index -1 )
+        }
+    }
+    function calc_direction(index,total){
+        if (index < total/2 -1){
+            return new THREE.Vector3( 0, -0.5, 0.5 )
+        } else {
+            return new THREE.Vector3( 0, 0.5, 0.5 )
+        }
+    }
     // /////////////////////////////////////////////////////////////////////////////
     //                       ///////    Draw Graph    ///////
     // /////////////////////////////////////////////////////////////////////////////
@@ -135,6 +148,7 @@ function UNet() {
         layer_offsets = pairWise(architecture).reduce((offsets, layers) => offsets.concat([offsets.last() + depthFn(layers[0]['depth'])/2 + betweenLayers + depthFn(layers[1]['depth'])/2]), [z_offset]);
         layer_offsets = layer_offsets.concat(connections.reduce((offsets, layer) => offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), [layer_offsets.last() + depthFn(architecture.last()['depth'])/2 + betweenLayers + widthFn(2)]));
 
+        
         architecture.forEach( function( layer, index ) {
 
             // Layer
@@ -142,17 +156,17 @@ function UNet() {
 
             layer_geometry = new THREE.BoxGeometry( wh(layer), wh(layer), depthFn(layer['depth']) );
             layer_object = new THREE.Mesh( layer_geometry, vol_material );
-            layer_object.position.set(0, 0, layer_offsets[index]);
+            layer_object.position.set(0, calc_vert(index,architecture.length), layer_offsets[index]);
             layers.add( layer_object );
 
             layer_edges_geometry = new THREE.EdgesGeometry( layer_geometry );
             layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
-            layer_edges_object.position.set(0, 0, layer_offsets[index]);
+            layer_edges_object.position.set(0, calc_vert(index,architecture.length), layer_offsets[index]);
             layers.add( layer_edges_object );
 
             if (layer['op'] != "No Op."){
-                direction = new THREE.Vector3( 0, 0, 1 );
-                origin = new THREE.Vector3( 0, 0, layer_offsets[index] + depthFn(layer['depth'])/2);
+                direction = calc_direction(index,architecture.length);
+                origin = new THREE.Vector3( 0, calc_vert(index,architecture.length), layer_offsets[index] + depthFn(layer['depth'])/2);
                 length = betweenLayers;
                 headLength = betweenLayers/3;
                 headWidth = 5;
@@ -178,14 +192,15 @@ function UNet() {
             }
 
         });
-        height = 15;
+        height = 5;
         connections.forEach( function( layer, index ) {
 
             // Skip connections
             // up link
+            vert = calc_vert(layer['from'],architecture.length)
             direction = new THREE.Vector3( 0, 1, 0 );
-            origin = new THREE.Vector3( 0,widths[layer['from']]/2, layer_offsets[layer['from']] );
-            length = widthFn(height);
+            origin = new THREE.Vector3( 0,widths[layer['from']]/2 + vert, layer_offsets[layer['from']] );
+            length = widthFn(height) + Math.abs(vert);
             headLength = 1e-16;
             headWidth = 1e-16;
             arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
@@ -201,15 +216,16 @@ function UNet() {
             layers.add( arrow );
 
             //down arrow
+            vert = calc_vert(layer['to'],architecture.length)
             direction = new THREE.Vector3( 0, -1, 0 );
             origin = new THREE.Vector3( 0,widths[layer['from']]/2 + widthFn(height), layer_offsets[layer['to']] );
-            length = widthFn(height);
+            length = widthFn(height) + Math.abs(vert);
             headLength = betweenLayers/3;
             headWidth = 5;
             arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
             layers.add( arrow );
 
-            height += 20;
+            height *= 4;
 
         });
 
