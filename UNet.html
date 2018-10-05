@@ -396,7 +396,7 @@ function updateLayersNumber(){
     layers.each(function (index) { 
         $(this).text('L' + (index));
     });
-    froms = $('#connections').find('[for="from"]:last');
+    froms = $('#connections').find('[for="from"]');
     froms.each(function (index) {
         options = '';
         for (i =0; i< layersCount;i++){
@@ -405,7 +405,7 @@ function updateLayersNumber(){
         $(this).html(options);
     });
 
-    tos = $('#connections').find('[for="to"]:last');
+    tos = $('#connections').find('[for="to"]');
     tos.each(function (index) {
         options = '';
         for (i =0; i< layersCount;i++){
@@ -465,8 +465,6 @@ $("#showDims").change(      function () { unet.redraw({'showDims_': this.checked
 $(document).on('click', '#architecture .btn-add', function(e) {
     e.preventDefault();
 
-    updateLayersNumber();
-
     var controlForm = $('#architecture');
     var currentEntry = $(this).parents('.entry:first');
     var newEntry = $(currentEntry.clone()).appendTo(controlForm);
@@ -477,6 +475,7 @@ $(document).on('click', '#architecture .btn-add', function(e) {
         .removeClass('btn-primary').addClass('btn-secondary')
         .html('<span class="fa fa-minus"></span>');
 
+    updateLayersNumber();
     restart();
 
 });
@@ -484,10 +483,10 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 $(document).on('click', '#architecture .btn-remove', function(e) {
     e.preventDefault();
 
-    updateLayersNumber();
 
     $(this).parents('.entry:first').remove();
 
+    updateLayersNumber();
     restart();
 
     return false;
