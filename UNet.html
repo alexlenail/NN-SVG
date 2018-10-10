@@ -196,10 +196,61 @@
                                 </div>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L0</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="224" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="32" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool">Pooling</option>
+                                          <option value="up_conv">Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L0</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="224" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="32" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool" selected>Pooling</option>
+                                          <option value="up_conv">Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L1</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="widthAndHeight" step="1" value="112" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="96" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="64" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool">Pooling</option>
+                                          <option value="up_conv">Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L1</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="112" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="64" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -216,7 +267,7 @@
                                         <label for="layerid" style="width: 36px;padding: 4px;">L2</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="widthAndHeight" step="1" value="56" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="256" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="128" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -230,10 +281,27 @@
                                 </div>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L2</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="56" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="128" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool" selected>Pooling</option>
+                                          <option value="up_conv">Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L3</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="widthAndHeight" step="1" value="28" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="384" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="256" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -247,10 +315,44 @@
                                 </div>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L3</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="28" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="256" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool">Pooling</option>
+                                          <option value="up_conv" selected>Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L4</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="widthAndHeight" step="1" value="56" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="256" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="128" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool">Pooling</option>
+                                          <option value="up_conv">Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L4</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="56" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="128" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -267,7 +369,7 @@
                                         <label for="layerid" style="width: 36px;padding: 4px;">L5</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="widthAndHeight" step="1" value="112" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="96" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="64" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -283,8 +385,25 @@
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="layerid" style="width: 36px;padding: 4px;">L5</label>
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="112" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="64" />
+                                    </div>
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
+                                         <select>
+                                          <option value="conv">Conv</option>
+                                          <option value="pool">Pooling</option>
+                                          <option value="up_conv" selected>Up-Conv</option>
+                                          <option value="No_op">No Op.</option>
+                                        </select> 
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                        <label for="layerid" style="width: 36px;padding: 4px;">L5</label>
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="widthAndHeight" step="1" value="224" />
-                                        <input type="number" class="form-control" name="depth" step="1" value="3" />
+                                        <input type="number" class="form-control" name="depth" step="1" value="1" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-10">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -327,7 +446,20 @@
                                         <select for="to"></select>
                                     </div>
                                 </div>
-
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-5">
+                                        <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
+                                        <select for="from"></select>
+                                        <select for="to"></select>
+                                    </div>
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-5">
+                                        <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
+                                        <select for="from"></select>
+                                        <select for="to"></select>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -377,6 +509,7 @@ function restart() {
         architecture[i]['op'] = ops[i];
     }
 
+
     connections = $('#connections').find(':selected').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
     connections = range(connections.length / 2).map(i => connections.slice(2*i, 2*i+2)).map((l) => {return {'from':l[0],'to':l[1]}});
 
@@ -387,6 +520,10 @@ function restart() {
 }
 
 updateLayersNumber();
+//
+var initial = ['2','13','4','11','6','9']
+$("#connections").find("select").map((i,el) => $(el).val(initial[i]));
+//
 restart();
 
 function updateLayersNumber(){

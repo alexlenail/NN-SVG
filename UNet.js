@@ -54,7 +54,7 @@ function UNet() {
                 "Pooling" : clr_pool,
                 "Up-Conv": clr_upconv}
 
-    let depthFn = (depth) => logDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
+    let depthFn = (depth) => logDepth ? (Math.log(depth+0.5) * depthScale) : (depth * depthScale);
     let widthFn = (width) => logWidth ? (Math.log(width) * widthScale) : (width * widthScale);
 
     function wh(layer) { return widthFn(layer['widthAndHeight']); }
@@ -75,20 +75,6 @@ function UNet() {
 
     var controls;
 
-    function calc_vert(index,total,lvl_height = 20){
-        if (index< total/2){
-            return -lvl_height*index
-        } else {
-            return -lvl_height*(total - index -1 )
-        }
-    }
-    function calc_direction(index,total){
-        if (index < total/2 -1){
-            return new THREE.Vector3( 0, -0.5, 0.5 )
-        } else {
-            return new THREE.Vector3( 0, 0.5, 0.5 )
-        }
-    }
     // /////////////////////////////////////////////////////////////////////////////
     //                       ///////    Draw Graph    ///////
     // /////////////////////////////////////////////////////////////////////////////
@@ -123,6 +109,13 @@ function UNet() {
 
     restartRenderer();
 
+    function adjust_offsets(layer_offsets,start_index,depth){
+        for ( i=start_index;i<layer_offsets.length;i++){
+            layer_offsets[i] -= (depth+betweenLayers)
+        }
+        return layer_offsets
+    }
+
     function redraw({architecture_=architecture,
                      connections_=connections,
                      betweenLayers_=betweenLayers,
@@ -142,32 +135,49 @@ function UNet() {
         showDims = showDims_;
 
         clearThree(scene);
-        var widths= [];
 
         z_offset = -(sum(architecture.map(layer => depthFn(layer['depth']))) + (betweenLayers * (architecture.length - 1))) / 3;
         layer_offsets = pairWise(architecture).reduce((offsets, layers) => offsets.concat([offsets.last() + depthFn(layers[0]['depth'])/2 + betweenLayers + depthFn(layers[1]['depth'])/2]), [z_offset]);
         layer_offsets = layer_offsets.concat(connections.reduce((offsets, layer) => offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), [layer_offsets.last() + depthFn(architecture.last()['depth'])/2 + betweenLayers + widthFn(2)]));
 
-        
+        var level = 0
+        var lvl_height = 70
+        var lvls = [];
         architecture.forEach( function( layer, index ) {
 
             // Layer
-            widths.push(wh(layer))
-
+            lvls.push(level);
             layer_geometry = new THREE.BoxGeometry( wh(layer), wh(layer), depthFn(layer['depth']) );
             layer_object = new THREE.Mesh( layer_geometry, vol_material );
-            layer_object.position.set(0, calc_vert(index,architecture.length), layer_offsets[index]);
+            layer_object.position.set(0, level*lvl_height, layer_offsets[index]-(70./depthFn(layer['depth'])));
             layers.add( layer_object );
 
             layer_edges_geometry = new THREE.EdgesGeometry( layer_geometry );
             layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
-            layer_edges_object.position.set(0, calc_vert(index,architecture.length), layer_offsets[index]);
+            layer_edges_object.position.set(0,level*lvl_height, layer_offsets[index] -(70./depthFn(layer['depth'])));
             layers.add( layer_edges_object );
 
             if (layer['op'] != "No Op."){
-                direction = calc_direction(index,architecture.length);
-                origin = new THREE.Vector3( 0, calc_vert(index,architecture.length), layer_offsets[index] + depthFn(layer['depth'])/2);
-                length = betweenLayers;
+                if (layer['op'] == "Pooling"){
+                    length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
+                    direction = new THREE.Vector3(0,-1,0);
+                    origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index] );
+                    level--;
+                    layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
+
+                }else if (layer['op'] == "Up-Conv"){
+                    length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
+                    direction = new THREE.Vector3(0,1,0);
+                    origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] );
+                    level++;
+                    layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
+
+                }else{
+                    length = betweenLayers;
+                    direction = new THREE.Vector3(0,0,1);
+                    origin = new THREE.Vector3( 0, level*lvl_height, layer_offsets[index] + depthFn(layer['depth'])/2);
+                }
+                
                 headLength = betweenLayers/3;
                 headWidth = 5;
                 arrow = new THREE.ArrowHelper( direction, origin, length, colors[layer['op']], headLength, headWidth );
@@ -192,40 +202,19 @@ function UNet() {
             }
 
         });
-        height = 5;
         connections.forEach( function( layer, index ) {
 
             // Skip connections
-            // up link
-            vert = calc_vert(layer['from'],architecture.length)
-            direction = new THREE.Vector3( 0, 1, 0 );
-            origin = new THREE.Vector3( 0,widths[layer['from']]/2 + vert, layer_offsets[layer['from']] );
-            length = widthFn(height) + Math.abs(vert);
-            headLength = 1e-16;
-            headWidth = 1e-16;
-            arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
-            layers.add( arrow );
-
-            //right link
+            console.log( )
+            half_depth_from = depthFn(architecture[layer['from']]['depth'])/2
+            half_depth_to = depthFn(architecture[layer['to']]['depth'])/2
             direction = new THREE.Vector3( 0, 0, 1 );
-            origin = new THREE.Vector3( 0,widths[layer['from']]/2 + widthFn(height), layer_offsets[layer['from']] );
-            length = layer_offsets[layer['to']] - layer_offsets[layer['from']];
-            headLength = 1e-16;
-            headWidth = 1e-16;
-            arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
-            layers.add( arrow );
-
-            //down arrow
-            vert = calc_vert(layer['to'],architecture.length)
-            direction = new THREE.Vector3( 0, -1, 0 );
-            origin = new THREE.Vector3( 0,widths[layer['from']]/2 + widthFn(height), layer_offsets[layer['to']] );
-            length = widthFn(height) + Math.abs(vert);
+            origin = new THREE.Vector3( 0,lvl_height*lvls[layer['from']] , layer_offsets[layer['from']] + half_depth_from);
+            length = layer_offsets[layer['to']]-half_depth_to - layer_offsets[layer['from']] -half_depth_from - (70./(2*half_depth_to));
             headLength = betweenLayers/3;
             headWidth = 5;
             arrow = new THREE.ArrowHelper( direction, origin, length, clr_conn, headLength, headWidth );
             layers.add( arrow );
-
-            height *= 4;
 
         });
 
