@@ -159,18 +159,34 @@ function UNet() {
 
             if (layer['op'] != "No Op."){
                 if (layer['op'] == "Pooling"){
-                    length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
-                    direction = new THREE.Vector3(0,-1,0);
-                    origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index] );
-                    level--;
-                    layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
+                    if (index+1 < architecture.length){
+                        length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
+                        direction = new THREE.Vector3(0,-1,0);
+                        origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index] );
+                        level--;
+                        layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
+                    }else{
+                        length = lvl_height;
+                        direction = new THREE.Vector3(0,-1,0);
+                        origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index] );
+                        level--;
+                    }
+                    
 
                 }else if (layer['op'] == "Up-Conv"){
-                    length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
-                    direction = new THREE.Vector3(0,1,0);
-                    origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] );
-                    level++;
-                    layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
+                    if (index+1 < architecture.length){
+                        length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
+                        direction = new THREE.Vector3(0,1,0);
+                        origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] );
+                        level++;
+                        layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
+                    }else{
+                        length = lvl_height;
+                        direction = new THREE.Vector3(0,1,0);
+                        origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] );
+                        level++;
+                    }
+                    
 
                 }else{
                     length = betweenLayers;
@@ -205,7 +221,7 @@ function UNet() {
         connections.forEach( function( layer, index ) {
 
             // Skip connections
-            console.log( )
+            
             half_depth_from = depthFn(architecture[layer['from']]['depth'])/2
             half_depth_to = depthFn(architecture[layer['to']]['depth'])/2
             direction = new THREE.Vector3( 0, 0, 1 );
@@ -220,6 +236,7 @@ function UNet() {
 
         scene.add( layers );
         scene.add( sprites );
+
 
     }
 
