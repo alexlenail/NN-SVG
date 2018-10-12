@@ -114,10 +114,11 @@
                                         <input class="form-check-input" type="radio" name="rendererType" id="SVG" value="svg"> SVG
                                     </label>
                                 </div>
-                                <small class="form-text text-muted">The SVG renderer is required to download SVG, however the WebGL renderer is required to show tensor dimensions.</small>
+                                <small class="form-text text-muted">The SVG renderer is required to download SVG and view legend, however the WebGL renderer is required to show tensor dimensions.</small>
                             </div>
 
                             <br>
+                            <div id="legend">
                             <div>
                                 <input type="color" value="#5a9dd6" id="clr_vol">
                                 <label for="clr_vol">Volume</label>
@@ -136,7 +137,8 @@
                             </div>
                             <div>
                                 <input type="color" value="#6dae47" id="clr_conn">
-                                <label for="clr_conn">Connections</label>
+                                <label for="clr_conn">Concat</label>
+                            </div>
                             </div>
                             <div>
                                 <label for="rectOpacity">Tensor Opacity</label>
@@ -172,7 +174,19 @@
                                 <input type="checkbox" id="showDims" name="showDims" value="showDims">
                                 <label for="showDims">Show Tensor Dimensions</label>
                             </div>
-
+                            <hr>
+                            <div>
+                                <input type="checkbox" id="showLegend" name="showLegend" value="showLegend" disabled="True">
+                                <label for="showLegend">Show Legend</label>
+                            </div>
+                            <div>
+                                <label for="widthScale">Legend X Position</label>
+                                <input type="range" id="legX" name="" min="0" max="1" step="0.01" value="0.5" style="position: relative; top: 3px;" disabled="true">
+                            </div>
+                            <div>
+                                <label for="widthScale">Legend Y Position</label>
+                                <input type="range" id="legY" name="" min="0" max="1" step="0.01" value="0.2" style="position: relative; top: 3px;" disabled="true">
+                            </div>
                             <hr>
                             <h4>Architecture:</h4>
                             <div id="architecture">
@@ -435,7 +449,7 @@
                             </div>
 
                             <hr>
-                            <h4>Connections:</h4>
+                            <h4>Concat:</h4>
                             <div id="connections">
                                 <p>From | To</p>
                                 
@@ -488,6 +502,7 @@
     <script src="OrbitControls.js"></script>
     <script src="SVGRenderer.js"></script>
     <script src="Projector.js"></script>
+
 
     <!-- We use locally cached copies of these in case the upstream versions change -->
     <!-- <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script> -->
@@ -573,10 +588,12 @@ $('#rendererType input:radio').change(function() {
     if (rendererType == 'svg') {
         showDims = false;
         $("#showDims").prop('disabled', true).prop('checked', false);
+        $("#showLegend").prop('disabled', false).prop('checked', false);
         $("#download").removeClass('disabled');
     }
     else if (rendererType == 'webgl') {
-        $("#showDims").prop('disabled', false);
+        $("#showDims").prop('disabled', false).prop('checked', false);
+        $("#showLegend").prop('disabled', true).prop('checked', false);
         $("#download").addClass('disabled');
     }
     $(this).blur();
@@ -600,7 +617,14 @@ $("#logWidth").change(      function () { unet.redraw({'logWidth_': this.checked
 $("#widthScale").change(    function () { unet.redraw({'widthScale_': parseFloat(this.value)}); $(this).blur(); $("#widthSpan").text(this.value); });
 
 $("#showDims").change(      function () { unet.redraw({'showDims_': this.checked}); });
-
+$("#showLegend").change(      function () { unet.redraw({'showLegend_': this.checked,
+                                                            'legX_':$("#legX").val(),
+                                                            'legY_':$("#legY").val()});
+                                            $("#legX").attr('disabled',!this.checked);
+                                            $("#legY").attr('disabled',!this.checked);
+ });
+$("#legX").change(      function (){ unet.redraw({'legX_': $("#legX").val()}); });
+$("#legY").change(      function (){ unet.redraw({'legY_': $("#legY").val()}); });
 // /////////////////////////////////////////////////////////////////////////////
 //                  ///////    Select Architecture    ///////
 // /////////////////////////////////////////////////////////////////////////////
@@ -676,6 +700,8 @@ $(document).on('change', 'select', function(e) {
 
     restart();
 });
+
+
 
 $("#download").on("click", function() {
     ga('send', 'event', 'downloadSVG', 'UNet');

@@ -34,6 +34,8 @@ function UNet() {
     var clr_conn = '#6dae47';
 
     var rectOpacity = 0.4;
+    var legX = 0.5;
+    var legY = 0.2;
 
 
     var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
@@ -49,6 +51,7 @@ function UNet() {
     var widthScale = 10;
 
     var showDims = false;
+    var showLegend = false;
 
     var colors = {"Conv" : clr_conv,
                 "Pooling" : clr_pool,
@@ -105,10 +108,37 @@ function UNet() {
     function animate() {
         requestAnimationFrame( animate );
         renderer.render(scene, camera);
+        if (showLegend){
+            legend=getLegend(legX,legY);
+            $("svg").html($("svg").html()+legend);
+        }
     };
 
     restartRenderer();
+    function getLegend(x,y){
+        coords = $("svg").attr("viewBox").split(" ");
+        start_x = parseInt(coords[0])+ (parseInt(coords[2]) - parseInt(coords[0]))*x;
+        start_y = parseInt(coords[1])+ (parseInt(coords[3]) - parseInt(coords[1]))*y;
+        // var legend = '<svg width="130" height="170">'
 
+        // start_x = x-10;
+        // start_y = y-27;
+
+        var legend = '<rect width="130" height="170" x="'+(start_x +10) +'" y="'+(start_y + 27)+'"style="fill:rgb(220,220,220);stroke-width:2;stroke:rgb(0,0,0)" />';
+
+        colors = {'Volume':$("#clr_vol").val(),
+                    'Conv':$("#clr_conv").val(),
+                    'Up-Conv':$("#clr_upconv").val(),
+                    'Pooling':$("#clr_pool").val(),
+                    'Concat':$("#clr_conn").val()};
+        
+        for(var key in colors) {
+            legend += '<text x="'+(start_x +50) +'" y="'+(start_y + 57)+'" font-family="sans-serif" font-size="20px" fill="black">'+(key)+'</text>';
+            legend += '<circle cx="'+(start_x +30)+'" cy="'+(start_y + 50)+'" r="10" fill="'+(colors[key])+'" />'
+            start_y += 30;
+        }
+        return legend + '</svg>';
+    }
     function adjust_offsets(layer_offsets,start_index,depth){
         for ( i=start_index;i<layer_offsets.length;i++){
             layer_offsets[i] -= (depth+betweenLayers)
@@ -123,7 +153,10 @@ function UNet() {
                      depthScale_=depthScale,
                      logWidth_=logWidth,
                      widthScale_=widthScale,
-                     showDims_=showDims}={}) {
+                     showDims_=showDims,
+                     showLegend_=showLegend,
+                     legX_=legX,
+                     legY_=legY}={}) {
 
         architecture = architecture_;
         connections = connections_;
@@ -133,6 +166,9 @@ function UNet() {
         logWidth = logWidth_;
         widthScale = widthScale_;
         showDims = showDims_;
+        showLegend = showLegend_;
+        legX = legX_;
+        legY = legY_
 
         clearThree(scene);
 
@@ -162,13 +198,13 @@ function UNet() {
                     if (index+1 < architecture.length){
                         length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
                         direction = new THREE.Vector3(0,-1,0);
-                        origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index] );
+                        origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index]-(70./depthFn(layer['depth'])) );
                         level--;
                         layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
                     }else{
                         length = lvl_height;
                         direction = new THREE.Vector3(0,-1,0);
-                        origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index] );
+                        origin = new THREE.Vector3( 0, level*lvl_height - wh(layer)/2, layer_offsets[index] -(70./depthFn(layer['depth'])));
                         level--;
                     }
                     
@@ -177,13 +213,13 @@ function UNet() {
                     if (index+1 < architecture.length){
                         length = lvl_height - wh(layer)/2 - wh(architecture[index+1])/2;
                         direction = new THREE.Vector3(0,1,0);
-                        origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] );
+                        origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] -(70./depthFn(layer['depth'])));
                         level++;
                         layer_offsets = adjust_offsets(layer_offsets,index+1,depthFn(architecture[index+1]['depth']));
                     }else{
                         length = lvl_height;
                         direction = new THREE.Vector3(0,1,0);
-                        origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] );
+                        origin = new THREE.Vector3( 0, level*lvl_height + wh(layer)/2, layer_offsets[index] -(70./depthFn(layer['depth'])));
                         level++;
                     }
                     
@@ -191,7 +227,7 @@ function UNet() {
                 }else{
                     length = betweenLayers;
                     direction = new THREE.Vector3(0,0,1);
-                    origin = new THREE.Vector3( 0, level*lvl_height, layer_offsets[index] + depthFn(layer['depth'])/2);
+                    origin = new THREE.Vector3( 0, level*lvl_height, layer_offsets[index] + depthFn(layer['depth'])/2 -(70./depthFn(layer['depth'])));
                 }
                 
                 headLength = betweenLayers/3;
