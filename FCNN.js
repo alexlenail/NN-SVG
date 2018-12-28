@@ -88,7 +88,7 @@ function FCNN() {
         graph.nodes = flatten(graph.nodes);
         graph.links = flatten(graph.links).filter(l => (Object.keys(l).length > 0 && (showBias ? (parseInt(l['target'].split('_')[0]) !== architecture.length-1 ? (l['target'].split('_')[1] !== '0') : true) : true)));
 
-        label = architecture.filter(width => width).map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
+        label = architecture.map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
 
         link = link.data(graph.links, d => d.id);
         link.exit().remove();
