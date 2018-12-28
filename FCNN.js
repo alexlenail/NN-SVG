@@ -88,16 +88,16 @@ function FCNN() {
         graph.nodes = flatten(graph.nodes);
         graph.links = flatten(graph.links).filter(l => (Object.keys(l).length > 0 && (showBias ? (parseInt(l['target'].split('_')[0]) !== architecture.length-1 ? (l['target'].split('_')[1] !== '0') : true) : true)));
 
-        label = architecture.map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
+        label = architecture.filter(width => width).map((layer_width, layer_index) => { return {'id':'layer_'+layer_index+'_label','layer':layer_index,'text':textFn(layer_index, layer_width)}});
 
-        link = link.data(graph.links);
+        link = link.data(graph.links, d => d.id);
         link.exit().remove();
         link = link.enter()
                    .insert("line", ".node")
                    .attr("class", "link")
                    .merge(link);
 
-        node = node.data(graph.nodes);
+        node = node.data(graph.nodes, d => d.id);
         node.exit().remove();
         node = node.enter()
                    .append("circle")
@@ -108,12 +108,15 @@ function FCNN() {
                    .on("mouseup", remove_focus)
                    .merge(node);
 
-        text = text.data(label);
-        if (text.empty()) { text = text.enter().append("text").attr("class", "text"); }
-        text = text.text(function(d) { return (showLabels ? d.text : ""); })
+        text = text.data(label, d => d.id);
+        text.exit().remove();
+        text = text.enter()
+                   .append("text")
+                   .attr("class", "text")
                    .attr("dy", ".35em")
                    .style("font-size", nominal_text_size+"px")
-                   .merge(text);
+                   .merge(text)
+                   .text(function(d) { return (showLabels ? d.text : ""); });
 
         style();
     }
