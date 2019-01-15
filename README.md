@@ -21,5 +21,7 @@ I hope this tool will save machine learning researchers time, and I hope this so
 
 ### Citation
 
-... coming soon!
-
+```
+LeNail, (2019). NN-SVG: Publication-Ready Neural Network Architecture Schematics.
+Journal of Open Source Software, 4(33), 747, https://doi.org/10.21105/joss.00747
+```
