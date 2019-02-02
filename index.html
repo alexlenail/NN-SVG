@@ -180,6 +180,24 @@
                                 <input type="checkbox" id="showLabels" name="showLabels" value="showLabels" checked>
                                 <label for="showLabels">Show Layer Labels</label>
                             </div>
+                            <div>
+
+                            <div id="arrowhead">
+                                <input type="checkbox" id="showArrowheads" name="showArrowheads" value="showArrowheads">
+                                <label for="showArrowheads">Show Arrowheads</label>
+                                <div class="form-check form-check-inline ml-3">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="arrowheadStyle" id="empty" value="empty" checked> empty
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="arrowheadStyle" id="solid" value="solid"> solid
+                                    </label>
+                                </div>
+                            </div>
+
+                            </div>
 
                             <hr>
                             <h4>Architecture:</h4>
@@ -283,8 +301,10 @@ $("#nodeColor").change(               function() { fcnn.style({'nodeColor_': thi
 $("#nodeBorderColor").change(         function() { fcnn.style({'nodeBorderColor_': this.value}) });
 $("#betweenLayers").change(           function() { fcnn.redistribute({'betweenLayers_': parseFloat(this.value)}) });
 $('#nnDirection input:radio').change( function() { fcnn.redistribute({'nnDirection_': this.value}) });
-$("#showBias").change(                function() { fcnn.redraw({'showBias_': this.checked}) });
+$("#showBias").change(                function() { fcnn.redraw({'showBias_': this.checked}); fcnn.redistribute(); });
 $("#showLabels").change(              function() { fcnn.redraw({'showLabels_': this.checked}) });
+$("#showArrowheads").change(          function() { fcnn.style({'showArrowheads_': this.checked}) });
+$("#arrowhead input:radio").change(   function() { fcnn.style({'arrowheadStyle_': this.value}) });
 
 
 /////////////////////////////////////////////////////////////////////////////
