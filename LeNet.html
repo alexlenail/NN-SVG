@@ -351,7 +351,7 @@ $(document).on('change', 'input[type="text"]', function(e) {
 
 
 d3.select("#download").on("click", function() {
-    ga('send', 'event', 'downloadSVG', 'LeNet');
+    // ga('send', 'event', 'downloadSVG', 'LeNet');
 
     d3.select(this)
       .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#graph-container").html()))

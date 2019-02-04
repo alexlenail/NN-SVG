@@ -350,7 +350,7 @@ $(document).on('click', '#newRandomWeights', function() {
 });
 
 d3.select("#download").on("click", function() {
-    ga('send', 'event', 'downloadSVG', 'FCNN');
+    // ga('send', 'event', 'downloadSVG', 'FCNN');
 
     d3.select(this)
       .attr("href", 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(d3.select("#graph-container").html()))))
