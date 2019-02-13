@@ -2,7 +2,7 @@
 function FCNN() {
 
     /////////////////////////////////////////////////////////////////////////////
-                        ///////    Helper Functions    ///////
+                        ///////    Helpers    ///////
     /////////////////////////////////////////////////////////////////////////////
 
     let range = n => [...Array(n).keys()];
@@ -85,7 +85,7 @@ function FCNN() {
     var text = g.selectAll(".text");
 
     /////////////////////////////////////////////////////////////////////////////
-                          ///////    Draw Graph    ///////
+                          ///////    Methods    ///////
     /////////////////////////////////////////////////////////////////////////////
 
     function redraw({architecture_=architecture,
@@ -228,31 +228,6 @@ function FCNN() {
     }
 
     /////////////////////////////////////////////////////////////////////////////
-                          ///////    Zoom    ///////
-    /////////////////////////////////////////////////////////////////////////////
-
-    svg.call(d3.zoom()
-               .scaleExtent([1 / 2, 8])
-               .on("zoom", zoomed));
-
-    function zoomed() { g.attr("transform", d3.event.transform); }
-
-
-    /////////////////////////////////////////////////////////////////////////////
-                          ///////    Resize    ///////
-    /////////////////////////////////////////////////////////////////////////////
-
-    function resize() {
-        w = window.innerWidth;
-        h = window.innerHeight;
-        svg.attr("width", w).attr("height", h);
-    }
-
-    d3.select(window).on("resize", resize)
-
-    resize();
-
-    /////////////////////////////////////////////////////////////////////////////
                           ///////    Focus    ///////
     /////////////////////////////////////////////////////////////////////////////
 
@@ -267,6 +242,26 @@ function FCNN() {
         node.style("opacity", 1);
         link.style("opacity", function () { return edgeOpacity; })
     }
+
+    /////////////////////////////////////////////////////////////////////////////
+                          ///////    Zoom & Resize   ///////
+    /////////////////////////////////////////////////////////////////////////////
+
+    svg.call(d3.zoom()
+               .scaleExtent([1 / 2, 8])
+               .on("zoom", zoomed));
+
+    function zoomed() { g.attr("transform", d3.event.transform); }
+
+    function resize() {
+        w = window.innerWidth;
+        h = window.innerHeight;
+        svg.attr("width", w).attr("height", h);
+    }
+
+    d3.select(window).on("resize", resize)
+
+    resize();
 
     /////////////////////////////////////////////////////////////////////////////
                           ///////    Return    ///////

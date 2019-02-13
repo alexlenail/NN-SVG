@@ -2,7 +2,7 @@
 function LeNet() {
 
     /////////////////////////////////////////////////////////////////////////////
-                        ///////    Helper Functions    ///////
+                        ///////    Helpers    ///////
     /////////////////////////////////////////////////////////////////////////////
 
     let range = n => [...Array(n).keys()];
@@ -51,17 +51,10 @@ function LeNet() {
 
     let textFn = (layer) => (typeof(layer) === "object" ? layer['numberOfSquares']+'@'+layer['squareWidth']+'x'+layer['squareWidth'] : "1x"+layer)
 
-    var rect = g.selectAll(".rect");
-    var conv = g.selectAll(".conv");
-    var link = g.selectAll(".link");
-    var poly = g.selectAll(".poly");
-    var line = g.selectAll(".line");
-    var text = g.selectAll(".text");
-    var info = g.selectAll(".info");
-
+    var rect, conv, link, poly, line, text, info;
 
     /////////////////////////////////////////////////////////////////////////////
-                          ///////    Draw Graph    ///////
+                          ///////    Methods    ///////
     /////////////////////////////////////////////////////////////////////////////
 
     function redraw({architecture_=architecture,
@@ -84,84 +77,80 @@ function LeNet() {
         lenet.fc_links[0]['prevSize'] = 0;                           // hacks
         lenet.fc_links[1]['prevSize'] = lenet.rects.last()['side'];  // hacks
 
-        label = $('#architecture').find('input[type="text"]').map((i,el) => $(el).val()).get().map((op, i) => {return {'id':'op_'+i, 'layer':i, 'op':op}})
+        label = $('#architecture').find('input[type="text"]').map((i,el) => $(el).val()).get().map((op, i) => {return {'id':'op_'+i, 'layer':i, 'op':op}})  // this is gross, fix this shit
         .concat(architecture2.map((op, i) => { return {'id':'op_'+i+architecture.length,'layer':i+architecture.length,'op':'Dense'}}));  label.pop();
         label2 = architecture.map((layer, layer_index) => { return {'id':'data_'+layer_index+'_label','layer':layer_index,'text':textFn(layer)}})
         .concat(architecture2.map((layer, layer_index) => { return {'id':'data_'+layer_index+architecture.length+'_label','layer':layer_index+architecture.length,'text':textFn(layer)}}) );
 
-        rect = rect.data([]);
-        rect.exit().remove();
-        rect = rect.data(lenet.rects);
-        rect = rect.enter()
-                   .append("rect")
-                   .attr("class", "rect")
-                   .attr("id", function(d) { return d.id; })
-                   .attr("width", function(d) { return d.side; })
-                   .attr("height", function(d) { return d.side; })
-                   .merge(rect);
 
-        conv = conv.data([]);
-        conv.exit().remove();
-        conv = conv.data(lenet.convs);
-        conv = conv.enter()
-                   .append("rect")
-                   .attr("class", "conv")
-                   .attr("id", function(d) { return d.id; })
-                   .attr("width", function(d) { return d.stride; })
-                   .attr("height", function(d) { return d.stride; })
-                   .style("fill-opacity", 0)
-                   .merge(conv);
+        g.selectAll('*').remove();
 
-        link = link.data([]);
-        link.exit().remove();
-        link = link.data(lenet.conv_links);
-        link = link.enter()
-                   .append("line")
-                   .attr("class", "link")
-                   .attr("id", function(d) { return d.id; })
-                   .merge(link);
+        rect = g.selectAll(".rect")
+                .data(lenet.rects)
+                .enter()
+                .append("rect")
+                .attr("class", "rect")
+                .attr("id", function(d) { return d.id; })
+                .attr("width", function(d) { return d.side; })
+                .attr("height", function(d) { return d.side; })
+                .merge(rect);
 
-        poly = poly.data([]);
-        poly.exit().remove();
-        poly = poly.data(lenet.fc_layers);
-        poly = poly.enter()
-                   .append("polygon")
-                   .attr("class", "poly")
-                   .attr("id", function(d) { return d.id; })
-                   .merge(poly);
+        conv = g.selectAll(".conv")
+                .data(lenet.convs)
+                .enter()
+                .append("rect")
+                .attr("class", "conv")
+                .attr("id", function(d) { return d.id; })
+                .attr("width", function(d) { return d.stride; })
+                .attr("height", function(d) { return d.stride; })
+                .style("fill-opacity", 0)
+                .merge(conv);
 
-        line = line.data([]);
-        line.exit().remove();
-        line = line.data(lenet.fc_links);
-        line = line.enter()
-                   .append("line")
-                   .attr("class", "line")
-                   .attr("id", function(d) { return d.id; })
-                   .merge(line);
+        link = g.selectAll(".link")
+                .data(lenet.conv_links)
+                .enter()
+                .append("line")
+                .attr("class", "link")
+                .attr("id", function(d) { return d.id; })
+                .merge(link);
 
-        text = text.data([]);
-        text.exit().remove();
-        text = text.data(label);
-        text = text.enter()
-                   .append("text")
-                   .text(function (d) { return (showLabels ? d.op : ""); })
-                   .attr("class", "text")
-                   .attr("dy", ".35em")
-                   .style("font-size", "16px")
-                   .attr("font-family", "sans-serif")
-                   .merge(text);
+        poly = g.selectAll(".poly")
+                .data(lenet.fc_layers)
+                .enter()
+                .append("polygon")
+                .attr("class", "poly")
+                .attr("id", function(d) { return d.id; })
+                .merge(poly);
 
-        info = info.data([]);
-        info.exit().remove();
-        info = info.data(label2);
-        info = info.enter()
-                   .append("text")
-                   .text(function (d) { return (showLabels ? d.text : ""); })
-                   .attr("class", "info")
-                   .attr("dy", "-0.3em")
-                   .style("font-size", "16px")
-                   .attr("font-family", "sans-serif")
-                   .merge(info);
+        line = g.selectAll(".line")
+                .data(lenet.fc_links)
+                .enter()
+                .append("line")
+                .attr("class", "line")
+                .attr("id", function(d) { return d.id; })
+                .merge(line);
+
+        text = g.selectAll(".text")
+                .data(label)
+                .enter()
+                .append("text")
+                .text(function (d) { return (showLabels ? d.op : ""); })
+                .attr("class", "text")
+                .attr("dy", ".35em")
+                .style("font-size", "16px")
+                .attr("font-family", "sans-serif")
+                .merge(text);
+
+        info = g.selectAll(".info")
+                .data(label2)
+                .enter()
+                .append("text")
+                .text(function (d) { return (showLabels ? d.text : ""); })
+                .attr("class", "info")
+                .attr("dy", "-0.3em")
+                .style("font-size", "16px")
+                .attr("font-family", "sans-serif")
+                .merge(info);
 
         style();
 
@@ -259,7 +248,7 @@ function LeNet() {
     }
 
     /////////////////////////////////////////////////////////////////////////////
-                          ///////    Zoom    ///////
+                        ///////    Zoom & Resize   ///////
     /////////////////////////////////////////////////////////////////////////////
 
     svg.call(d3.zoom()
@@ -267,11 +256,6 @@ function LeNet() {
                .on("zoom", zoomed));
 
     function zoomed() { g.attr("transform", d3.event.transform); }
-
-
-    /////////////////////////////////////////////////////////////////////////////
-                          ///////    Resize    ///////
-    /////////////////////////////////////////////////////////////////////////////
 
     function resize() {
         w = window.innerWidth;
