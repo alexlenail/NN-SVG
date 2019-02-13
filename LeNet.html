@@ -126,15 +126,15 @@
                             <hr>
                             <h4>Architecture:</h4>
                             <div id="architecture">
-                                <p>Depth | Width | Height | filter Width | filter Height</p>
+                                <p>Depth | Height | Width | filter Height | filter Width</p>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="8" />
-                                        <input type="number" class="form-control" name="squareWidth" step="1" value="128" />
                                         <input type="number" class="form-control" name="squareHeight" step="1" value="128" />
-                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="128" />
                                         <input type="number" class="form-control" name="filterHeight" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -146,10 +146,10 @@
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="8" />
-                                        <input type="number" class="form-control" name="squareWidth" step="1" value="64" />
                                         <input type="number" class="form-control" name="squareHeight" step="1" value="64" />
-                                        <input type="number" class="form-control" name="filterWidth" step="1" value="16" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="64" />
                                         <input type="number" class="form-control" name="filterHeight" step="1" value="16" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="16" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -161,10 +161,10 @@
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="24" />
-                                        <input type="number" class="form-control" name="squareWidth" step="1" value="48" />
                                         <input type="number" class="form-control" name="squareHeight" step="1" value="48" />
-                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="48" />
                                         <input type="number" class="form-control" name="filterHeight" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -176,10 +176,10 @@
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="24" />
-                                        <input type="number" class="form-control" name="squareWidth" step="1" value="16" />
                                         <input type="number" class="form-control" name="squareHeight" step="1" value="16" />
-                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
+                                        <input type="number" class="form-control" name="squareWidth" step="1" value="16" />
                                         <input type="number" class="form-control" name="filterHeight" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -191,10 +191,10 @@
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1"/>
-                                        <input type="number" class="form-control" name="squareWidth" step="1"/>
                                         <input type="number" class="form-control" name="squareHeight" step="1"/>
-                                        <input type="number" class="form-control" name="filterWidth" step="1"/>
+                                        <input type="number" class="form-control" name="squareWidth" step="1"/>
                                         <input type="number" class="form-control" name="filterHeight" step="1"/>
+                                        <input type="number" class="form-control" name="filterWidth" step="1"/>
                                     </div>
                                     <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
@@ -256,7 +256,7 @@ lenet = LeNet();
 function restart() {
 
     architecture = $('#architecture').find('.entry').map((i,el) =>
-        _.object(['numberOfSquares','squareWidth','squareHeight','filterWidth','filterHeight'],
+        _.object(['numberOfSquares','squareHeight','squareWidth','filterHeight','filterWidth'],
                  $(el).find('input[type="number"]').map((i,input) => parseFloat($(input).val())).get())
         ).get()
          .filter(layer => Object.values(layer).every(val => val));

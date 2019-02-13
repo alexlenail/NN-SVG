@@ -28,7 +28,7 @@ function LeNet() {
     var largest_layer_width = 0;
     var showLabels = true;
 
-    let textFn = (layer) => (typeof(layer) === "object" ? layer['numberOfSquares']+'@'+layer['squareWidth']+'x'+layer['squareWidth'] : "1x"+layer)
+    let textFn = (layer) => (typeof(layer) === "object" ? layer['numberOfSquares']+'@'+layer['squareHeight']+'x'+layer['squareWidth'] : "1x"+layer)
 
     var rect, conv, link, poly, line, text, info;
 
