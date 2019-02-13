@@ -41,7 +41,7 @@ function LeNet() {
 
         architecture = architecture_;
 
-        lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {return {'id':layer_index+'_'+rect_index,'layer':layer_index,'rect_index':rect_index,'side':layer['squareWidth']}}));
+        lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {return {'id':layer_index+'_'+rect_index,'layer':layer_index,'rect_index':rect_index,'width':layer['squareWidth'],'height':layer['squareHeight']}}));
         lenet.rects = flatten(lenet.rects);
 
         lenet.convs = architecture.map((layer, layer_index) => Object.assign({'id':'conv_'+layer_index,'layer':layer_index}, layer)); lenet.convs.pop();
@@ -69,9 +69,9 @@ function LeNet() {
                 .enter()
                 .append("rect")
                 .attr("class", "rect")
-                .attr("id", function(d) { return d.id; })
-                .attr("width", function(d) { return d.side; })
-                .attr("height", function(d) { return d.side; })
+                .attr("id", d => d.id)
+                .attr("width", d => d.width)
+                .attr("height", d => d.height)
                 .merge(rect);
 
         conv = g.selectAll(".conv")
@@ -79,9 +79,9 @@ function LeNet() {
                 .enter()
                 .append("rect")
                 .attr("class", "conv")
-                .attr("id", function(d) { return d.id; })
-                .attr("width", function(d) { return d.stride; })
-                .attr("height", function(d) { return d.stride; })
+                .attr("id", d => d.id)
+                .attr("width", d => d.stride)
+                .attr("height", d => d.stride)
                 .style("fill-opacity", 0)
                 .merge(conv);
 
@@ -90,7 +90,7 @@ function LeNet() {
                 .enter()
                 .append("line")
                 .attr("class", "link")
-                .attr("id", function(d) { return d.id; })
+                .attr("id", d => d.id)
                 .merge(link);
 
         poly = g.selectAll(".poly")
@@ -98,7 +98,7 @@ function LeNet() {
                 .enter()
                 .append("polygon")
                 .attr("class", "poly")
-                .attr("id", function(d) { return d.id; })
+                .attr("id", d => d.id)
                 .merge(poly);
 
         line = g.selectAll(".line")
@@ -106,7 +106,7 @@ function LeNet() {
                 .enter()
                 .append("line")
                 .attr("class", "line")
-                .attr("id", function(d) { return d.id; })
+                .attr("id", d => d.id)
                 .merge(line);
 
         text = g.selectAll(".text")
@@ -155,19 +155,19 @@ function LeNet() {
         let x = (layer, node_index) => layer_x_offsets[layer] + (node_index * betweenSquares) + screen_center_x;
         let y = (layer, node_index) => layer_y_offsets[layer] + (node_index * betweenSquares) + screen_center_y;
 
-        rect.attr('x', function(d) { return x(d.layer, d.rect_index); })
-            .attr('y', function(d) { return y(d.layer, d.rect_index); });
+        rect.attr('x', d => x(d.layer, d.rect_index))
+            .attr('y', d => y(d.layer, d.rect_index));
 
         let xc = (d) => (layer_x_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['x_rel'] * (d['squareWidth'] - d['stride'])) + screen_center_x;
         let yc = (d) => (layer_y_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['y_rel'] * (d['squareWidth'] - d['stride'])) + screen_center_y;
 
-        conv.attr('x', function(d) { return xc(d); })
-            .attr('y', function(d) { return yc(d); });
+        conv.attr('x', d => xc(d))
+            .attr('y', d => yc(d));
 
-        link.attr("x1", function(d) { return xc(d) + d['stride']; })
-            .attr("y1", function(d) { return yc(d) + (d.i ? 0 : d['stride']); })
-            .attr("x2", function(d) { return (layer_x_offsets[d.layer+1]) + ((architecture[d.layer+1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer+1]['squareWidth'] * d.x_rel + screen_center_x })
-            .attr("y2", function(d) { return (layer_y_offsets[d.layer+1]) + ((architecture[d.layer+1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer+1]['squareWidth'] * d.y_rel + screen_center_y });
+        link.attr("x1", d => xc(d) + d['stride'])
+            .attr("y1", d => yc(d) + (d.i ? 0 : d['stride']))
+            .attr("x2", d => (layer_x_offsets[d.layer+1]) + ((architecture[d.layer+1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer+1]['squareWidth'] * d.x_rel + screen_center_x)
+            .attr("y2", d => (layer_y_offsets[d.layer+1]) + ((architecture[d.layer+1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer+1]['squareWidth'] * d.y_rel + screen_center_y);
 
 
         poly.attr("points", function(d) {
@@ -177,16 +177,16 @@ function LeNet() {
                 ' '+(layer_x_offsets[d.layer]+screen_center_x+d.size)    +','+(layer_y_offsets[d.layer]+screen_center_y+d.size));
         });
 
-        line.attr("x1", function(d) { return layer_x_offsets[d.layer-1] + (d.i ? 0 : layer_widths[d.layer-1]) + d.prevSize + screen_center_x})
-            .attr("y1", function(d) { return layer_y_offsets[d.layer-1] + (d.i ? 0 : layer_widths[d.layer-1]) + screen_center_y})
-            .attr("x2", function(d) { return layer_x_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_x})
-            .attr("y2", function(d) { return layer_y_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_y});
+        line.attr("x1", d => layer_x_offsets[d.layer-1] + (d.i ? 0 : layer_widths[d.layer-1]) + d.prevSize + screen_center_x)
+            .attr("y1", d => layer_y_offsets[d.layer-1] + (d.i ? 0 : layer_widths[d.layer-1]) + screen_center_y)
+            .attr("x2", d => layer_x_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_x)
+            .attr("y2", d => layer_y_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_y);
 
-        text.attr('x', function(d) { return (layer_x_offsets[d.layer] + layer_widths[d.layer] + layer_x_offsets[d.layer+1] + layer_widths[d.layer+1]/2)/2 + screen_center_x -15; })
-            .attr('y', function(d) { return layer_y_offsets[0] + screen_center_y + largest_layer_width;  });
+        text.attr('x', d => (layer_x_offsets[d.layer] + layer_widths[d.layer] + layer_x_offsets[d.layer+1] + layer_widths[d.layer+1]/2)/2 + screen_center_x -15)
+            .attr('y', d => layer_y_offsets[0] + screen_center_y + largest_layer_width);
 
-        info.attr('x', function(d) { return layer_x_offsets[d.layer] + screen_center_x; })
-            .attr('y', function(d) { return layer_y_offsets[d.layer] + screen_center_y - 15;  });
+        info.attr('x', d => layer_x_offsets[d.layer] + screen_center_x)
+            .attr('y', d => layer_y_offsets[d.layer] + screen_center_y - 15);
 
     }
 
@@ -201,7 +201,7 @@ function LeNet() {
         rectOpacity = rectOpacity_;
         showLabels  = showLabels_;
 
-        rect.style("fill", function(d) { return d.rect_index % 2 ? color1 : color2});
+        rect.style("fill", d => d.rect_index % 2 ? color1 : color2);
         poly.style("fill", color1);
 
         rect.style("stroke", borderColor);
