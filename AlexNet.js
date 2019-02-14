@@ -13,12 +13,12 @@ function AlexNet() {
     var color3 = '#ffbbbb';
 
     var rectOpacity = 0.4;
-    var strideOpacity = 0.4;
+    var filterOpacity = 0.4;
 
     var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
     var box_material = new THREE.MeshBasicMaterial( {'color':color1, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':rectOpacity, 'depthWrite':false, 'needsUpdate':true} );
-    var conv_material = new THREE.MeshBasicMaterial( {'color':color2, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
-    var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':strideOpacity, 'depthWrite':false, 'needsUpdate':true} );
+    var conv_material = new THREE.MeshBasicMaterial( {'color':color2, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':filterOpacity, 'depthWrite':false, 'needsUpdate':true} );
+    var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':filterOpacity, 'depthWrite':false, 'needsUpdate':true} );
 
     var architecture = [];
     var architecture2 = [];
@@ -32,12 +32,14 @@ function AlexNet() {
     var convScale = 1;
 
     var showDims = false;
+    var showConvDims = false;
 
     let depthFn = (depth) => logDepth ? (Math.log(depth) * depthScale) : (depth * depthScale);
     let widthFn = (width) => logWidth ? (Math.log(width) * widthScale) : (width * widthScale);
     let convFn = (conv) => logConvSize ? (Math.log(conv) * convScale) : (conv * convScale);
 
-    function wh(layer) { return widthFn(layer['widthAndHeight']); }
+    function wf(layer) { return widthFn(layer['width']); }
+    function hf(layer) { return widthFn(layer['height']); }
 
     var layers = new THREE.Group();
     var convs = new THREE.Group();
@@ -101,7 +103,8 @@ function AlexNet() {
                      widthScale_=widthScale,
                      logConvSize_=logConvSize,
                      convScale_=convScale,
-                     showDims_=showDims}={}) {
+                     showDims_=showDims,
+                     showConvDims_=showConvDims}={}) {
 
         architecture = architecture_;
         architecture2 = architecture2_;
@@ -113,6 +116,7 @@ function AlexNet() {
         logConvSize = logConvSize_;
         convScale = convScale_;
         showDims = showDims_;
+        showConvDims = showConvDims_;
 
         clearThree(scene);
 
@@ -123,7 +127,7 @@ function AlexNet() {
         architecture.forEach( function( layer, index ) {
 
             // Layer
-            layer_geometry = new THREE.BoxGeometry( wh(layer), wh(layer), depthFn(layer['depth']) );
+            layer_geometry = new THREE.BoxGeometry( wf(layer), hf(layer), depthFn(layer['depth']) );
             layer_object = new THREE.Mesh( layer_geometry, box_material );
             layer_object.position.set(0, 0, layer_offsets[index]);
             layers.add( layer_object );
@@ -136,14 +140,14 @@ function AlexNet() {
             if (index < architecture.length - 1) {
 
                 // Conv
-                conv_geometry = new THREE.BoxGeometry( convFn(layer['stride']), convFn(layer['stride']), depthFn(layer['depth']) );
+                conv_geometry = new THREE.BoxGeometry( convFn(layer['filterWidth']), convFn(layer['filterHeight']), depthFn(layer['depth']) );
                 conv_object = new THREE.Mesh( conv_geometry, conv_material );
-                conv_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
+                conv_object.position.set(layer['rel_x'] * wf(layer), layer['rel_y'] * hf(layer), layer_offsets[index]);
                 convs.add( conv_object );
 
                 conv_edges_geometry = new THREE.EdgesGeometry( conv_geometry );
                 conv_edges_object = new THREE.LineSegments( conv_edges_geometry, line_material );
-                conv_edges_object.position.set(layer['rel_x'] * wh(layer), layer['rel_y'] * wh(layer), layer_offsets[index]);
+                conv_edges_object.position.set(layer['rel_x'] * wf(layer), layer['rel_y'] * hf(layer), layer_offsets[index]);
                 convs.add( conv_edges_object );
 
                 // Pyramid
@@ -151,13 +155,13 @@ function AlexNet() {
 
                 base_z = layer_offsets[index] + (depthFn(layer['depth']) / 2);
                 summit_z = layer_offsets[index] + (depthFn(layer['depth']) / 2) + betweenLayers;
-                next_layer_wh = widthFn(architecture[index+1]['widthAndHeight'])
+                next_layer_wh = widthFn(architecture[index+1]['width'])
 
                 pyramid_geometry.vertices = [
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) + (convFn(layer['stride'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) + (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) - (convFn(layer['stride'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) - (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) - (convFn(layer['stride'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * wh(layer)) - (convFn(layer['stride'])/2), (layer['rel_y'] * wh(layer)) + (convFn(layer['stride'])/2), base_z ),  // base
+                    new THREE.Vector3( (layer['rel_x'] * wf(layer)) + (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) + (convFn(layer['filterHeight'])/2), base_z ),  // base
+                    new THREE.Vector3( (layer['rel_x'] * wf(layer)) + (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) - (convFn(layer['filterHeight'])/2), base_z ),  // base
+                    new THREE.Vector3( (layer['rel_x'] * wf(layer)) - (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) - (convFn(layer['filterHeight'])/2), base_z ),  // base
+                    new THREE.Vector3( (layer['rel_x'] * wf(layer)) - (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) + (convFn(layer['filterHeight'])/2), base_z ),  // base
                     new THREE.Vector3( (layer['rel_x'] * next_layer_wh),                           (layer['rel_y'] * next_layer_wh),                           summit_z)  // summit
                 ];
                 pyramid_geometry.faces = [new THREE.Face3(0,1,2),new THREE.Face3(0,2,3),new THREE.Face3(1,0,4),new THREE.Face3(2,1,4),new THREE.Face3(3,2,4),new THREE.Face3(0,3,4)];
@@ -175,15 +179,28 @@ function AlexNet() {
 
                 // Dims
                 sprite = makeTextSprite(layer['depth'].toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wh(layer)/2 + 2, wh(layer)/2 + 2, 0 ) );
+                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wf(layer)/2 + 2, hf(layer)/2 + 2, 0 ) );
                 sprites.add( sprite );
 
-                sprite = makeTextSprite(layer['widthAndHeight'].toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wh(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ) );
+                sprite = makeTextSprite(layer['width'].toString());
+                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wf(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ) );
                 sprites.add( sprite );
 
-                sprite = makeTextSprite(layer['widthAndHeight'].toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, -wh(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ) );
+                sprite = makeTextSprite(layer['height'].toString());
+                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, -hf(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ) );
+                sprites.add( sprite );
+
+            }
+
+            if (showConvDims && index < architecture.length - 1) {
+
+                // Conv Dims
+                sprite = makeTextSprite(layer['filterWidth'].toString());
+                sprite.position.copy( conv_object.position ).sub( new THREE.Vector3( convFn(layer['filterWidth'])/2, -3, depthFn(layer['depth'])/2 ) );
+                sprites.add( sprite );
+
+                sprite = makeTextSprite(layer['filterHeight'].toString());
+                sprite.position.copy( conv_object.position ).sub( new THREE.Vector3( -1, convFn(layer['filterHeight'])/2, depthFn(layer['depth'])/2 ) );
                 sprites.add( sprite );
 
             }
@@ -275,12 +292,12 @@ function AlexNet() {
                     color2_=color2,
                     color3_=color3,
                     rectOpacity_=rectOpacity,
-                    strideOpacity_=strideOpacity}={}) {
+                    filterOpacity_=filterOpacity}={}) {
         color1        = color1_;
         color2        = color2_;
         color3        = color3_;
         rectOpacity   = rectOpacity_;
-        strideOpacity = strideOpacity_;
+        filterOpacity = filterOpacity_;
 
         box_material.color = new THREE.Color(color1);
         conv_material.color = new THREE.Color(color2);
@@ -288,8 +305,8 @@ function AlexNet() {
 
         box_material.opacity = rectOpacity;
 
-        conv_material.opacity = strideOpacity;
-        pyra_material.opacity = strideOpacity;
+        conv_material.opacity = filterOpacity;
+        pyra_material.opacity = filterOpacity;
     }
 
     // /////////////////////////////////////////////////////////////////////////////
