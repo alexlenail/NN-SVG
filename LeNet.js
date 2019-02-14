@@ -21,7 +21,6 @@ function LeNet() {
     var betweenLayers = [];
     var betweenLayersDefault = 12;
 
-    // numberOfSquares, squareWidth, stride.
     var architecture = [];
     var lenet = {};
     var layer_offsets = [];
@@ -53,13 +52,11 @@ function LeNet() {
         lenet.fc_layers = architecture2.map((size, fc_layer_index) => {return {'id': 'fc_'+fc_layer_index, 'layer':fc_layer_index+architecture.length, 'size':size/Math.sqrt(2)}});
         lenet.fc_links = lenet.fc_layers.map(fc => { return [Object.assign({'id':'link_'+fc['layer']+'_0','i':0,'prevSize':10},fc), Object.assign({'id':'link_'+fc['layer']+'_1','i':1,'prevSize':10},fc)]});
         lenet.fc_links = flatten(lenet.fc_links);
-        lenet.fc_links[0]['prevSize'] = 0;                           // hacks
-        lenet.fc_links[1]['prevSize'] = lenet.rects.last()['side'];  // hacks
+        lenet.fc_links[0]['prevSize'] = 0;                            // hacks
+        lenet.fc_links[1]['prevSize'] = lenet.rects.last()['width'];  // hacks
 
-        label = $('#architecture').find('input[type="text"]').map((i,el) => $(el).val()).get().map((op, i) => {return {'id':'op_'+i, 'layer':i, 'op':op}})  // this is gross, fix this shit
-        .concat(architecture2.map((op, i) => { return {'id':'op_'+i+architecture.length,'layer':i+architecture.length,'op':'Dense'}}));  label.pop();
-        label2 = architecture.map((layer, layer_index) => { return {'id':'data_'+layer_index+'_label','layer':layer_index,'text':textFn(layer)}})
-        .concat(architecture2.map((layer, layer_index) => { return {'id':'data_'+layer_index+architecture.length+'_label','layer':layer_index+architecture.length,'text':textFn(layer)}}) );
+        label = architecture.map((layer, layer_index) => { return {'id':'data_'+layer_index+'_label','layer':layer_index,'text':textFn(layer)}})
+                             .concat(architecture2.map((layer, layer_index) => { return {'id':'data_'+layer_index+architecture.length+'_label','layer':layer_index+architecture.length,'text':textFn(layer)}}) );
 
 
         g.selectAll('*').remove();
@@ -71,8 +68,7 @@ function LeNet() {
                 .attr("class", "rect")
                 .attr("id", d => d.id)
                 .attr("width", d => d.width)
-                .attr("height", d => d.height)
-                .merge(rect);
+                .attr("height", d => d.height);
 
         conv = g.selectAll(".conv")
                 .data(lenet.convs)
@@ -80,56 +76,50 @@ function LeNet() {
                 .append("rect")
                 .attr("class", "conv")
                 .attr("id", d => d.id)
-                .attr("width", d => d.stride)
-                .attr("height", d => d.stride)
-                .style("fill-opacity", 0)
-                .merge(conv);
+                .attr("width", d => d.filterWidth)
+                .attr("height", d => d.filterHeight)
+                .style("fill-opacity", 0);
 
         link = g.selectAll(".link")
                 .data(lenet.conv_links)
                 .enter()
                 .append("line")
                 .attr("class", "link")
-                .attr("id", d => d.id)
-                .merge(link);
+                .attr("id", d => d.id);
 
         poly = g.selectAll(".poly")
                 .data(lenet.fc_layers)
                 .enter()
                 .append("polygon")
                 .attr("class", "poly")
-                .attr("id", d => d.id)
-                .merge(poly);
+                .attr("id", d => d.id);
 
         line = g.selectAll(".line")
                 .data(lenet.fc_links)
                 .enter()
                 .append("line")
                 .attr("class", "line")
-                .attr("id", d => d.id)
-                .merge(line);
+                .attr("id", d => d.id);
 
         text = g.selectAll(".text")
-                .data(label)
+                .data(architecture)
                 .enter()
                 .append("text")
-                .text(function (d) { return (showLabels ? d.op : ""); })
+                .text(d => (showLabels ? d.op : ""))
                 .attr("class", "text")
                 .attr("dy", ".35em")
                 .style("font-size", "16px")
-                .attr("font-family", "sans-serif")
-                .merge(text);
+                .attr("font-family", "sans-serif");
 
         info = g.selectAll(".info")
-                .data(label2)
+                .data(label)
                 .enter()
                 .append("text")
-                .text(function (d) { return (showLabels ? d.text : ""); })
+                .text(d => (showLabels ? d.text : ""))
                 .attr("class", "info")
                 .attr("dy", "-0.3em")
                 .style("font-size", "16px")
-                .attr("font-family", "sans-serif")
-                .merge(info);
+                .attr("font-family", "sans-serif");
 
         style();
 
@@ -158,16 +148,16 @@ function LeNet() {
         rect.attr('x', d => x(d.layer, d.rect_index))
             .attr('y', d => y(d.layer, d.rect_index));
 
-        let xc = (d) => (layer_x_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['x_rel'] * (d['squareWidth'] - d['stride'])) + screen_center_x;
-        let yc = (d) => (layer_y_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['y_rel'] * (d['squareWidth'] - d['stride'])) + screen_center_y;
+        let xc = (d) => (layer_x_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['x_rel'] * (d['squareWidth'] - d['filterWidth'])) + screen_center_x;
+        let yc = (d) => (layer_y_offsets[d.layer]) + ((d['numberOfSquares']-1) * betweenSquares) + (d['y_rel'] * (d['squareHeight'] - d['filterHeight'])) + screen_center_y;
 
         conv.attr('x', d => xc(d))
             .attr('y', d => yc(d));
 
-        link.attr("x1", d => xc(d) + d['stride'])
-            .attr("y1", d => yc(d) + (d.i ? 0 : d['stride']))
+        link.attr("x1", d => xc(d) + d['filterWidth'])
+            .attr("y1", d => yc(d) + (d.i ? 0 : d['filterHeight']))
             .attr("x2", d => (layer_x_offsets[d.layer+1]) + ((architecture[d.layer+1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer+1]['squareWidth'] * d.x_rel + screen_center_x)
-            .attr("y2", d => (layer_y_offsets[d.layer+1]) + ((architecture[d.layer+1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer+1]['squareWidth'] * d.y_rel + screen_center_y);
+            .attr("y2", d => (layer_y_offsets[d.layer+1]) + ((architecture[d.layer+1]['numberOfSquares']-1) * betweenSquares) + architecture[d.layer+1]['squareHeight'] * d.y_rel + screen_center_y);
 
 
         poly.attr("points", function(d) {
@@ -222,8 +212,8 @@ function LeNet() {
         poly.style("opacity", rectOpacity);
         line.style("stroke-opacity", rectOpacity);
 
-        text.text(function (d) { return (showLabels ? d.op : ""); });
-        info.text(function (d) { return (showLabels ? d.text : ""); });
+        text.text(d => (showLabels ? d.op : ""));
+        info.text(d => (showLabels ? d.text : ""));
     }
 
     /////////////////////////////////////////////////////////////////////////////

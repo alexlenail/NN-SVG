@@ -310,10 +310,6 @@ alexnet = AlexNet();
 
 function restart() {
 
-    let range = n => [...Array(n).keys()];
-    let rand = (min, max) => Math.random() * (max - min) + min;
-
-
     architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
     architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1],'stride':l[2],'rel_x':rand(-0.4,0.4),'rel_y':rand(-0.4,0.4)}});
 

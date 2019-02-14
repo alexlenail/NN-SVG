@@ -9,6 +9,8 @@ let pairWise = (array) => nWise(2, array);
 
 let sum = (arr) => arr.reduce((a,b)=>a+b);
 
+let range = n => [...Array(n).keys()];
+
 let rand = (min, max) => Math.random() * (max - min) + min;
 
 Array.prototype.last = function() { return this[this.length - 1]; };

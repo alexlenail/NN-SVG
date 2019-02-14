@@ -256,10 +256,10 @@ lenet = LeNet();
 function restart() {
 
     architecture = $('#architecture').find('.entry').map((i,el) =>
-        _.object(['numberOfSquares','squareHeight','squareWidth','filterHeight','filterWidth'],
-                 $(el).find('input[type="number"]').map((i,input) => parseFloat($(input).val())).get())
+        _.object(['numberOfSquares','squareHeight','squareWidth','filterHeight','filterWidth', 'op', 'layer'],
+                 $(el).find('input[type="number"]').map((j,input) => parseFloat($(input).val())).get().concat([$(el).find('input[type="text"]').val(), i]))
         ).get()
-         .filter(layer => Object.values(layer).every(val => val));
+         .filter(layer => Object.values(layer).every(val => !_.isNaN(val)));
 
     betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
 
