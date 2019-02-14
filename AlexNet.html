@@ -181,65 +181,83 @@
                                 <input type="checkbox" id="showDims" name="showDims" value="showDims">
                                 <label for="showDims">Show Tensor Dimensions</label>
                             </div>
+                            <div>
+                                <input type="checkbox" id="showConvDims" name="showConvDims" value="showConvDims">
+                                <label for="showConvDims">Show Conv Dimensions</label>
+                            </div>
 
                             <hr>
                             <h4>Architecture:</h4>
                             <div id="architecture">
-                                <p>Width and Height | Depth | Filter Size</p>
+                                <p>Height | Width | Depth | filter Height | filter Width</p>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="224" />
+                                        <input type="number" class="form-control" name="height" step="1" value="224" />
+                                        <input type="number" class="form-control" name="width" step="1" value="224" />
                                         <input type="number" class="form-control" name="depth" step="1" value="3" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="11" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="11" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="11" />
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="55" />
+                                        <input type="number" class="form-control" name="height" step="1" value="55" />
+                                        <input type="number" class="form-control" name="width" step="1" value="55" />
                                         <input type="number" class="form-control" name="depth" step="1" value="96" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="5" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="5" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="5" />
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="27" />
+                                        <input type="number" class="form-control" name="height" step="1" value="27" />
+                                        <input type="number" class="form-control" name="width" step="1" value="27" />
                                         <input type="number" class="form-control" name="depth" step="1" value="256" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="3" />
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
+                                        <input type="number" class="form-control" name="height" step="1" value="13" />
+                                        <input type="number" class="form-control" name="width" step="1" value="13" />
                                         <input type="number" class="form-control" name="depth" step="1" value="384" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="3" />
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
+                                        <input type="number" class="form-control" name="height" step="1" value="13" />
+                                        <input type="number" class="form-control" name="width" step="1" value="13" />
                                         <input type="number" class="form-control" name="depth" step="1" value="384" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="3" />
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1" value="13" />
+                                        <input type="number" class="form-control" name="height" step="1" value="13" />
+                                        <input type="number" class="form-control" name="width" step="1" value="13" />
                                         <input type="number" class="form-control" name="depth" step="1" value="256" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="3" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="3" />
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
-                                        <input type="number" class="form-control" name="widthAndHeight" step="1"/>
+                                        <input type="number" class="form-control" name="height" step="1"/>
+                                        <input type="number" class="form-control" name="width" step="1"/>
                                         <input type="number" class="form-control" name="depth" step="1"/>
-                                        <input type="number" class="form-control" name="stride" step="1"/>
+                                        <input type="number" class="form-control" name="filterHeight" step="1"/>
+                                        <input type="number" class="form-control" name="filterWidth" step="1"/>
                                     </div>
                                 </div>
                             </div>
@@ -289,6 +307,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+    <script type="text/javascript" src="https://underscorejs.org/underscore-min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
     <script src="OrbitControls.js"></script>
     <script src="SVGRenderer.js"></script>
@@ -301,6 +321,7 @@
     <!-- <script src="https://threejs.org/examples/js/renderers/CSS2DRenderer.js"></script> -->
     <!-- <script src="https://threejs.org/examples/js/renderers/CSS3DRenderer.js"></script> -->
 
+    <script src="util.js"></script>
     <script src="AlexNet.js"></script>
 
     <script type="text/javascript">
@@ -309,12 +330,11 @@ alexnet = AlexNet();
 
 function restart() {
 
-    let range = n => [...Array(n).keys()];
-    let rand = (min, max) => Math.random() * (max - min) + min;
-
-
-    architecture = $('#architecture').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
-    architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'widthAndHeight':l[0],'depth':l[1],'stride':l[2],'rel_x':rand(-0.4,0.4),'rel_y':rand(-0.4,0.4)}});
+    architecture = $('#architecture').find('.entry').map((i,el) =>
+        _.object(['height','width','depth','filterHeight','filterWidth','rel_x','rel_y'],
+                 $(el).find('input[type="number"]').map((j,input) => parseFloat($(input).val())).get().concat([rand(-0.4,0.4), rand(-0.4,0.4)]))
+        ).get()
+         .filter(layer => Object.values(layer).every(val => !_.isNaN(val)));
 
     architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
@@ -334,10 +354,12 @@ $('#rendererType input:radio').change(function() {
     if (rendererType == 'svg') {
         showDims = false;
         $("#showDims").prop('disabled', true).prop('checked', false);
+        $("#showConvDims").prop('disabled', true).prop('checked', false);
         $("#download").removeClass('disabled');
     }
     else if (rendererType == 'webgl') {
         $("#showDims").prop('disabled', false);
+        $("#showConvDims").prop('disabled', false);
         $("#download").addClass('disabled');
     }
     $(this).blur();
@@ -357,6 +379,7 @@ $("#widthScale").change(    function () { alexnet.redraw({'widthScale_': parseFl
 $("#logConvSize").change(   function () { alexnet.redraw({'logConvSize_': this.checked}); });
 $("#convScale").change(     function () { alexnet.redraw({'convScale_': parseFloat(this.value)}); $(this).blur(); $("#convSpan").text(this.value); });
 $("#showDims").change(      function () { alexnet.redraw({'showDims_': this.checked}); });
+$("#showConvDims").change(  function () { alexnet.redraw({'showConvDims_': this.checked}); });
 
 
 // /////////////////////////////////////////////////////////////////////////////

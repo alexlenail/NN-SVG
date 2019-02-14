@@ -126,67 +126,77 @@
                             <hr>
                             <h4>Architecture:</h4>
                             <div id="architecture">
-                                <p># Feature-Maps | fMap Size | Filter Size</p>
+                                <p>Depth | Height | Width | filter Height | filter Width</p>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="8" />
+                                        <input type="number" class="form-control" name="squareHeight" step="1" value="128" />
                                         <input type="number" class="form-control" name="squareWidth" step="1" value="128" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
                                     </div>
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
                                         <input type="text"  class="form-control" name="Op" step="1" value="Max-Pool" />
                                         <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="40" style="margin-left: 10px !important;">
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="8" />
+                                        <input type="number" class="form-control" name="squareHeight" step="1" value="64" />
                                         <input type="number" class="form-control" name="squareWidth" step="1" value="64" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="16" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="16" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="16" />
                                     </div>
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
                                       <input type="text"  class="form-control" name="Op" step="1" value="Convolution" />
                                       <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="10" style="margin-left: 10px !important;">
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="24" />
+                                        <input type="number" class="form-control" name="squareHeight" step="1" value="48" />
                                         <input type="number" class="form-control" name="squareWidth" step="1" value="48" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
                                     </div>
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
                                       <input type="text"  class="form-control" name="Op" step="1" value="Max-Pool" />
                                       <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="-20" style="margin-left: 10px !important;">
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1" value="24" />
+                                        <input type="number" class="form-control" name="squareHeight" step="1" value="16" />
                                         <input type="number" class="form-control" name="squareWidth" step="1" value="16" />
-                                        <input type="number" class="form-control" name="stride" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterHeight" step="1" value="8" />
+                                        <input type="number" class="form-control" name="filterWidth" step="1" value="8" />
                                     </div>
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
                                       <input type="text"  class="form-control" name="Op" step="1" value="Dense" />
                                       <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="-20" style="margin-left: 10px !important;">
                                     </div>
                                 </div>
                                 <div class="row entry">
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                         <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
                                         <input type="number" class="form-control" name="numberOfSquares" step="1"/>
+                                        <input type="number" class="form-control" name="squareHeight" step="1"/>
                                         <input type="number" class="form-control" name="squareWidth" step="1"/>
-                                        <input type="number" class="form-control" name="stride" step="1"/>
+                                        <input type="number" class="form-control" name="filterHeight" step="1"/>
+                                        <input type="number" class="form-control" name="filterWidth" step="1"/>
                                     </div>
-                                    <div class="input-group mb-2 mr-sm-2 col-10">
+                                    <div class="input-group mb-2 mr-sm-2 col-12">
                                       <label for="Op" style="width: 36px;padding: 4px;">Op: </label>
                                       <input type="text"  class="form-control" name="Op" step="1" value="" />
                                       <input type="range" class="form-control" name="spacing" min="-100" max="100" step="1" value="10" style="margin-left: 10px !important;">
@@ -234,7 +244,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="text/javascript" src="https://underscorejs.org/underscore-min.js"></script>
 
+    <script type="text/javascript" src="util.js"></script>
     <script type="text/javascript" src="LeNet.js"></script>
 
     <script type="text/javascript">
@@ -243,11 +255,13 @@ lenet = LeNet();
 
 function restart() {
 
-    architecture = $('#architecture').find('input[type="number"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
-    betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
+    architecture = $('#architecture').find('.entry').map((i,el) =>
+        _.object(['numberOfSquares','squareHeight','squareWidth','filterHeight','filterWidth', 'op', 'layer'],
+                 $(el).find('input[type="number"]').map((j,input) => parseFloat($(input).val())).get().concat([$(el).find('input[type="text"]').val(), i]))
+        ).get()
+         .filter(layer => Object.values(layer).every(val => !_.isNaN(val)));
 
-    let range = n => [...Array(n).keys()];
-    architecture = range(architecture.length / 3).map(i => architecture.slice(3*i, 3*i+3)).map((l) => {return {'numberOfSquares':l[0],'squareWidth':l[1],'stride':l[2]}});
+    betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
 
     architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
 
@@ -295,7 +309,7 @@ $(document).on('click', '#architecture .btn-add', function(e) {
 
     restart();
 
-})
+});
 
 $(document).on('click', '#architecture .btn-remove', function(e) {
     e.preventDefault();
@@ -306,7 +320,7 @@ $(document).on('click', '#architecture .btn-remove', function(e) {
 
     return false;
 
-})
+});
 
 $(document).on('click', '#architecture2 .btn-add', function(e) {
     e.preventDefault();
@@ -323,7 +337,7 @@ $(document).on('click', '#architecture2 .btn-add', function(e) {
 
     restart();
 
-})
+});
 
 $(document).on('click', '#architecture2 .btn-remove', function(e) {
     e.preventDefault();
@@ -334,14 +348,14 @@ $(document).on('click', '#architecture2 .btn-remove', function(e) {
 
     return false;
 
-})
+});
 
 $(document).on('change', 'input[type="number"]', function(e) {
     e.preventDefault();
 
     restart();  // TODO only fire if the whole row is filled.
 
-})
+});
 
 $(document).on('change', 'input[type="text"]', function(e) {
     e.preventDefault();
@@ -356,7 +370,7 @@ d3.select("#download").on("click", function() {
     d3.select(this)
       .attr("href", 'data:application/octet-stream;base64,' + btoa(d3.select("#graph-container").html()))
       .attr("download", "nn.svg")
-})
+});
 
     </script>
 
