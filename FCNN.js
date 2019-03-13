@@ -49,7 +49,7 @@ function FCNN() {
     let sup_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
     let sup = (s) => Array.prototype.map.call(s, (d) => (d in sup_map && sup_map[d]) || d).join('');
 
-    let textFn = (layer_index, layer_width) => ((layer_index === 0 ? "Input" : (layer_index === architecture.length-1 ? "Output" : "Hidden")) + " Layer ∈ ℝ" + sup(layer_width.toString()));
+    let textFn = (layer_index, layer_width) => ((layer_index === 0 ? localize("Input Layer") : (layer_index === architecture.length-1 ? localize("Output Layer") : localize("Hidden Layer"))) + localize(" ∈ ℝ") + sup(layer_width.toString()));
     var nominal_text_size = 12;
     var textWidth = 70;
 
