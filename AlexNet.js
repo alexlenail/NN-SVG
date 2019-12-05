@@ -200,7 +200,7 @@ function AlexNet() {
                 sprites.add( sprite );
 
                 sprite = makeTextSprite(layer['filterWidth'].toString());
-                sprite.position.copy( conv_object.position ).sub( new THREE.Vector3( -1, convFn(layer['filterWidth'])/2, depthFn(layer['depth'])/2 ) );
+                sprite.position.copy( conv_object.position ).sub( new THREE.Vector3( -1, convFn(layer['filterHeight'])/2, depthFn(layer['depth'])/2 ) );
                 sprites.add( sprite );
 
             }
