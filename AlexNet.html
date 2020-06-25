@@ -453,7 +453,7 @@ $(document).on('change', 'input', function(e) {
 $("#download").on("click", function() {
     // ga('send', 'event', 'downloadSVG', 'AlexNet');
 
-    $(this).attr("href", 'data:application/octet-stream;base64,' + btoa($('<div>').append($( $("#graph-container").html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html()))
+    $(this).attr("href", 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent($('<div>').append($( $("#graph-container").html()).attr("xmlns", "http://www.w3.org/2000/svg") ).html()))))
            .attr("download", "nn.svg")
 });
 
