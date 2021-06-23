@@ -23,3 +23,4 @@ I hope this tool will save machine learning researchers time, and I hope this so
 ### Related
 
 - [vdumoulin/conv_arithmetic](https://github.com/vdumoulin/conv_arithmetic)
+- [TensorSpace](https://github.com/tensorspace-team/tensorspace)
