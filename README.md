@@ -20,3 +20,6 @@ I hope this tool will save machine learning researchers time, and I hope this so
 > LeNail, (2019). NN-SVG: Publication-Ready Neural Network Architecture Schematics. <br>
 > Journal of Open Source Software, 4(33), 747, https://doi.org/10.21105/joss.00747
 
+### Related
+
+- [vdumoulin/conv_arithmetic](https://github.com/vdumoulin/conv_arithmetic)
