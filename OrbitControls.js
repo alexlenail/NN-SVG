@@ -82,6 +82,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.position0 = this.object.position.clone();
 	this.zoom0 = this.object.zoom;
 
+	this.currentPosition = this.object.position;
 	//
 	// public methods
 	//
@@ -136,7 +137,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 		return function update() {
 
 			var position = scope.object.position;
-
+			this.currentPosition = position;
+			
 			offset.copy( position ).sub( scope.target );
 
 			// rotate offset to "y-axis-is-up" space
