@@ -89,8 +89,9 @@ function AlexNet() {
 
     function animate() {
         requestAnimationFrame( animate );
+        let camera_world_pos = camera.localToWorld(camera.position.clone());
         sprites.children.forEach(sprite => {
-            sprite.lookAt(controls.currentPosition);
+            sprite.lookAt(camera_world_pos);
         });
         renderer.render(scene, camera);
     }
@@ -263,6 +264,9 @@ function AlexNet() {
 
                 let material = new THREE.MeshBasicMaterial({ color: 0x000000 });
                 let sprite = new THREE.Mesh(geometry, material);
+                sprite.matrixAutoUpdate = true;
+                sprite.up.set(0, 1, 0);
+                sprite.scale.set(1, 1, 0.1);
 
                 sprites.add(sprite);
                 sprite.position.copy(copy_pos).sub(sub_pos);                
