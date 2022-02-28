@@ -39,6 +39,7 @@ function LeNet() {
                      architecture2_=architecture2}={}) {
 
         architecture = architecture_;
+        architecture2 = architecture2_;
 
         lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {return {'id':layer_index+'_'+rect_index,'layer':layer_index,'rect_index':rect_index,'width':layer['squareWidth'],'height':layer['squareHeight']}}));
         lenet.rects = flatten(lenet.rects);
@@ -52,12 +53,15 @@ function LeNet() {
         lenet.fc_layers = architecture2.map((size, fc_layer_index) => {return {'id': 'fc_'+fc_layer_index, 'layer':fc_layer_index+architecture.length, 'size':size/Math.sqrt(2)}});
         lenet.fc_links = lenet.fc_layers.map(fc => { return [Object.assign({'id':'link_'+fc['layer']+'_0','i':0,'prevSize':10},fc), Object.assign({'id':'link_'+fc['layer']+'_1','i':1,'prevSize':10},fc)]});
         lenet.fc_links = flatten(lenet.fc_links);
-        lenet.fc_links[0]['prevSize'] = 0;                            // hacks
-        lenet.fc_links[1]['prevSize'] = lenet.rects.last()['width'];  // hacks
+
+        // hacks
+        if (lenet.rects.length > 0 && lenet.fc_layers.length > 0) {
+            lenet.fc_links[0]['prevSize'] = 0;
+            lenet.fc_links[1]['prevSize'] = lenet.rects.last()['width'];
+        }
 
         label = architecture.map((layer, layer_index) => { return {'id':'data_'+layer_index+'_label','layer':layer_index,'text':textFn(layer)}})
                              .concat(architecture2.map((layer, layer_index) => { return {'id':'data_'+layer_index+architecture.length+'_label','layer':layer_index+architecture.length,'text':textFn(layer)}}) );
-
 
         g.selectAll('*').remove();
 
@@ -132,12 +136,12 @@ function LeNet() {
         betweenSquares = betweenSquares_;
 
         layer_widths = architecture.map((layer, i) => (layer['numberOfSquares']-1) * betweenSquares + layer['squareWidth']);
-        layer_widths = layer_widths.concat(lenet.fc_layers.map((layer, i) => layer['size']));
+        layer_widths = layer_widths.concat(lenet.fc_layers.map((layer, i) => layer['size'])).concat([0]);
 
         largest_layer_width = Math.max(...layer_widths);
 
-        layer_x_offsets = layer_widths.reduce((offsets, layer_width, i) => offsets.concat([offsets.last() + layer_width + (betweenLayers[i] || betweenLayersDefault) ]), [0]);
-        layer_y_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2);
+        layer_x_offsets = layer_widths.reduce((offsets, layer_width, i) => offsets.concat([offsets.last() + layer_width + (betweenLayers[i] || betweenLayersDefault) ]), [0]).concat([0]);
+        layer_y_offsets = layer_widths.map(layer_width => (largest_layer_width - layer_width) / 2).concat([0]);
 
         screen_center_x = w/2 - architecture.length * largest_layer_width/2;
         screen_center_y = h/2 - largest_layer_width/2;
@@ -170,10 +174,12 @@ function LeNet() {
         line.attr("x1", d => layer_x_offsets[d.layer-1] + (d.i ? 0 : layer_widths[d.layer-1]) + d.prevSize + screen_center_x)
             .attr("y1", d => layer_y_offsets[d.layer-1] + (d.i ? 0 : layer_widths[d.layer-1]) + screen_center_y)
             .attr("x2", d => layer_x_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_x)
-            .attr("y2", d => layer_y_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_y);
+            .attr("y2", d => layer_y_offsets[d.layer] + (d.i ? 0 : d.size) + screen_center_y)
+            .style('opacity', d => +(d.layer > 0));
 
         text.attr('x', d => (layer_x_offsets[d.layer] + layer_widths[d.layer] + layer_x_offsets[d.layer+1] + layer_widths[d.layer+1]/2)/2 + screen_center_x -15)
-            .attr('y', d => layer_y_offsets[0] + screen_center_y + largest_layer_width);
+            .attr('y', d => layer_y_offsets[0] + screen_center_y + largest_layer_width)
+            .style('opacity', d => +(d.layer+1 < architecture.length || architecture2.length > 0));
 
         info.attr('x', d => layer_x_offsets[d.layer] + screen_center_x)
             .attr('y', d => layer_y_offsets[d.layer] + screen_center_y - 15);
