@@ -135,8 +135,8 @@
                             </div>
                             <div>
                             <div>
-                                <label for="strideOpacity">Filter Opacity</label>
-                                <input type="range" id="strideOpacity" name="" min="0" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
+                                <label for="filterOpacity">Filter Opacity</label>
+                                <input type="range" id="filterOpacity" name="" min="0" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
                             </div>
 <!--                             <div>
                                 <label for="borderWidth">Border Width</label>
@@ -370,7 +370,7 @@ $("#color1").change(        function () { alexnet.style({'color1_': this.value})
 $("#color2").change(        function () { alexnet.style({'color2_': this.value}); });
 $("#color3").change(        function () { alexnet.style({'color3_': this.value}); });
 $("#rectOpacity").change(   function () { alexnet.style({'rectOpacity_': parseFloat(this.value)}); $(this).blur(); });
-$("#strideOpacity").change( function () { alexnet.style({'strideOpacity_': parseFloat(this.value)}); $(this).blur(); });
+$("#filterOpacity").change( function () { alexnet.style({'filterOpacity_': parseFloat(this.value)}); $(this).blur(); });
 $("#betweenLayers").change( function () { alexnet.redraw({'betweenLayers_': parseFloat(this.value)}); $(this).blur(); });
 $("#logDepth").change(      function () { alexnet.redraw({'logDepth_': this.checked}); });
 $("#depthScale").change(    function () { alexnet.redraw({'depthScale_': parseFloat(this.value)}); $(this).blur(); $("#depthSpan").text(this.value); });
