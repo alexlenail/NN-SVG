@@ -352,14 +352,9 @@ restart();
 $('#rendererType input:radio').change(function() {
     rendererType = this.value;
     if (rendererType == 'svg') {
-        showDims = false;
-        $("#showDims").prop('disabled', true).prop('checked', false);
-        $("#showConvDims").prop('disabled', true).prop('checked', false);
         $("#download").removeClass('disabled');
     }
     else if (rendererType == 'webgl') {
-        $("#showDims").prop('disabled', false);
-        $("#showConvDims").prop('disabled', false);
         $("#download").addClass('disabled');
     }
     $(this).blur();
