@@ -302,7 +302,6 @@ function AlexNet() {
         rectOpacity   = rectOpacity_;
         filterOpacity = filterOpacity_;
         fontScale = fontScale_;
-        console.log(fontScale)
 
         box_material.color = new THREE.Color(color1);
         conv_material.color = new THREE.Color(color2);
