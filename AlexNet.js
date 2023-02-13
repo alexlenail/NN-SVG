@@ -14,6 +14,7 @@ function AlexNet() {
 
     var rectOpacity = 0.4;
     var filterOpacity = 0.4;
+    var fontScale = 1;
 
     var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
     var box_material = new THREE.MeshBasicMaterial( {'color':color1, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':rectOpacity, 'depthWrite':false, 'needsUpdate':true} );
@@ -283,7 +284,7 @@ function AlexNet() {
 
         var spriteMaterial = new THREE.SpriteMaterial({ map: texture });
         var sprite = new THREE.Sprite( spriteMaterial );
-        sprite.scale.set( 10, 5, 1.0 );
+        sprite.scale.set( 10 * fontScale, 5* fontScale, 1.0 );
         sprite.center.set( 0,1 );
         return sprite;
     }
@@ -292,12 +293,15 @@ function AlexNet() {
                     color2_=color2,
                     color3_=color3,
                     rectOpacity_=rectOpacity,
-                    filterOpacity_=filterOpacity}={}) {
+                    filterOpacity_=filterOpacity,
+                    fontScale_ =fontScale,
+                }={}) {
         color1        = color1_;
         color2        = color2_;
         color3        = color3_;
         rectOpacity   = rectOpacity_;
         filterOpacity = filterOpacity_;
+        fontScale = fontScale_;
 
         box_material.color = new THREE.Color(color1);
         conv_material.color = new THREE.Color(color2);
