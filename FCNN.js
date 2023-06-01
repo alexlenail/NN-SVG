@@ -45,6 +45,7 @@ function FCNN() {
     var showLabels = true;
     var showArrowheads = false;
     var arrowheadStyle = "empty";
+    var bezierCurves = false;
 
     let sup_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
     let sup = (s) => Array.prototype.map.call(s, (d) => (d in sup_map && sup_map[d]) || d).join('');
@@ -74,11 +75,14 @@ function FCNN() {
 
     function redraw({architecture_=architecture,
                      showBias_=showBias,
-                     showLabels_=showLabels}={}) {
+                     showLabels_=showLabels,
+                     bezierCurves_=bezierCurves,
+                     }={}) {
 
         architecture = architecture_;
         showBias = showBias_;
         showLabels = showLabels_;
+        bezierCurves = bezierCurves_;
 
         graph.nodes = architecture.map((layer_width, layer_index) => range(layer_width).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
         graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return right.node_index >= 0 ? {'id':left.id+'-'+right.id, 'source':left.id,'target':right.id,'weight':randomWeight()} : null })));
@@ -120,11 +124,13 @@ function FCNN() {
 
     function redistribute({betweenNodesInLayer_=betweenNodesInLayer,
                            betweenLayers_=betweenLayers,
-                           nnDirection_=nnDirection}={}) {
+                           nnDirection_=nnDirection,
+                           bezierCurves_=bezierCurves}={}) {
 
         betweenNodesInLayer = betweenNodesInLayer_;
         betweenLayers = betweenLayers_;
         nnDirection = nnDirection_;
+        bezierCurves = bezierCurves_;
 
         layer_widths = architecture.map((layer_width, i) => layer_width * nodeDiameter + (layer_width - 1) * betweenNodesInLayer[i])
 
@@ -145,10 +151,26 @@ function FCNN() {
         node.attr('cx', function(d) { return x(d.layer, d.node_index); })
             .attr('cy', function(d) { return y(d.layer, d.node_index); });
 
-        link.attr("d", (d) => "M" + x(...indices_from_id(d.source)) + "," +
-                                    y(...indices_from_id(d.source)) + ", " +
-                                    x(...indices_from_id(d.target)) + "," +
-                                    y(...indices_from_id(d.target)));
+        if(bezierCurves) {
+                link.attr("d", (d) => {
+                let source = [x(...indices_from_id(d.source)), y(...indices_from_id(d.source))];
+                let target = [x(...indices_from_id(d.target)), y(...indices_from_id(d.target))];
+            
+                // control points
+                let cp1 = [(source[0] + target[0]) / 2, source[1]];
+                let cp2 = [(source[0] + target[0]) / 2, target[1]];
+            
+                return "M" + source[0] + "," + source[1]
+                    + "C" + cp1[0] + "," + cp1[1]
+                    + " " + cp2[0] + "," + cp2[1]
+                    + " " + target[0] + "," + target[1];
+            });
+        } else {
+            link.attr("d", (d) => "M" + x(...indices_from_id(d.source)) + "," +
+                                        y(...indices_from_id(d.source)) + ", " +
+                                        x(...indices_from_id(d.target)) + "," +
+                                        y(...indices_from_id(d.target)));
+        }
 
         text.attr("x", function(d) { return (nnDirection === 'right' ? x(d.layer, d.node_index) - textWidth/2 : w/2 + largest_layer_width/2 + 20 ); })
             .attr("y", function(d) { return (nnDirection === 'right' ? h/2 + largest_layer_width/2 + 20       : y(d.layer, d.node_index) ); });
@@ -167,7 +189,8 @@ function FCNN() {
                     nodeColor_=nodeColor,
                     nodeBorderColor_=nodeBorderColor,
                     showArrowheads_=showArrowheads,
-                    arrowheadStyle_=arrowheadStyle}={}) {
+                    arrowheadStyle_=arrowheadStyle,
+                    bezierCurves_=bezierCurves}={}) {
         // Edge Width
         edgeWidthProportional   = edgeWidthProportional_;
         edgeWidth               = edgeWidth_;
@@ -188,6 +211,8 @@ function FCNN() {
         // Arrowheads
         showArrowheads          = showArrowheads_;
         arrowheadStyle          = arrowheadStyle_;
+        // Bezier curves
+        bezierCurves            = bezierCurves_;
 
         link.style("stroke-width", function(d) {
             if (edgeWidthProportional) { return weightedEdgeWidth(Math.abs(d.weight)); } else { return edgeWidth; }
@@ -200,6 +225,8 @@ function FCNN() {
         link.style("stroke", function(d) {
             if (edgeColorProportional) { return weightedEdgeColor(d.weight); } else { return defaultEdgeColor; }
         });
+
+        link.style("fill", "none");
 
         link.attr('marker-end', showArrowheads ? "url(#arrow)" : '');
         marker.attr('refX', nodeDiameter*1.4 + 12);

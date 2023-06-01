@@ -138,6 +138,13 @@
                                 <label for="defaultEdgeColor">Default Edge Color</label>
                             </div>
 
+                            <hr>
+                            <div>
+                                <input type="checkbox" id="bezierCurves" name="bezierCurves" value="bezierCurves">
+                                <label for="bezierCurves">Use Bezier Curves</label>
+                            </div>
+
+
                             <!-- Node Properties -->
                             <hr>
                             <div>
@@ -306,7 +313,7 @@ $("#showBias").change(                function() { fcnn.redraw({'showBias_': thi
 $("#showLabels").change(              function() { fcnn.redraw({'showLabels_': this.checked}) });
 $("#showArrowheads").change(          function() { fcnn.style({'showArrowheads_': this.checked}) });
 $("#arrowhead input:radio").change(   function() { fcnn.style({'arrowheadStyle_': this.value}) });
-
+$("#bezierCurves").change(            function() { fcnn.redistribute({'bezierCurves_': this.checked}) });
 
 /////////////////////////////////////////////////////////////////////////////
                  ///////    Select Architecture    ///////
