@@ -183,11 +183,11 @@ function AlexNet() {
                 sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wf(layer)/2 + 2, hf(layer)/2 + 2, 0 ) );
                 sprites.add( sprite );
 
-                sprite = makeTextSprite(layer['width'].toString());
+                sprite = makeTextSprite(layer['height'].toString());
                 sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wf(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ) );
                 sprites.add( sprite );
 
-                sprite = makeTextSprite(layer['height'].toString());
+                sprite = makeTextSprite(layer['width'].toString());
                 sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, -hf(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ) );
                 sprites.add( sprite );
 
