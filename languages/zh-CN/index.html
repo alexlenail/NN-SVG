@@ -1,0 +1,365 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119008715-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119008715-1');
+    </script>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <style type="text/css">
+        * { font-weight: 100; }
+        h1 { font-weight: 100; }
+        #graph-container {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            position: fixed;
+        }
+
+        .nn-picker {
+            width: 410px;
+            margin: 30px;
+            z-index: 1000;
+        }
+
+        [data-toggle="collapse"] .fa:before {
+            font-size: 2rem;
+            color: black;
+            content: "\f106";
+            position: relative;
+            top: 5px;
+        }
+        .fa {
+          transition: 0.3s transform ease-in-out;
+        }
+        .collapsed .fa {
+          transform: rotate(-180deg);
+        }
+        .tab-content {
+            padding: 20px;
+        }
+        input[type="range"] {
+            margin-left: 10px;
+        }
+        #count {
+            position: fixed;
+            bottom: 0;
+            right: 1rem;
+            opacity: 0.4;
+            font-weight: 100;
+        }
+        .text {
+            font-weight: 300;
+        }
+    </style>
+
+    <title>NN SVG</title>
+
+</head>
+<body>
+
+
+    <div id="graph-container"></div>
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="nn-picker">
+                <div class="card">
+                    <div class="card-header">
+                        <a class="pull-right" data-toggle="collapse" href="#collapsable" role="button"><i class="fa"></i></a>
+                        <h1>网络结构示意图</h1>
+                        <p>当前结构的示意图已准备就绪。<a id="download" href="#">下载SVG</a></p>
+
+                        <nav>
+                            <div class="nav nav-tabs card-header-tabs" role="tablist">
+                                <a class="nav-item nav-link active">FCNN 风格</a>
+                                <a class="nav-item nav-link" href="LeNet.html">LeNet 风格</a>
+                                <a class="nav-item nav-link" href="AlexNet.html">AlexNet 风格</a>
+                            </div>
+                        </nav>
+
+                    </div>
+                    <div class="tab-content collapse show" id="collapsable">
+                        <div class="tab-pane fade show active" id="FCNN" role="tabpanel">
+
+                            <h4>显示风格：</h4>
+
+                            <!-- Edge Properties -->
+                            <hr>
+                            <div>
+                                <input type="checkbox" id="edgeWidthProportional" name="edgeWidthProportional" value="edgeWidthProportional">
+                                <label for="edgeWidthProportional">连线的粗细与连接权重成正比</label>
+                            </div>
+                            <div>
+                                <label for="edgeWidth">连线粗细程度</label>
+                                <input type="range" id="edgeWidth" name="" min="0" max="2" step="0.01" value="0.5" style="position: relative; top: 3px;">
+                            </div>
+
+                            <hr>
+                            <div>
+                                <input type="checkbox" id="edgeOpacityProportional" name="edgeOpacityProportional" value="edgeOpacityProportional">
+                                <label for="edgeOpacityProportional">连线的透明度与连接权重成正比</label>
+                            </div>
+                            <div>
+                                <label for="edgeOpacity">连线透明程度</label>
+                                <input type="range" id="edgeOpacity" name="" min="0" max="1" step="0.01" value="1" style="position: relative; top: 3px;">
+                            </div>
+
+                            <hr>
+                            <div>
+                                <input type="checkbox" id="edgeColorProportional" name="edgeColorProportional" value="edgeColorProportional">
+                                <label for="edgeColorProportional">连线的颜色与连接权重成正比</label>
+                            </div>
+                            <div>
+                                <input type="color" value="#0000ff" id="negativeEdgeColor">
+                                <label for="negativeEdgeColor">：负权值代表的颜色</label>
+                            </div>
+                            <div>
+                                <input type="color" value="#ff0000" id="positiveEdgeColor">
+                                <label for="positiveEdgeColor">：正权值代表的颜色</label>
+                            </div>
+                            <div>
+                                <input type="color" value="#505050" id="defaultEdgeColor">
+                                <label for="defaultEdgeColor">：默认使用的颜色</label>
+                            </div>
+
+                            <!-- Node Properties -->
+                            <hr>
+                            <div>
+                                <label for="nodeDiameter">神经元节点直径</label>
+                                <input type="range" id="nodeDiameter" name="" min="10" max="50" step="1" value="20" style="position: relative; top: 3px;">
+                            </div>
+                            <div>
+                                <input type="color" value="#ffffff" id="nodeColor">
+                                <label for="nodeColor">：节点颜色</label>
+                            </div>
+                            <div>
+                                <input type="color" value="#333333" id="nodeBorderColor">
+                                <label for="nodeBorderColor">：节点边框颜色</label>
+                            </div>
+
+                            <!-- Layer Properties -->
+                            <hr>
+                            <div>
+                                <label for="betweenLayers">层间距</label>
+                                <input type="range" id="betweenLayers" name="" min="30" max="400" step="1" value="160" style="position: relative; top: 3px;">
+                            </div>
+                            <div id="nnDirection">
+                                <label for="nnDirection" style="margin-right:10px;">层级结构排列方向</label>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="nnDirection" id="horizontal" value="right" checked> 水平
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="nnDirection" id="vertical" value="up"> 垂直
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="showBias" name="showBias" value="showBias">
+                                <label for="showBias">显示偏置单元（Bias Units）</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="showLabels" name="showLabels" value="showLabels" checked>
+                                <label for="showLabels">显示层参数</label>
+                            </div>
+                            <div>
+
+                            <div id="arrowhead">
+                                <input type="checkbox" id="showArrowheads" name="showArrowheads" value="showArrowheads">
+                                <label for="showArrowheads">显示箭头</label>
+                                <div class="form-check form-check-inline ml-3">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="arrowheadStyle" id="empty" value="empty" checked> 空心箭头
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input class="form-check-input" type="radio" name="arrowheadStyle" id="solid" value="solid"> 实心箭头
+                                    </label>
+                                </div>
+                            </div>
+
+                            </div>
+
+                            <hr>
+                            <h4>层级结构：</h4>
+
+                            <hr>
+                            <div id="architecture">
+
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="16" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="12" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="10" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1" value="1" />
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
+                                </div>
+                                <div class="row entry">
+                                    <div class="input-group mb-2 mr-sm-2 col-4">
+                                        <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
+                                        <input type="number" class="form-control" name="numberOfNodes" step="1"/>
+                                    </div>
+                                    <input type="range" class="form-control col-4" name="betweenNodesInLayer" min="0" max="100" step="1" value="20" style="position: relative; top: -4px;">
+                                </div>
+
+                            </div>
+
+                            <hr>
+                            <button type="button" class="btn btn-sm btn-secondary" id="newRandomWeights">随机分配权重</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="count"><span></span><a style="font-size: 1rem" href="about.html">关于</a></div>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="text/javascript" src="util.js"></script>
+    <script type="text/javascript" src="FCNN.js"></script>
+
+    <script type="text/javascript">
+
+fcnn = FCNN();
+
+function restart() {
+
+    architecture = $('#architecture').find('input[name="numberOfNodes"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+
+    betweenNodesInLayer = $('#architecture').find('input[name="betweenNodesInLayer"]').map((i,el) => parseFloat($(el).val())).get();
+
+    fcnn.redraw({'architecture_':architecture});
+    fcnn.redistribute({'betweenNodesInLayer_':betweenNodesInLayer});
+
+    $('#count span:first').text(fcnn.graph.nodes.length+" nodes, "+fcnn.graph.links.length+" edges you don't need to draw yourself! ")
+}
+
+restart();
+
+/////////////////////////////////////////////////////////////////////////////
+                ///////    Select Styling    ///////
+/////////////////////////////////////////////////////////////////////////////
+
+$("#edgeWidthProportional").change(   function() { fcnn.style({'edgeWidthProportional_': this.checked}) });
+$("#edgeWidth").change(               function() { fcnn.style({'edgeWidth_': parseFloat(this.value)}) });
+$("#edgeOpacityProportional").change( function() { fcnn.style({'edgeOpacityProportional_': this.checked});
+    if (this.checked) { $("#edgeOpacity").prop('disabled', true); }
+    else { $("#edgeOpacity").prop('disabled', false); }
+});
+$("#edgeOpacity").change(             function() { fcnn.style({'edgeOpacity_': parseFloat(this.value)}) });
+$("#negativeEdgeColor").change(       function() { fcnn.style({'negativeEdgeColor_': this.value}) });
+$("#positiveEdgeColor").change(       function() { fcnn.style({'positiveEdgeColor_': this.value}) });
+$("#edgeColorProportional").change(   function() { fcnn.style({'edgeColorProportional_': this.checked}) });
+$("#defaultEdgeColor").change(        function() { fcnn.style({'defaultEdgeColor_': this.value}) });
+$("#nodeDiameter").change(            function() { fcnn.style({'nodeDiameter_': parseFloat(this.value)}) });
+$("#nodeColor").change(               function() { fcnn.style({'nodeColor_': this.value}) });
+$("#nodeBorderColor").change(         function() { fcnn.style({'nodeBorderColor_': this.value}) });
+$("#betweenLayers").change(           function() { fcnn.redistribute({'betweenLayers_': parseFloat(this.value)}) });
+$('#nnDirection input:radio').change( function() { fcnn.redistribute({'nnDirection_': this.value}) });
+$("#showBias").change(                function() { fcnn.redraw({'showBias_': this.checked}); fcnn.redistribute(); });
+$("#showLabels").change(              function() { fcnn.redraw({'showLabels_': this.checked}) });
+$("#showArrowheads").change(          function() { fcnn.style({'showArrowheads_': this.checked}) });
+$("#arrowhead input:radio").change(   function() { fcnn.style({'arrowheadStyle_': this.value}) });
+
+
+/////////////////////////////////////////////////////////////////////////////
+                 ///////    Select Architecture    ///////
+/////////////////////////////////////////////////////////////////////////////
+
+$(document).on('click', '.btn-add', function(e) {
+    e.preventDefault();
+
+    var controlForm = $('#architecture');
+    var currentEntry = $(this).parents('.entry:first');
+    var newEntry = $(currentEntry.clone()).appendTo(controlForm);
+
+    newEntry.find('input[name="numberOfNodes"]').val('');
+    controlForm.find('.entry:not(:last) .btn-add')
+        .removeClass('btn-add').addClass('btn-remove')
+        .removeClass('btn-primary').addClass('btn-secondary')
+        .html('<span class="fa fa-minus"></span>');
+
+    restart();
+
+});
+
+$(document).on('click', '.btn-remove', function(e) {
+    e.preventDefault();
+
+    $(this).parents('.entry:first').remove();
+
+    restart();
+
+    return false;
+
+});
+
+$(document).on('change', "input[name='numberOfNodes']", restart);
+
+$(document).on('change', "input[name='betweenNodesInLayer']", restart);  // fix this so we only redistribute
+
+$(document).on('click', '#newRandomWeights', function() {
+    link = fcnn.link.data([]);
+    fcnn.link.exit().remove();
+    restart();
+});
+
+d3.select("#download").on("click", function() {
+    // ga('send', 'event', 'downloadSVG', 'FCNN');
+
+    d3.select(this)
+      .attr("href", 'data:application/octet-stream;base64,' + btoa(unescape(encodeURIComponent(d3.select("#graph-container").html()))))
+      .attr("download", "nn.svg")
+})
+
+    </script>
+
+</body>
+
+</html>
