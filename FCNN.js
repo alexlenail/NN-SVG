@@ -42,6 +42,7 @@ function FCNN() {
     var largest_layer_width = 0;
     var nnDirection = 'right';
     var showBias = false;
+    var wasBiasShown = false;
     var showLabels = true;
     var showArrowheads = false;
     var arrowheadStyle = "empty";
@@ -49,7 +50,15 @@ function FCNN() {
 
     let sup_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
     let sup = (s) => Array.prototype.map.call(s, (d) => (d in sup_map && sup_map[d]) || d).join('');
-    let textFn = (layer_index, layer_width) => ((layer_index === 0 ? "Input" : (layer_index === architecture.length-1 ? "Output" : "Hidden")) + " Layer ∈ ℝ" + sup(layer_index === architecture.length-1 ? layer_width.toString() : (layer_width-1).toString()));
+    
+    let textFn = (layer_index, layer_width) => {
+        let adjusted_width = layer_width;
+        if (showBias && layer_index !== architecture.length-1) {
+            adjusted_width -= 1; 
+        }
+        return ((layer_index === 0 ? "Input" : (layer_index === architecture.length-1 ? "Output" : "Hidden")) + " Layer ∈ ℝ" + sup(adjusted_width.toString()));
+    };
+
     var nominal_text_size = 12;
     var textWidth = 70;
 
@@ -82,6 +91,14 @@ function FCNN() {
         showBias = showBias_;
         showLabels = showLabels_;
         bezierCurves = bezierCurves_;
+        if (showBias) {
+            architecture = architecture.map((layer_width, layer_index) => layer_index !== architecture.length-1 ? layer_width + 1 : layer_width);
+            wasBiasShown = true;
+        } 
+        else if (!showBias && wasBiasShown) {
+            architecture = architecture.map((layer_width, layer_index) => layer_index !== architecture.length-1 ? layer_width - 1 : layer_width);
+            wasBiasShown = false;
+        }
 
         graph.nodes = architecture.map((layer_width, layer_index) => range(layer_width).map(node_index => {return {'id':layer_index+'_'+node_index,'layer':layer_index,'node_index':node_index}}));
         graph.links = pairWise(graph.nodes).map((nodes) => nodes[0].map(left => nodes[1].map(right => {return right.node_index >= 0 ? {'id':left.id+'-'+right.id, 'source':left.id,'target':right.id,'weight':randomWeight()} : null })));
