@@ -122,6 +122,18 @@
                                 <input type="checkbox" id="showLabels" name="showLabels" value="showLabels" checked>
                                 <label for="showLabels">Show Layer Labels</label>
                             </div>
+                            
+                            <hr>
+                            <div></div>
+                                <input type="checkbox" id="sqrtLength" name="sqrtLength" value="sqrtLength">
+                                <label for="sqrtLength">Sqrt Vector Length Scaling</label>
+                            </div>
+                            <div>
+                                <label for="lengthScale">Length Size Scaling</label>
+                                <input type="range" id="lengthScale" name="" min="1" max="200" step="1" value="100" style="position: relative; top: 3px;">
+                                <span id="lengthSpan">100</span>
+                                <span>%</span>
+                            </div>
 
                             <hr>
                             <h4>Architecture:</h4>
@@ -204,7 +216,7 @@
                                 </div>
 
                             </div>
-
+                            
                             <hr>
                             <div id="architecture2">
                                 <p>Vector Length</p>
@@ -264,8 +276,12 @@ function restart() {
     betweenLayers = $('#architecture').find('input[type="range"]').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)); betweenLayers.pop();
 
     architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    
+    sqrtLength = $('#sqrtLength').prop('checked');
+    lengthScale = parseFloat($('#lengthScale').prop('value'));
 
-    lenet.redraw({'architecture_':architecture, 'architecture2_':architecture2});
+
+    lenet.redraw({'architecture_':architecture, 'architecture2_':architecture2, 'sqrtLength_': sqrtLength, 'lengthScale_': lengthScale});
     lenet.redistribute({'betweenLayers_':betweenLayers});
 
 }
@@ -360,6 +376,18 @@ $(document).on('change', 'input[type="number"]', function(e) {
 $(document).on('change', 'input[type="text"]', function(e) {
     e.preventDefault();
 
+    restart();
+});
+
+$(document).on('change', '#sqrtLength', function(e) {
+    e.preventDefault();
+
+    restart();
+});
+
+$(document).on('change', '#lengthScale', function(e) {
+    e.preventDefault();
+    $("#lengthSpan").text(e.target.value)
     restart();
 });
 
