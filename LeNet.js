@@ -22,10 +22,16 @@ function LeNet() {
     var betweenLayersDefault = 12;
 
     var architecture = [];
+    var architecture2 = [];
     var lenet = {};
     var layer_offsets = [];
     var largest_layer_width = 0;
     var showLabels = true;
+
+    var sqrtLength = false;
+    var lengthScale = 100;
+    
+    let lengthFn = (length) => sqrtLength ? (Math.sqrt(length) * lengthScale/10) : (length * lengthScale/100);
 
     let textFn = (layer) => (typeof(layer) === "object" ? layer['numberOfSquares']+'@'+layer['squareHeight']+'x'+layer['squareWidth'] : "1x"+layer)
 
@@ -36,10 +42,14 @@ function LeNet() {
     /////////////////////////////////////////////////////////////////////////////
 
     function redraw({architecture_=architecture,
-                     architecture2_=architecture2}={}) {
+                     architecture2_=architecture2, 
+                     sqrtLength_=sqrtLength,
+                     lengthScale_=lengthScale,}={}) {
 
         architecture = architecture_;
         architecture2 = architecture2_;
+        sqrtLength = sqrtLength_;
+        lengthScale = lengthScale_;
 
         lenet.rects = architecture.map((layer, layer_index) => range(layer['numberOfSquares']).map(rect_index => {return {'id':layer_index+'_'+rect_index,'layer':layer_index,'rect_index':rect_index,'width':layer['squareWidth'],'height':layer['squareHeight']}}));
         lenet.rects = flatten(lenet.rects);
@@ -50,7 +60,7 @@ function LeNet() {
         lenet.conv_links = lenet.convs.map(conv => {return [Object.assign({'id':'link_'+conv['layer']+'_0','i':0},conv), Object.assign({'id':'link_'+conv['layer']+'_1','i':1},conv)]});
         lenet.conv_links = flatten(lenet.conv_links);
 
-        lenet.fc_layers = architecture2.map((size, fc_layer_index) => {return {'id': 'fc_'+fc_layer_index, 'layer':fc_layer_index+architecture.length, 'size':size/Math.sqrt(2)}});
+        lenet.fc_layers = architecture2.map((size, fc_layer_index) => {return {'id': 'fc_'+fc_layer_index, 'layer':fc_layer_index+architecture.length, 'size': lengthFn(size)}});
         lenet.fc_links = lenet.fc_layers.map(fc => { return [Object.assign({'id':'link_'+fc['layer']+'_0','i':0,'prevSize':10},fc), Object.assign({'id':'link_'+fc['layer']+'_1','i':1,'prevSize':10},fc)]});
         lenet.fc_links = flatten(lenet.fc_links);
 
