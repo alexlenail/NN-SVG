@@ -90,6 +90,9 @@ function AlexNet() {
 
     function animate() {
         requestAnimationFrame( animate );
+        sprites.children.forEach(sprite => {
+            sprite.quaternion.copy(camera.quaternion);
+        });
         renderer.render(scene, camera);
     };
 
@@ -179,30 +182,20 @@ function AlexNet() {
             if (showDims) {
 
                 // Dims
-                sprite = makeTextSprite(layer['depth'].toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wf(layer)/2 + 2, hf(layer)/2 + 2, 0 ) );
-                sprites.add( sprite );
+                sprite = makeTextSprite(rendererType === 'svg', layer['depth'].toString(), layer_object.position, new THREE.Vector3( wf(layer)/2 + 2, hf(layer)/2 + 2, 0 ));
 
-                sprite = makeTextSprite(layer['height'].toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( wf(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ) );
-                sprites.add( sprite );
+                sprite = makeTextSprite(rendererType === 'svg', layer['width'].toString(), layer_object.position, new THREE.Vector3( wf(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ));
 
-                sprite = makeTextSprite(layer['width'].toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 0, -hf(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ) );
-                sprites.add( sprite );
+                sprite = makeTextSprite(rendererType === 'svg', layer['height'].toString(), layer_object.position, new THREE.Vector3( 0, -hf(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ));
 
             }
 
             if (showConvDims && index < architecture.length - 1) {
 
                 // Conv Dims
-                sprite = makeTextSprite(layer['filterHeight'].toString());
-                sprite.position.copy( conv_object.position ).sub( new THREE.Vector3( convFn(layer['filterWidth'])/2, -3, depthFn(layer['depth'])/2 ) );
-                sprites.add( sprite );
+                sprite = makeTextSprite(rendererType === 'svg', layer['filterHeight'].toString(), conv_object.position, new THREE.Vector3( convFn(layer['filterWidth'])/2, -3, depthFn(layer['depth'])/2 + 3 ));
 
-                sprite = makeTextSprite(layer['filterWidth'].toString());
-                sprite.position.copy( conv_object.position ).sub( new THREE.Vector3( -1, convFn(layer['filterHeight'])/2, depthFn(layer['depth'])/2 ) );
-                sprites.add( sprite );
+                sprite = makeTextSprite(rendererType === 'svg', layer['filterWidth'].toString(), conv_object.position, new THREE.Vector3( -1, convFn(layer['filterHeight'])/2, depthFn(layer['depth'])/2 + 3 ));
 
             }
 
@@ -232,9 +225,7 @@ function AlexNet() {
             if (showDims) {
 
                 // Dims
-                sprite = makeTextSprite(layer.toString());
-                sprite.position.copy( layer_object.position ).sub( new THREE.Vector3( 3, depthFn(layer)/2 + 3, 3 ) );
-                sprites.add( sprite );
+                sprite = makeTextSprite(rendererType === 'svg', layer.toString(), layer_object.position, new THREE.Vector3( 3, depthFn(layer)/2 + 4, 3 ));
 
             }
 
@@ -261,32 +252,55 @@ function AlexNet() {
     }
 
 
-    function makeTextSprite(message, opts) {
-        var parameters = opts || {};
-        var fontface = parameters.fontface || 'Helvetica';
-        var fontsize = parameters.fontsize || 120;
-        var canvas = document.createElement('canvas');
-        var context = canvas.getContext('2d');
-        context.font = fontsize + "px " + fontface;
+    function makeTextSprite(should_make_geometry, message, copy_pos, sub_pos, opts) {
+        if (should_make_geometry) {
+            const loader = new THREE.FontLoader();
+            loader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+                let geometry = new THREE.TextGeometry(message, {
+                    font: font,
+                    size: 3 * fontScale,
+                    height: 0.01,
+                });
 
-        // get size data (height depends only on font size)
-        var metrics = context.measureText(message);
-        var textWidth = metrics.width;
+                let material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+                let sprite = new THREE.Mesh(geometry, material);
+                sprite.matrixAutoUpdate = true;
+                sprite.up.set(0, 1, 0);
+                sprite.scale.set(1, 1, 0.1);
 
-        // text color
-        context.fillStyle = 'rgba(0, 0, 0, 1.0)';
-        context.fillText(message, 0, fontsize);
+                sprite.position.copy(copy_pos).sub(sub_pos);
+                sprites.add(sprite);               
+            });
+        
+        } else {
+            var parameters = opts || {};
+            var fontface = parameters.fontface || 'Helvetica';
+            var fontsize = parameters.fontsize || 120;
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            context.font = fontsize + "px " + fontface;
 
-        // canvas contents will be used for a texture
-        var texture = new THREE.Texture(canvas)
-        texture.minFilter = THREE.LinearFilter;
-        texture.needsUpdate = true;
+            // get size data (height depends only on font size)
+            var metrics = context.measureText(message);
+            var textWidth = metrics.width;
 
-        var spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-        var sprite = new THREE.Sprite( spriteMaterial );
-        sprite.scale.set( 10 * fontScale, 5* fontScale, 1.0 );
-        sprite.center.set( 0,1 );
-        return sprite;
+            // text color
+            context.fillStyle = 'rgba(0, 0, 0, 1.0)';
+            context.fillText(message, 0, fontsize);
+
+            // canvas contents will be used for a texture
+            var texture = new THREE.Texture(canvas)
+            texture.minFilter = THREE.LinearFilter;
+            texture.needsUpdate = true;
+
+            var spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+            var sprite = new THREE.Sprite( spriteMaterial );
+            sprite.scale.set( 10 * fontScale, 5* fontScale, 1.0 );
+            sprite.center.set( 0,1 );
+
+            sprite.position.copy(copy_pos).sub(sub_pos);
+            sprites.add(sprite);
+        }
     }
 
     function style({color1_=color1,
