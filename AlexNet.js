@@ -12,17 +12,20 @@ function AlexNet() {
     var color2 = '#99ddff';
     var color3 = '#ffbbbb';
 
+    var imageOpacity = 0.5; 
     var rectOpacity = 0.4;
     var filterOpacity = 0.4;
     var fontScale = 1;
 
     var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
+    var image_material = new THREE.MeshBasicMaterial({ 'side': THREE.DoubleSide, 'transparent': true, 'opacity': imageOpacity, 'depthWrite': false, 'needsUpdate': true });
     var box_material = new THREE.MeshBasicMaterial( {'color':color1, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':rectOpacity, 'depthWrite':false, 'needsUpdate':true} );
     var conv_material = new THREE.MeshBasicMaterial( {'color':color2, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':filterOpacity, 'depthWrite':false, 'needsUpdate':true} );
     var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':filterOpacity, 'depthWrite':false, 'needsUpdate':true} );
 
     var architecture = [];
     var architecture2 = [];
+    var inputImage = null;
     var betweenLayers = 20;
 
     var logDepth = true;
@@ -100,6 +103,7 @@ function AlexNet() {
 
     function redraw({architecture_=architecture,
                      architecture2_=architecture2,
+                     inputimage_ = inputImage,
                      betweenLayers_=betweenLayers,
                      logDepth_=logDepth,
                      depthScale_=depthScale,
@@ -112,6 +116,7 @@ function AlexNet() {
 
         architecture = architecture_;
         architecture2 = architecture2_;
+        inputImage = inputimage_;
         betweenLayers = betweenLayers_;
         logDepth = logDepth_;
         depthScale = depthScale_;
@@ -132,9 +137,38 @@ function AlexNet() {
 
             // Layer
             layer_geometry = new THREE.BoxGeometry( wf(layer), hf(layer), depthFn(layer['depth']) );
-            layer_object = new THREE.Mesh( layer_geometry, box_material );
-            layer_object.position.set(0, 0, layer_offsets[index]);
-            layers.add( layer_object );
+            if (index === 0 && inputImage) {
+                    var textureLoader = new THREE.TextureLoader();
+                    const layer_geometry_cache = layer_geometry.clone();
+                    const layer_offset_cache = layer_offsets[index];
+                    textureLoader.load(inputImage, function(texture) {
+                        texture.minFilter = THREE.LinearFilter;
+                        texture.magFilter = THREE.LinearFilter;
+                        texture.wrapS = THREE.ClampToEdgeWrapping;
+                        texture.wrapT = THREE.ClampToEdgeWrapping;
+                        image_material.map = texture;
+                        var materials = [
+                            box_material,   
+                            box_material,   
+                            box_material,  
+                            box_material,  
+                            box_material,   
+                            image_material 
+                        ];
+                        layer_object = new THREE.Mesh(layer_geometry_cache, materials);
+                        layer_object.position.set(0, 0, layer_offset_cache);
+                        layers.add(layer_object);
+                        if (showDims) {
+                            makeTextSprite(rendererType === 'svg', layer['depth'].toString(), layer_object.position, new THREE.Vector3(wf(layer) / 2 + 2, hf(layer) / 2 + 2, 0));
+                            makeTextSprite(rendererType === 'svg', layer['width'].toString(), layer_object.position, new THREE.Vector3(wf(layer) / 2 + 3, 0, depthFn(layer['depth']) / 2 + 3));
+                            makeTextSprite(rendererType === 'svg', layer['height'].toString(), layer_object.position, new THREE.Vector3(0, -hf(layer) / 2 - 3, depthFn(layer['depth']) / 2 + 3));
+                        }
+                    });
+                } else {
+                    layer_object = new THREE.Mesh(layer_geometry, box_material);
+                    layer_object.position.set(0, 0, layer_offsets[index]);
+                    layers.add(layer_object);
+                }
 
             layer_edges_geometry = new THREE.EdgesGeometry( layer_geometry );
             layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
@@ -179,7 +213,7 @@ function AlexNet() {
 
             }
 
-            if (showDims) {
+            if (showDims&&(index!=0||inputImage==null)) {
 
                 // Dims
                 sprite = makeTextSprite(rendererType === 'svg', layer['depth'].toString(), layer_object.position, new THREE.Vector3( wf(layer)/2 + 2, hf(layer)/2 + 2, 0 ));
@@ -247,7 +281,19 @@ function AlexNet() {
         }
 
         if ( obj.geometry ) { obj.geometry.dispose(); }
-        if ( obj.material ) { obj.material.dispose(); }
+        if (obj.material) {
+            if (Array.isArray(obj.material)) {
+                obj.material.forEach(material => {
+                    if (material && typeof material.dispose === 'function') {
+                        material.dispose();
+                    }
+                });
+            } else {
+                if (typeof obj.material.dispose === 'function') {
+                    obj.material.dispose();
+                }
+            }
+        }
         if ( obj.texture ) { obj.texture.dispose(); }
     }
 
@@ -306,6 +352,7 @@ function AlexNet() {
     function style({color1_=color1,
                     color2_=color2,
                     color3_=color3,
+                    imageOpacity_ = imageOpacity_,
                     rectOpacity_=rectOpacity,
                     filterOpacity_=filterOpacity,
                     fontScale_ =fontScale,
@@ -313,16 +360,18 @@ function AlexNet() {
         color1        = color1_;
         color2        = color2_;
         color3        = color3_;
+        
         rectOpacity   = rectOpacity_;
         filterOpacity = filterOpacity_;
         fontScale = fontScale_;
-
+        imageOpacity = imageOpacity_;
         box_material.color = new THREE.Color(color1);
         conv_material.color = new THREE.Color(color2);
         pyra_material.color = new THREE.Color(color3);
 
         box_material.opacity = rectOpacity;
 
+        image_material.opacity = imageOpacity;
         conv_material.opacity = filterOpacity;
         pyra_material.opacity = filterOpacity;
     }
