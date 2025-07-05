@@ -137,7 +137,7 @@ function AlexNet() {
 
             // Layer
             layer_geometry = new THREE.BoxGeometry( wf(layer), hf(layer), depthFn(layer['depth']) );
-            if (index === 0 && inputImage) {
+            if (index === 0 && inputImage && rendererType === 'webgl') {
                     var textureLoader = new THREE.TextureLoader();
                     const layer_geometry_cache = layer_geometry.clone();
                     const layer_offset_cache = layer_offsets[index];
