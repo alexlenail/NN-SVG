@@ -271,7 +271,7 @@
                             <div id="architecture2">
                                 <p>Vector Length</p>
                                 <div class="branch-1">
-                                <p>Branch 1</p>
+                                <p id="branch-1-label" style="display:none;">Branch 1</p>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-5">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
@@ -297,7 +297,11 @@
                                     </div>
                                 </div>
                                 </div>
-                                <div class="branch-2">
+                                <div>
+                                    <input type="checkbox" id="addSecondBranch" name="addSecondBranch" value="addSecondBranch">
+                                    <label for="addSecondBranch">Do you want to add a second branch?</label>
+                                </div>
+                                <div class="branch-2" style="display:none;">
                                         <p>Branch 2</p>
                                         <div class="row entry">
                                             <div class="input-group mb-2 mr-sm-2 col-5">
@@ -459,6 +463,16 @@ $(document).on('click', '#architecture2 .btn-remove', function(e) {
 
     return false;
 
+});
+
+$("#addSecondBranch").change(function() {
+    if (this.checked) {
+        $("#branch-1-label").show();
+        $(".branch-2").show();
+    } else {
+        $("#branch-1-label").hide();
+        $(".branch-2").hide();
+    }
 });
 
 $(document).on('change', 'input', function(e) {
