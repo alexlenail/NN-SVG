@@ -131,18 +131,6 @@
                             </div>
                             
                             <div>
-                                <label for="inputImage">Upload Image for First Layer</label>
-                                <input type="file" id="inputImage" accept="image/*" class="form-control-file">
-                                <button id="removeImage" class="btn btn-secondary" style="display:none; margin-top: 5px; padding: 3px;">
-                                    Remove Image
-                                </button>
-                            </div>
-                            <div id="opacityControl" style="display:none;">
-                                <label for="imageOpacity">Image Opacity</label>
-                                <input type="range" id="imageOpacity" min="0" max="1" step="0.01" value="0.5" 
-                                    style="position: relative; top: 3px;">
-                            </div>
-                            <div>
                                 <label for="rectOpacity">Tensor Opacity</label>
                                 <input type="range" id="rectOpacity" name="" min="0" max="1" step="0.01" value="0.4" style="position: relative; top: 3px;">
                             </div>
@@ -158,6 +146,22 @@
                             <div>
                                 <label for="betweenLayers">Spacing Between Layers</label>
                                 <input type="range" id="betweenLayers" name="" min="10" max="100" step="1" value="20" style="position: relative; top: 3px;">
+                            </div>
+
+                            <div id="inputImageControl">
+                                <hr>
+                                <div>
+                                    <label for="inputImage">Upload Image for First Layer</label>
+                                    <input type="file" id="inputImage" accept="image/*" class="form-control-file">
+                                    <button id="removeImage" class="btn btn-secondary" style="display:none; margin-top: 5px; padding: 3px;">
+                                        Remove Image
+                                    </button>
+                                </div>
+                                <div id="opacityControl" style="display:none;">
+                                    <label for="imageOpacity">Image Opacity</label>
+                                    <input type="range" id="imageOpacity" min="0" max="1" step="0.01" value="0.5" 
+                                        style="position: relative; top: 3px;">
+                                </div>
                             </div>
 
                             <hr>
@@ -370,9 +374,11 @@ $('#rendererType input:radio').change(function() {
     rendererType = this.value;
     if (rendererType == 'svg') {
         $("#download").removeClass('disabled');
+        $("#inputImageControl").hide();
     }
     else if (rendererType == 'webgl') {
         $("#download").addClass('disabled');
+        $("#inputImageControl").show();
     }
     $(this).blur();
     alexnet.restartRenderer({'rendererType_':rendererType});
