@@ -12,9 +12,10 @@ function AlexNet() {
     var color2 = '#99ddff';
     var color3 = '#ffbbbb';
 
-    var imageOpacity = 0.5; 
     var rectOpacity = 0.4;
     var filterOpacity = 0.4;
+    var imageOpacity = 0.5; 
+    var imageFlip = false;
     var fontScale = 1;
 
     var line_material = new THREE.LineBasicMaterial( { 'color':0x000000 } );
@@ -146,6 +147,13 @@ function AlexNet() {
                         texture.magFilter = THREE.LinearFilter;
                         texture.wrapS = THREE.ClampToEdgeWrapping;
                         texture.wrapT = THREE.ClampToEdgeWrapping;
+                        if (imageFlip) {
+                            texture.wrapS = THREE.RepeatWrapping;
+                            texture.repeat.x = -1;
+                        } else {
+                            texture.wrapS = THREE.ClampToEdgeWrapping;
+                            texture.repeat.x = 1;
+                        }
                         image_material.map = texture;
                         var materials = [
                             box_material,   
@@ -352,9 +360,10 @@ function AlexNet() {
     function style({color1_=color1,
                     color2_=color2,
                     color3_=color3,
-                    imageOpacity_ = imageOpacity,
                     rectOpacity_=rectOpacity,
                     filterOpacity_=filterOpacity,
+                    imageOpacity_ = imageOpacity,
+                    imageFlip_=imageFlip,
                     fontScale_ =fontScale,
                 }={}) {
         color1        = color1_;
@@ -363,8 +372,9 @@ function AlexNet() {
         
         rectOpacity   = rectOpacity_;
         filterOpacity = filterOpacity_;
-        fontScale = fontScale_;
         imageOpacity = imageOpacity_;
+        imageFlip     = imageFlip_;
+        fontScale = fontScale_;
         box_material.color = new THREE.Color(color1);
         conv_material.color = new THREE.Color(color2);
         pyra_material.color = new THREE.Color(color3);
