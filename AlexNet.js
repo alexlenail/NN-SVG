@@ -148,11 +148,8 @@ function AlexNet() {
                         texture.wrapS = THREE.ClampToEdgeWrapping;
                         texture.wrapT = THREE.ClampToEdgeWrapping;
                         if (imageFlip) {
-                            texture.wrapS = THREE.RepeatWrapping;
-                            texture.repeat.x = -1;
-                        } else {
-                            texture.wrapS = THREE.ClampToEdgeWrapping;
-                            texture.repeat.x = 1;
+                            texture.matrix.setUvTransform(0, 0, -1, 1, 0, 0.5, 0);
+                            texture.matrixAutoUpdate = false;
                         }
                         image_material.map = texture;
                         var materials = [
