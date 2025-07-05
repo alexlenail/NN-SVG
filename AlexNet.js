@@ -352,7 +352,7 @@ function AlexNet() {
     function style({color1_=color1,
                     color2_=color2,
                     color3_=color3,
-                    imageOpacity_ = imageOpacity_,
+                    imageOpacity_ = imageOpacity,
                     rectOpacity_=rectOpacity,
                     filterOpacity_=filterOpacity,
                     fontScale_ =fontScale,
