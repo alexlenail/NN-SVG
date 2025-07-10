@@ -148,6 +148,26 @@
                                 <input type="range" id="betweenLayers" name="" min="10" max="100" step="1" value="20" style="position: relative; top: 3px;">
                             </div>
 
+                            <div id="inputImageControl">
+                                <hr>
+                                <div>
+                                    <label for="inputImage">Upload Image for First Layer</label>
+                                    <input type="file" id="inputImage" accept="image/*" class="form-control-file">
+                                    <button id="removeImage" class="btn btn-secondary" style="display:none; margin-top: 5px; padding: 3px;">
+                                        Remove Image
+                                    </button>
+                                </div>
+                                <div id="opacityControl" style="display:none;">
+                                    <label for="imageOpacity">Image Opacity</label>
+                                    <input type="range" id="imageOpacity" min="0" max="1" step="0.01" value="0.5" 
+                                        style="position: relative; top: 3px;">
+                                </div>
+                                <div id="flipControl" style="display:none;">
+                                    <input type="checkbox" id="imageFlip" name="imageFlip" value="imageFlip">
+                                    <label for="imageFlip">Flip Image Horizontally</label>
+                                </div>
+                            </div>
+
                             <hr>
                             <div>
                                 <input type="checkbox" id="logDepth" name="logDepth" value="logDepth" checked>
@@ -358,9 +378,11 @@ $('#rendererType input:radio').change(function() {
     rendererType = this.value;
     if (rendererType == 'svg') {
         $("#download").removeClass('disabled');
+        $("#inputImageControl").hide();
     }
     else if (rendererType == 'webgl') {
         $("#download").addClass('disabled');
+        $("#inputImageControl").show();
     }
     $(this).blur();
     alexnet.restartRenderer({'rendererType_':rendererType});
@@ -372,6 +394,10 @@ $("#color3").change(        function () { alexnet.style({'color3_': this.value})
 $("#fontScale").change(        function () { alexnet.style({'fontScale_': this.value}); });
 $("#rectOpacity").change(   function () { alexnet.style({'rectOpacity_': parseFloat(this.value)}); $(this).blur(); });
 $("#filterOpacity").change( function () { alexnet.style({'filterOpacity_': parseFloat(this.value)}); $(this).blur(); });
+$("#inputImage").change(function(){var file=this.files[0];$('#imageOpacity').closest('div').toggle(!!file);$('#flipControl').toggle(!!file);$("#removeImage").toggle(!!file);if(file){alexnet.redraw({'inputimage_':URL.createObjectURL(file)});}$(this).blur();});
+$("#removeImage").click(function () { $("#inputImage").val(""); $("#imageOpacity").closest('div').hide();  $(this).hide();  alexnet.redraw({ 'inputimage_': null }); });
+$("#imageOpacity").change(function () { alexnet.style({ 'imageOpacity_': parseFloat(this.value) }); $(this).blur(); });
+$("#imageFlip").change(function () { alexnet.style({'imageFlip_': this.checked}); });
 $("#betweenLayers").change( function () { alexnet.redraw({'betweenLayers_': parseFloat(this.value)}); $(this).blur(); });
 $("#logDepth").change(      function () { alexnet.redraw({'logDepth_': this.checked}); });
 $("#depthScale").change(    function () { alexnet.redraw({'depthScale_': parseFloat(this.value)}); $(this).blur(); $("#depthSpan").text(this.value); });
