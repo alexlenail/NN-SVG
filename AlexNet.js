@@ -25,7 +25,7 @@ function AlexNet() {
     var pyra_material = new THREE.MeshBasicMaterial( {'color':color3, 'side':THREE.DoubleSide, 'transparent':true, 'opacity':filterOpacity, 'depthWrite':false, 'needsUpdate':true} );
 
     var architecture = [];
-    var architecture2 = [];
+    var architecture2 = {branch1: [], branch2: []};
     var inputImage = null;
     var betweenLayers = 20;
 
@@ -132,7 +132,6 @@ function AlexNet() {
 
         z_offset = -(sum(architecture.map(layer => depthFn(layer['depth']))) + (betweenLayers * (architecture.length - 1))) / 3;
         layer_offsets = pairWise(architecture).reduce((offsets, layers) => offsets.concat([offsets.last() + depthFn(layers[0]['depth'])/2 + betweenLayers + depthFn(layers[1]['depth'])/2]), [z_offset]);
-        layer_offsets = layer_offsets.concat(architecture2.reduce((offsets, layer) => offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), [layer_offsets.last() + depthFn(architecture.last()['depth'])/2 + betweenLayers + widthFn(2)]));
 
         architecture.forEach( function( layer, index ) {
 
@@ -240,26 +239,56 @@ function AlexNet() {
 
         });
 
-        architecture2.forEach( function( layer, index ) {
+        const lastArchitectureOffset = layer_offsets.last() + depthFn(architecture.last()['depth']) / 2 + betweenLayers;
+    
+        const branch1_offsets = architecture2.branch1.reduce((offsets, layer) => 
+            offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), 
+            [lastArchitectureOffset + widthFn(2)]
+        );
+        
+        const branch2_offsets = architecture2.branch2.reduce((offsets, layer) => 
+            offsets.concat([offsets.last() + widthFn(2) + betweenLayers]), 
+            [lastArchitectureOffset + widthFn(2)]
+        );
+
+        const isBranch1Empty = architecture2.branch1.length === 0;
+        const isBranch2Empty = architecture2.branch2.length === 0;
+        const branch1XPos = isBranch2Empty ? 0 : -30;
+        const branch2XPos = isBranch1Empty ? 0 : 30;
+
+        architecture2.branch1.forEach( function( layer, index ) {
 
             // Dense
             layer_geometry = new THREE.BoxGeometry( widthFn(2), depthFn(layer), widthFn(2) );
             layer_object = new THREE.Mesh( layer_geometry, box_material );
-            layer_object.position.set(0, 0, layer_offsets[architecture.length + index]);
+            layer_object.position.set(branch1XPos, 0, branch1_offsets[index]);
             layers.add( layer_object );
 
             layer_edges_geometry = new THREE.EdgesGeometry( layer_geometry );
             layer_edges_object = new THREE.LineSegments( layer_edges_geometry, line_material );
-            layer_edges_object.position.set(0, 0, layer_offsets[architecture.length + index]);
+            layer_edges_object.position.set(branch1XPos, 0, branch1_offsets[index]);
             layers.add( layer_edges_object );
 
-            direction = new THREE.Vector3( 0, 0, 1 );
-            origin = new THREE.Vector3( 0, 0, layer_offsets[architecture.length + index] - betweenLayers - widthFn(2)/2 + 1 );
-            length = betweenLayers - 2;
-            headLength = betweenLayers/3;
-            headWidth = 5;
-            arrow = new THREE.ArrowHelper( direction, origin, length, 0x000000, headLength, headWidth );
-            pyramids.add( arrow );
+            if (index === 0 && !isBranch2Empty) {
+                const lastConvLayerIndex = architecture.length - 1;
+                const lastConvLayerZ = layer_offsets[lastConvLayerIndex] + depthFn(architecture[lastConvLayerIndex]['depth']) / 2;
+                const origin = new THREE.Vector3(-5, 0, betweenLayers/3 + lastConvLayerZ);
+                const target = new THREE.Vector3(branch1XPos, 0, branch1_offsets[index] - widthFn(2) / 2);
+                const direction = target.clone().sub(origin).normalize();
+                const length = betweenLayers;
+                const headLength = betweenLayers / 3;
+                const headWidth = 5;
+                const arrow = new THREE.ArrowHelper(direction, origin, length, 0x000000, headLength, headWidth);
+                pyramids.add(arrow);
+            } else {
+                direction = new THREE.Vector3(0, 0, 1);
+                origin = new THREE.Vector3(branch1XPos, 0, branch1_offsets[index] - betweenLayers - widthFn(2) / 2 + 1);
+                length = betweenLayers - 2;
+                headLength = betweenLayers / 3;
+                headWidth = 5;
+                arrow = new THREE.ArrowHelper(direction, origin, length, 0x000000, headLength, headWidth);
+                pyramids.add(arrow);
+            };
 
             if (showDims) {
 
@@ -269,6 +298,47 @@ function AlexNet() {
             }
 
 
+        });
+
+         architecture2.branch2.forEach(function (layer, index) {
+
+            // Dense
+            layer_geometry = new THREE.BoxGeometry(widthFn(2), depthFn(layer), widthFn(2));
+            layer_object = new THREE.Mesh(layer_geometry, box_material);
+            layer_object.position.set(branch2XPos, 0, branch2_offsets[index]);
+            layers.add(layer_object);
+
+            layer_edges_geometry = new THREE.EdgesGeometry(layer_geometry);
+            layer_edges_object = new THREE.LineSegments(layer_edges_geometry, line_material);
+            layer_edges_object.position.set(branch2XPos, 0, branch2_offsets[index]);
+            layers.add(layer_edges_object);
+
+            if (index === 0 && !isBranch1Empty) {
+                const lastConvLayerIndex = architecture.length - 1;
+                const lastConvLayerZ = layer_offsets[lastConvLayerIndex] + depthFn(architecture[lastConvLayerIndex]['depth']) / 2;
+                const origin = new THREE.Vector3(5, 0, betweenLayers/3 + lastConvLayerZ);
+                const target = new THREE.Vector3(branch2XPos, 0, branch2_offsets[index] - widthFn(2) / 2);
+                const direction = target.clone().sub(origin).normalize();
+                const length = betweenLayers;
+                const headLength = betweenLayers / 3;
+                const headWidth = 5;
+                const arrow = new THREE.ArrowHelper(direction, origin, length, 0x000000, headLength, headWidth);
+                pyramids.add(arrow);
+            } else {
+                direction = new THREE.Vector3(0, 0, 1);
+                origin = new THREE.Vector3(branch2XPos, 0, branch2_offsets[index] - betweenLayers - widthFn(2) / 2 + 1);
+                length = betweenLayers - 2;
+                headLength = betweenLayers / 3;
+                headWidth = 5;
+                arrow = new THREE.ArrowHelper(direction, origin, length, 0x000000, headLength, headWidth);
+                pyramids.add(arrow);
+            }
+
+            if (showDims) {
+
+                // Dims
+                sprite = makeTextSprite(rendererType === 'svg', layer.toString(), layer_object.position, new THREE.Vector3(3, depthFn(layer) / 2 + 4, 3));
+            }
         });
 
         scene.add( layers );

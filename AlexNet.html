@@ -290,6 +290,8 @@
                             <hr>
                             <div id="architecture2">
                                 <p>Vector Length</p>
+                                <div class="branch-1">
+                                <p id="branch-1-label" style="display:none;">Branch 1</p>
                                 <div class="row entry">
                                     <div class="input-group mb-2 mr-sm-2 col-5">
                                         <button class="btn btn-secondary btn-remove input-group-prepend"><span class="fa fa-minus"></span></button>
@@ -313,6 +315,22 @@
                                         <button class="btn btn-primary btn-add input-group-prepend"><span class="fa fa-plus"></span></button>
                                         <input type="number" class="form-control" name="vectorLength" step="1"/>
                                     </div>
+                                </div>
+                                </div>
+                                <div>
+                                    <input type="checkbox" id="addSecondBranch" name="addSecondBranch" value="addSecondBranch">
+                                    <label for="addSecondBranch">Do you want to add a second branch?</label>
+                                </div>
+                                <div class="branch-2" style="display:none;">
+                                        <p>Branch 2</p>
+                                        <div class="row entry">
+                                            <div class="input-group mb-2 mr-sm-2 col-5">
+                                                <button class="btn btn-primary btn-add input-group-prepend"><span
+                                                        class="fa fa-plus"></span></button>
+                                                <input type="number" class="form-control" name="vectorLength"
+                                                    step="1" />
+                                            </div>
+                                        </div>
                                 </div>
 
                             </div>
@@ -361,7 +379,10 @@ function restart() {
         ).get()
          .filter(layer => Object.values(layer).every(val => !_.isNaN(val)));
 
-    architecture2 = $('#architecture2').find('input').map((i,el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s));
+    architecture2 = {
+                    branch1: $('.branch-1').find('input').map((i, el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s)),
+                    branch2: $('.branch-2').find('input').map((i, el) => $(el).val()).get().filter(input => $.isNumeric(input)).map(s => parseInt(s))
+                };
 
     alexnet.redraw({'architecture_':architecture, 'architecture2_':architecture2});
 
@@ -445,7 +466,7 @@ $(document).on('click', '#architecture .btn-remove', function(e) {
 $(document).on('click', '#architecture2 .btn-add', function(e) {
     e.preventDefault();
 
-    var controlForm = $('#architecture2');
+    var controlForm = $(this).closest('.branch-1, .branch-2');
     var currentEntry = $(this).parents('.entry:first');
     var newEntry = $(currentEntry.clone()).appendTo(controlForm);
 
@@ -468,6 +489,16 @@ $(document).on('click', '#architecture2 .btn-remove', function(e) {
 
     return false;
 
+});
+
+$("#addSecondBranch").change(function() {
+    if (this.checked) {
+        $("#branch-1-label").show();
+        $(".branch-2").show();
+    } else {
+        $("#branch-1-label").hide();
+        $(".branch-2").hide();
+    }
 });
 
 $(document).on('change', 'input', function(e) {
