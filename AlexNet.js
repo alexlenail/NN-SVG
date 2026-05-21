@@ -165,8 +165,8 @@ function AlexNet() {
                         layers.add(layer_object);
                         if (showDims) {
                             makeTextSprite(rendererType === 'svg', layer['depth'].toString(), layer_object.position, new THREE.Vector3(wf(layer) / 2 + 2, hf(layer) / 2 + 2, 0));
-                            makeTextSprite(rendererType === 'svg', layer['width'].toString(), layer_object.position, new THREE.Vector3(wf(layer) / 2 + 3, 0, depthFn(layer['depth']) / 2 + 3));
-                            makeTextSprite(rendererType === 'svg', layer['height'].toString(), layer_object.position, new THREE.Vector3(0, -hf(layer) / 2 - 3, depthFn(layer['depth']) / 2 + 3));
+                            makeTextSprite(rendererType === 'svg', layer['height'].toString(), layer_object.position, new THREE.Vector3(wf(layer) / 2 + 3, 0, depthFn(layer['depth']) / 2 + 3));
+                            makeTextSprite(rendererType === 'svg', layer['width'].toString(), layer_object.position, new THREE.Vector3(0, -hf(layer) / 2 - 3, depthFn(layer['depth']) / 2 + 3));
                         }
                     });
                 } else {
@@ -223,9 +223,9 @@ function AlexNet() {
                 // Dims
                 sprite = makeTextSprite(rendererType === 'svg', layer['depth'].toString(), layer_object.position, new THREE.Vector3( wf(layer)/2 + 2, hf(layer)/2 + 2, 0 ));
 
-                sprite = makeTextSprite(rendererType === 'svg', layer['width'].toString(), layer_object.position, new THREE.Vector3( wf(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ));
+                sprite = makeTextSprite(rendererType === 'svg', layer['height'].toString(), layer_object.position, new THREE.Vector3( wf(layer)/2 + 3, 0, depthFn(layer['depth'])/2 + 3 ));
 
-                sprite = makeTextSprite(rendererType === 'svg', layer['height'].toString(), layer_object.position, new THREE.Vector3( 0, -hf(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ));
+                sprite = makeTextSprite(rendererType === 'svg', layer['width'].toString(), layer_object.position, new THREE.Vector3( 0, -hf(layer)/2 - 3, depthFn(layer['depth'])/2 + 3 ));
 
             }
 
