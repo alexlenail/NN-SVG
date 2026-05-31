@@ -198,14 +198,15 @@ function AlexNet() {
 
                 base_z = layer_offsets[index] + (depthFn(layer['depth']) / 2);
                 summit_z = layer_offsets[index] + (depthFn(layer['depth']) / 2) + betweenLayers;
-                next_layer_wh = widthFn(architecture[index+1]['width'])
+                next_layer_w = wf(architecture[index+1]);
+                next_layer_h = hf(architecture[index+1]);
 
                 pyramid_geometry.vertices = [
                     new THREE.Vector3( (layer['rel_x'] * wf(layer)) + (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) + (convFn(layer['filterHeight'])/2), base_z ),  // base
                     new THREE.Vector3( (layer['rel_x'] * wf(layer)) + (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) - (convFn(layer['filterHeight'])/2), base_z ),  // base
                     new THREE.Vector3( (layer['rel_x'] * wf(layer)) - (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) - (convFn(layer['filterHeight'])/2), base_z ),  // base
                     new THREE.Vector3( (layer['rel_x'] * wf(layer)) - (convFn(layer['filterWidth'])/2), (layer['rel_y'] * hf(layer)) + (convFn(layer['filterHeight'])/2), base_z ),  // base
-                    new THREE.Vector3( (layer['rel_x'] * next_layer_wh),                           (layer['rel_y'] * next_layer_wh),                           summit_z)  // summit
+                    new THREE.Vector3( (layer['rel_x'] * next_layer_w),                            (layer['rel_y'] * next_layer_h),                            summit_z)  // summit
                 ];
                 pyramid_geometry.faces = [new THREE.Face3(0,1,2),new THREE.Face3(0,2,3),new THREE.Face3(1,0,4),new THREE.Face3(2,1,4),new THREE.Face3(3,2,4),new THREE.Face3(0,3,4)];
 
